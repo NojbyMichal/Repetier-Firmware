@@ -536,10 +536,6 @@ inline void memcopy4(void *dest,void *source) {
 #define Z_ACCELERATION_TOP 0
 #endif
 
-#ifndef KEEP_ALIVE_INTERVAL
-#define KEEP_ALIVE_INTERVAL 2000
-#endif
-
 #include "HAL.h"
 #include "gcode.h"
 #define MAX_VFAT_ENTRIES (2)
@@ -895,7 +891,7 @@ extern long baudrate;
 
 extern unsigned int counterPeriodical;
 extern volatile uint8_t executePeriodical;
-extern uint8_t counter500ms;
+extern uint8_t counter250ms;
 extern void writeMonitor();
 #if FEATURE_FAN_CONTROL
 extern uint8_t fanKickstart;

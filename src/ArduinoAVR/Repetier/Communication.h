@@ -410,6 +410,26 @@ FSTRINGVAR(tPrinterModeCNC)
 #ifdef STARTUP_GCODE
 FSTRINGVAR(tStartupGCode)
 #endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1
+FSTRINGVAR(tUserQuickMenuItemCustomScript1)
+#endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2
+FSTRINGVAR(tUserQuickMenuItemCustomScript2)
+#endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3
+FSTRINGVAR(tUserQuickMenuItemCustomScript3)
+#endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4
+FSTRINGVAR(tUserQuickMenuItemCustomScript4)
+#endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5
+FSTRINGVAR(tUserQuickMenuItemCustomScript5)
+#endif
+
+FSTRINGVAR(tZProbeBedDeviationOk);
+FSTRINGVAR(tZProbeBedDeviationBad);
+
+
 #if NONLINEAR_SYSTEM
 FSTRINGVAR(tEPRSegmentsPerSecondPrint)
 FSTRINGVAR(tEPRSegmentsPerSecondTravel)

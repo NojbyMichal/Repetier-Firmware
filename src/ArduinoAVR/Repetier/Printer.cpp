@@ -1811,6 +1811,7 @@ void Printer::reportCaseLightStatus() {
 #endif
 }
 
+
 void Printer::handleInterruptEvent() {
     if(interruptEvent == 0) return;
     int event = interruptEvent;
@@ -1864,6 +1865,14 @@ void Printer::handleInterruptEvent() {
     }
 }
 
+float smallestNumber(float x, float y, float z){
+    return RMath::min((RMath::min(x, y), z);
+}
+
+float biggestNumber(float x, float y, float z){
+    return RMath::max((RMath::max(x, y), z);
+}
+
 #define START_EXTRUDER_CONFIG(i)     Com::printF(Com::tConfig);Com::printF(Com::tExtrDot,i+1);Com::print(':');
 void Printer::showConfiguration() {
     Com::config(PSTR("Baudrate:"),baudrate);
@@ -1893,7 +1902,6 @@ void Printer::showConfiguration() {
     Com::config(PSTR("EEPROM:"),EEPROM_MODE != 0);
     Com::config(PSTR("PrintlineCache:"), PRINTLINE_CACHE_SIZE);
     Com::config(PSTR("JerkXY:"),maxJerk);
-    Com::config(PSTR("KeepAliveInterval:"), KEEP_ALIVE_INTERVAL);
 #if DRIVE_SYSTEM != DELTA
     Com::config(PSTR("JerkZ:"),maxZJerk);
 #endif

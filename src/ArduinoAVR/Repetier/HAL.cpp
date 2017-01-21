@@ -349,22 +349,10 @@ void HAL::analogStart()
 
 #include <avr/io.h>
 
-/****************************************************************************************
- Setting for I2C Clock speed. needed to change  clock speed for different peripherals
- here is just the same as i2cInit  , added to be compatible to DUE Version
-****************************************************************************************/
-
-void HAL::i2cSetClockspeed(uint32_t clockSpeedHz)
-{
-    /* initialize TWI clock: 100 kHz clock, TWPS = 0 => prescaler = 1 */
-    TWSR = 0;                         /* no prescaler */
-    TWBR = ((F_CPU/clockSpeedHz)-16)/2;  /* must be > 10 for stable operation */
-}
-
 /*************************************************************************
  Initialization of the I2C bus interface. Need to be called only once
 *************************************************************************/
-void HAL::i2cInit(uint32_t clockSpeedHz)
+void HAL::i2cInit(unsigned long clockSpeedHz)
 {
     /* initialize TWI clock: 100 kHz clock, TWPS = 0 => prescaler = 1 */
     TWSR = 0;                         /* no prescaler */
@@ -376,7 +364,7 @@ void HAL::i2cInit(uint32_t clockSpeedHz)
   Issues a start condition and sends address and transfer direction.
   return 0 = device accessible, 1= failed to access device
 *************************************************************************/
-unsigned char HAL::i2cStart(uint8_t address)
+unsigned char HAL::i2cStart(unsigned char address)
 {
     uint8_t   twst;
 
@@ -472,18 +460,18 @@ void HAL::i2cStop(void)
   Return:   0 write successful
             1 write failed
 *************************************************************************/
-void HAL::i2cWrite( unsigned char data )
+unsigned char HAL::i2cWrite( unsigned char data )
 {
-    //uint8_t   twst;
+    uint8_t   twst;
     // send data to the previously addressed device
     TWDR = data;
     TWCR = (1<<TWINT) | (1<<TWEN);
     // wait until transmission completed
     while(!(TWCR & (1<<TWINT)));
     // check value of TWI Status Register. Mask prescaler bits
-    //twst = TW_STATUS & 0xF8;
-    //if( twst != TW_MT_DATA_ACK) return 1;
-    //return 0;
+    twst = TW_STATUS & 0xF8;
+    if( twst != TW_MT_DATA_ACK) return 1;
+    return 0;
 }
 
 
@@ -511,7 +499,7 @@ unsigned char HAL::i2cReadNak(void)
 }
 
 #if FEATURE_SERVO
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega128__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega2561__)
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega128__) ||defined(__AVR_ATmega1281__)||defined(__AVR_ATmega2561__)
 #define SERVO2500US F_CPU/3200
 #define SERVO5000US F_CPU/1600
 unsigned int HAL::servoTimings[4] = {0,0,0,0};
@@ -675,7 +663,7 @@ inline void setTimer(uint32_t delay)
 }
 
 volatile uint8_t insideTimer1 = 0;
-__attribute__((used)) long stepperWait = 0;
+long __attribute__((used)) stepperWait = 0;
 /** \brief Timer interrupt routine to drive the stepper motors.
 */
 ISR(TIMER1_COMPA_vect)
@@ -1479,3 +1467,4 @@ RFHardwareSerial RFSerial(&rx_buffer, &tx_buffer, &UBRR0H, &UBRR0L, &UCSR0A, &UC
 #endif
 
 #endif
+
