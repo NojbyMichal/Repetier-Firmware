@@ -995,30 +995,25 @@ void Commands::processGCode(GCode *com) {
                 Printer::startProbing(true);
                 bool oldAutolevel = Printer::isAutolevelActive();
                 Printer::setAutolevelActive(false);
-                float sum = 0, last,point1,point2,point3,bed_deviation = BED_DEVIATION,oldFeedrate = Printer::feedrate;
+                float sum = 0, last,oldFeedrate = Printer::feedrate;
                 Printer::moveTo(EEPROM::zProbeX1(), EEPROM::zProbeY1(), IGNORE_COORDINATE, IGNORE_COORDINATE, EEPROM::zProbeXYSpeed());
                 sum = Printer::runZProbe(true,false,Z_PROBE_REPETITIONS,false);
-                point1 = sum;
                 if(sum == ILLEGAL_Z_PROBE) ok = false;
                 if(ok) {
                     Printer::moveTo(EEPROM::zProbeX2(), EEPROM::zProbeY2(), IGNORE_COORDINATE, IGNORE_COORDINATE, EEPROM::zProbeXYSpeed());
                     last = Printer::runZProbe(false,false);
                     if(last == ILLEGAL_Z_PROBE) ok = false;
-                    point2 = last;
                     sum+= last;
                 }
                 if(ok) {
                     Printer::moveTo(EEPROM::zProbeX3(), EEPROM::zProbeY3(), IGNORE_COORDINATE, IGNORE_COORDINATE, EEPROM::zProbeXYSpeed());
                     last = Printer::runZProbe(false,true);
                     if(last == ILLEGAL_Z_PROBE) ok = false;
-                    point3 = last;
                     sum += last;
                 }
                 if(ok) {
                     sum *= 0.33333333333333;
                     Com::printFLN(Com::tZProbeAverage, sum);
-                    if ((Printer::biggestNumber(point1,point2,point3) - Printer::smallestNumber(point1,point2,point3)) <= bed_deviation ? Com::printFLN(Com::tZProbeBedDeviationOk) : Com::printFLN(Com::tZProbeBedDeviationBad));
-
                     if(com->hasS() && com->S) {
 #if MAX_HARDWARE_ENDSTOP_Z
 #if DRIVE_SYSTEM == DELTA

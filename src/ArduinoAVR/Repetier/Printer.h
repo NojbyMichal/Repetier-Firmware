@@ -1157,9 +1157,6 @@ public:
     {
         return wizardStack[--wizardStackPos];
     }
-
-    static float smallestNumber(float x, float y, float z);
-    static float biggestNumber(float x, float y, float z);
     static void showConfiguration();
     static void setCaseLight(bool on);
     static void reportCaseLightStatus();

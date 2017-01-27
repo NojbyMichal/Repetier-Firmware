@@ -1811,7 +1811,6 @@ void Printer::reportCaseLightStatus() {
 #endif
 }
 
-
 void Printer::handleInterruptEvent() {
     if(interruptEvent == 0) return;
     int event = interruptEvent;
@@ -1863,14 +1862,6 @@ void Printer::handleInterruptEvent() {
         break;
 #endif // EXTRUDER_JAM_CONTROL    case PRINTER_INTERRUPT_EVENT_JAM_DETECTED:
     }
-}
-
-float smallestNumber(float x, float y, float z){
-    return RMath::min((RMath::min(x, y), z);
-}
-
-float biggestNumber(float x, float y, float z){
-    return RMath::max((RMath::max(x, y), z);
 }
 
 #define START_EXTRUDER_CONFIG(i)     Com::printF(Com::tConfig);Com::printF(Com::tExtrDot,i+1);Com::print(':');
