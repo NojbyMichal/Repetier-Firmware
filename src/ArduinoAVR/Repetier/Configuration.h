@@ -37,7 +37,7 @@
 */
 
 #define NUM_EXTRUDER 1
-#define MOTHERBOARD 33
+#define MOTHERBOARD 80
 #include "pins.h"
 
 // ################## EDIT THESE SETTINGS MANUALLY ################
@@ -79,7 +79,7 @@
 #define EXT0_X_OFFSET 0
 #define EXT0_Y_OFFSET 0
 #define EXT0_Z_OFFSET 0
-#define EXT0_STEPS_PER_MM 400
+#define EXT0_STEPS_PER_MM 396
 #define EXT0_TEMPSENSOR_TYPE 8
 #define EXT0_TEMPSENSOR_PIN TEMP_0_PIN
 #define EXT0_HEATER_PIN HEATER_0_PIN
@@ -96,14 +96,14 @@
 #define EXT0_MAX_FEEDRATE 200
 #define EXT0_MAX_START_FEEDRATE 20
 #define EXT0_MAX_ACCELERATION 9000
-#define EXT0_HEAT_MANAGER 1
+#define EXT0_HEAT_MANAGER 3
 #define EXT0_WATCHPERIOD 1
-#define EXT0_PID_INTEGRAL_DRIVE_MAX 255
+#define EXT0_PID_INTEGRAL_DRIVE_MAX 230
 #define EXT0_PID_INTEGRAL_DRIVE_MIN 40
-#define EXT0_PID_PGAIN_OR_DEAD_TIME 10
-#define EXT0_PID_I 1
-#define EXT0_PID_D 32
-#define EXT0_PID_MAX 255
+#define EXT0_PID_PGAIN_OR_DEAD_TIME 7
+#define EXT0_PID_I 2
+#define EXT0_PID_D 40
+#define EXT0_PID_MAX 230
 #define EXT0_ADVANCE_K 0
 #define EXT0_ADVANCE_L 0
 #define EXT0_ADVANCE_BACKLASH_STEPS 0
@@ -167,12 +167,12 @@
 #define HEATED_BED_HEAT_MANAGER 1
 #define HEATED_BED_PID_INTEGRAL_DRIVE_MAX 220
 #define HEATED_BED_PID_INTEGRAL_DRIVE_MIN 10
-#define HEATED_BED_PID_PGAIN_OR_DEAD_TIME   168
-#define HEATED_BED_PID_IGAIN   23
-#define HEATED_BED_PID_DGAIN 309
+#define HEATED_BED_PID_PGAIN_OR_DEAD_TIME   240
+#define HEATED_BED_PID_IGAIN   46
+#define HEATED_BED_PID_DGAIN 313
 #define HEATED_BED_PID_MAX 220
 #define HEATED_BED_DECOUPLE_TEST_PERIOD 300000
-#define MIN_EXTRUDER_TEMP 170
+#define MIN_EXTRUDER_TEMP 90
 #define MAXTEMP 290
 #define MIN_DEFECT_TEMPERATURE 5
 #define MAX_DEFECT_TEMPERATURE 295
@@ -282,7 +282,7 @@ It also can add a delay to wait for spindle to run on full speed.
 #define Z_HOME_DIR 1
 #define X_MAX_LENGTH 200
 #define Y_MAX_LENGTH 200
-#define Z_MAX_LENGTH 323
+#define Z_MAX_LENGTH 1000
 #define X_MIN_POS 0
 #define Y_MIN_POS 0
 #define Z_MIN_POS 0
@@ -311,9 +311,9 @@ It also can add a delay to wait for spindle to run on full speed.
 #define EXACT_DELTA_MOVES 1
 
 // Delta settings
-#define DELTA_DIAGONAL_ROD 298.2 // mm
-#define DELTA_ALPHA_A 210.33
-#define DELTA_ALPHA_B 330.17
+#define DELTA_DIAGONAL_ROD 300 // mm
+#define DELTA_ALPHA_A 210
+#define DELTA_ALPHA_B 330
 #define DELTA_ALPHA_C 90
 #define DELTA_RADIUS_CORRECTION_A 0
 #define DELTA_RADIUS_CORRECTION_B 0
@@ -324,8 +324,8 @@ It also can add a delay to wait for spindle to run on full speed.
 #define END_EFFECTOR_HORIZONTAL_OFFSET 0
 #define CARRIAGE_HORIZONTAL_OFFSET 0
 #define DELTA_MAX_RADIUS 125
-#define ROD_RADIUS 150.5
-#define PRINTER_RADIUS 150.5
+#define ROD_RADIUS 150.85
+#define PRINTER_RADIUS 150.85
 #define DELTA_HOME_ON_POWER 0
 #define STEP_COUNTER
 #define DELTA_X_ENDSTOP_OFFSET_STEPS 0
@@ -439,12 +439,12 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define Z_PROBE_PIN ORIG_Z_MIN_PIN
 #define Z_PROBE_PULLUP 0
 #define Z_PROBE_ON_HIGH 0
-#define Z_PROBE_X_OFFSET 0
-#define Z_PROBE_Y_OFFSET 25
+#define Z_PROBE_X_OFFSET -20
+#define Z_PROBE_Y_OFFSET 0
 #define Z_PROBE_WAIT_BEFORE_TEST 0
-#define Z_PROBE_SPEED 20
+#define Z_PROBE_SPEED 10
 #define Z_PROBE_XY_SPEED 150
-#define Z_PROBE_SWITCHING_DISTANCE 0.75
+#define Z_PROBE_SWITCHING_DISTANCE 1
 #define Z_PROBE_REPETITIONS 3
 #define Z_PROBE_HEIGHT 0
 #define Z_PROBE_START_SCRIPT ""
@@ -537,7 +537,7 @@ Values must be in range 1..255
 #define UI_SET_PRESET_EXTRUDER_TEMP_ABS   230
 #define UI_SET_MIN_HEATED_BED_TEMP  30
 #define UI_SET_MAX_HEATED_BED_TEMP 105
-#define UI_SET_MIN_EXTRUDER_TEMP   170
+#define UI_SET_MIN_EXTRUDER_TEMP   90
 #define UI_SET_MAX_EXTRUDER_TEMP   290
 #define UI_SET_EXTRUDER_FEEDRATE 2
 #define UI_SET_EXTRUDER_RETRACT_DISTANCE 3
@@ -571,10 +571,10 @@ Values must be in range 1..255
     "extruder": [
         {
             "id": 0,
-            "heatManager": 1,
+            "heatManager": 3,
             "pidDriveMin": 40,
-            "pidDriveMax": 255,
-            "pidMax": 255,
+            "pidDriveMax": 230,
+            "pidMax": 230,
             "sensorType": 8,
             "sensorPin": "TEMP_0_PIN",
             "heaterPin": "HEATER_0_PIN",
@@ -584,15 +584,15 @@ Values must be in range 1..255
             "invertEnable": "0",
             "acceleration": 9000,
             "watchPeriod": 1,
-            "pidP": 10,
-            "pidI": 1,
-            "pidD": 32,
+            "pidP": 7,
+            "pidI": 2,
+            "pidD": 40,
             "advanceK": 0,
             "advanceL": 0,
             "waitRetractTemp": 150,
             "waitRetractUnits": 0,
             "waitRetract": 0,
-            "stepsPerMM": 400,
+            "stepsPerMM": 396,
             "coolerPin": -1,
             "coolerSpeed": 255,
             "selectCommands": "",
@@ -631,7 +631,7 @@ Values must be in range 1..255
     "xMaxEndstop": 2,
     "yMaxEndstop": 2,
     "zMaxEndstop": 2,
-    "motherboard": 33,
+    "motherboard": 80,
     "driveSystem": 3,
     "xMaxSpeed": 200,
     "xHomingSpeed": 100,
@@ -674,7 +674,7 @@ Values must be in range 1..255
     "zMinPos": 0,
     "xLength": 200,
     "yLength": 200,
-    "zLength": 323,
+    "zLength": 1000,
     "alwaysCheckEndstops": "0",
     "disableX": "0",
     "disableY": "0",
@@ -688,10 +688,10 @@ Values must be in range 1..255
     "zEndstopBack": 0,
     "deltaSegmentsPerSecondPrint": 180,
     "deltaSegmentsPerSecondTravel": 70,
-    "deltaDiagonalRod": 298.2,
-    "deltaHorizontalRadius": 150.5,
-    "deltaAlphaA": 210.33,
-    "deltaAlphaB": 330.17,
+    "deltaDiagonalRod": 300,
+    "deltaHorizontalRadius": 150.85,
+    "deltaAlphaA": 210,
+    "deltaAlphaB": 330,
     "deltaAlphaC": 90,
     "deltaDiagonalCorrA": 0,
     "deltaDiagonalCorrB": 0,
@@ -783,7 +783,7 @@ Values must be in range 1..255
     "uiPresetExtruderABS": 230,
     "uiMinHeatedBed": 30,
     "uiMaxHeatedBed": 105,
-    "uiMinEtxruderTemp": 170,
+    "uiMinEtxruderTemp": 90,
     "uiMaxExtruderTemp": 290,
     "uiExtruderFeedrate": 2,
     "uiExtruderRetractDistance": 3,
@@ -796,9 +796,9 @@ Values must be in range 1..255
     "bedUpdateInterval": 5000,
     "bedPidDriveMin": 10,
     "bedPidDriveMax": 220,
-    "bedPidP": 168,
-    "bedPidI": 23,
-    "bedPidD": 309,
+    "bedPidP": 240,
+    "bedPidI": 46,
+    "bedPidD": 313,
     "bedPidMax": 220,
     "bedDecoupleTestPeriod": 300,
     "caseLightPin": -1,
@@ -847,7 +847,7 @@ Values must be in range 1..255
     "pidControlRange": 10,
     "skipM109Within": 1,
     "extruderFanCoolTemp": 50,
-    "minTemp": 170,
+    "minTemp": 90,
     "maxTemp": 290,
     "minDefectTemp": 5,
     "maxDefectTemp": 295,
@@ -871,10 +871,10 @@ Values must be in range 1..255
     "zProbeBedDistance": 10,
     "zProbePullup": "0",
     "zProbeOnHigh": "0",
-    "zProbeXOffset": 0,
-    "zProbeYOffset": 25,
+    "zProbeXOffset": -20,
+    "zProbeYOffset": 0,
     "zProbeWaitBeforeTest": "0",
-    "zProbeSpeed": 20,
+    "zProbeSpeed": 10,
     "zProbeXYSpeed": 150,
     "zProbeHeight": 0,
     "zProbeStartScript": "",
@@ -886,7 +886,7 @@ Values must be in range 1..255
     "zProbeY2": -50,
     "zProbeX3": 0,
     "zProbeY3": 100,
-    "zProbeSwitchingDistance": 0.75,
+    "zProbeSwitchingDistance": 1,
     "zProbeRepetitions": 3,
     "sdSupport": "1",
     "sdCardDetectPin": "ORIG_SDCARDDETECT",

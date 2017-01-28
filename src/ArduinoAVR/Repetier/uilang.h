@@ -373,7 +373,6 @@
 #define UI_TEXT_Y_OFFSET_ID 264
 #define UI_TEXT_Z_OFFSET_ID 265
 #define UI_TEXT_DBG_ENDSTOP_ID 266 //     "EndStop:%dp"
-#define UI_TEXT_CALIBRATE_BED_ID 267    
 
 // Universal definitions
 
@@ -672,8 +671,6 @@
 #define UI_TEXT_X_OFFSET_EN "Set X offset:%T0mm"
 #define UI_TEXT_Y_OFFSET_EN "Set Y offset:%T1mm"
 #define UI_TEXT_Z_OFFSET_EN "Set Z offset:%T2mm"
-
-#define UI_TEXT_CALIBRATE_BED_EN "Bed Calibration"  
 
 
 
@@ -1262,7 +1259,6 @@
 #define UI_TEXT_Y_OFFSET_NL "Set Y offset:%T1mm"
 #define UI_TEXT_Z_OFFSET_NL "Set Z offset:%T2mm"
 
-#define UI_TEXT_CALIBRATE_BED_NL "Bed Calibration"
 
 // *************** Brazilian portuguese translation ****************
 
@@ -1558,7 +1554,7 @@
 #define UI_TEXT_Y_OFFSET_PT "Set Y offset:%T1mm"
 #define UI_TEXT_Z_OFFSET_PT "Set Z offset:%T2mm"
 
-#define UI_TEXT_CALIBRATE_BED_PT "Bed Calibration"
+
 // *************** Italian translation ****************
 
 #define UI_TEXT_ON_IT               "On"
@@ -2143,7 +2139,6 @@
 #define UI_TEXT_Y_OFFSET_ES "Set Y offset:%T1mm"
 #define UI_TEXT_Z_OFFSET_ES "Set Z offset:%T2mm"
 
-#define UI_TEXT_CALIBRATE_BED_ET "Bed Calibration"
 
 // *************** Swedish translation ****************
 // By Daniel Tedenljung 2013-08-21
@@ -2438,7 +2433,6 @@
 #define UI_TEXT_Y_OFFSET_SE "Set Y offset:%T1mm"
 #define UI_TEXT_Z_OFFSET_SE "Set Z offset:%T2mm"
 
-#define UI_TEXT_CALIBRATE_BED_SE "Bed Calibration"
 
 // *************** French translation ****************
 // ***************      By Doudou     ****************
@@ -2733,7 +2727,7 @@
 #define UI_TEXT_Y_OFFSET_FR "Set Y offset:%T1mm"
 #define UI_TEXT_Z_OFFSET_FR "Set Z offset:%T2mm"
 
-#define UI_TEXT_CALIBRATE_BED_FR "Bed Calibration"
+
 // *************** Czech translation ****************
 // ***************      By Majkl     ****************
 // version: 2014/08/27
@@ -3027,7 +3021,6 @@
 #define UI_TEXT_Y_OFFSET_CZ "Set Y offset:%T1mm"
 #define UI_TEXT_Z_OFFSET_CZ "Set Z offset:%T2mm"
 
-#define UI_TEXT_CALIBRATE_BED_EN "Kalibrace desky"
 
 // *************** Polish translation ****************
 // ***************       By MIS       ****************
@@ -3608,7 +3601,6 @@
 #define UI_TEXT_Y_OFFSET_TR "Set Y offset:%T1mm"
 #define UI_TEXT_Z_OFFSET_TR "Set Z offset:%T2mm"
 
-#define UI_TEXT_CALIBRATE_BED_PL "Bed Calibration"
 // *************** Finnish translation ****************
 // ********** By Matti Granstedt 28.01.2016 ***********
 
@@ -3899,5 +3891,3 @@
 #define UI_TEXT_X_OFFSET_FI "Aseta X poikkeama:%T0mm"
 #define UI_TEXT_Y_OFFSET_FI "Aseta Y poikkeama:%T1mm"
 #define UI_TEXT_Z_OFFSET_FI "Aseta Z poikkeama:%T2mm"
-
-#define UI_TEXT_CALIBRATE_BED_FI "Bed Calibration"
