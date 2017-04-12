@@ -2402,6 +2402,7 @@ int UIDisplay::okAction(bool allowMoves)
 #endif
             Printer::setJamcontrolDisabled(false);
             break;
+            
 #if EXTRUDER_JAM_CONTROL
         case UI_ACTION_WIZARD_JAM_REHEAT: // user saw problem and takes action
             popMenu(false);
@@ -3588,6 +3589,37 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves)
             Com::printFLN(PSTR(" of "),sd.filesize);
             break;
 #endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1
+
+        case UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1: 
+            GCode::executeFString(Com::tUserQuickMenuItemCustomScript1);
+            break;
+#endif            
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2
+
+        case UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2: 
+            GCode::executeFString(Com::tUserQuickMenuItemCustomScript2);
+            break;
+#endif   
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3
+
+        case UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3: 
+            GCode::executeFString(Com::tUserQuickMenuItemCustomScript3);
+            break;
+#endif   
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4
+
+        case UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4: 
+            GCode::executeFString(Com::tUserQuickMenuItemCustomScript4);
+            break;
+#endif   
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5
+
+        case UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5: 
+            GCode::executeFString(Com::tUserQuickMenuItemCustomScript5);
+            break;
+#endif               
+
         case UI_ACTION_TEMP_DEFECT:
             Printer::setAnyTempsensorDefect();
             break;
