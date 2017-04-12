@@ -224,7 +224,6 @@
 #define UI_ACTION_COATING_CUSTOM        1213
 #define UI_ACTION_BUILDTAK              1214
 
-#define UI_ACTION_MEASURE_BED           1215
 // 1700-1956 language selectors
 
 #define UI_ACTION_LANGUAGE_EN           1700
