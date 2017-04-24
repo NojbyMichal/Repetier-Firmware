@@ -1663,7 +1663,8 @@ void UIDisplay::parse(const char *txt,bool ram)
         case 'z':
 #if EEPROM_MODE != 0 && FEATURE_Z_PROBE
             if(c2 == 'h') { // write z probe height
-                addFloat(EEPROM::zProbeHeight(),3,2);
+                //addFloat(EEPROM::zProbeHeight(),3,2);
+                addFloat(Printer::zProbeHeight,3,2);
                 break;
             }
 #endif
@@ -2780,14 +2781,14 @@ ZPOS2:
         Commands::changeFlowrateMultiply(Printer::extrudeMultiply);
     }
     break;
-#ifdef USER_QUICK_MENU_Z_OFFSET_USER_CHANGE   
+#if UI_Z_PROBE_HEIGHT_USER_CHANGE   
     case UI_ACTION_Z_OFFSET_CHANGE:
-    INCREMENT_MIN_MAX(Printer::zOffsetHeight,0.01,-5.0,5.0);
-    if (EEPROM::zProbeHeight() != Printer::zOffsetHeight)
+    INCREMENT_MIN_MAX(Printer::zProbeHeight,0.1,-3.0,3.0);
+    /*if (EEPROM::zProbeHeight() != Printer::zProbeHeight)
     {
-        HAL::eprSetFloat(EPR_Z_PROBE_HEIGHT,Printer::zOffsetHeight);
+        HAL::eprSetFloat(EPR_Z_PROBE_HEIGHT,Printer::zProbeHeight);
         EEPROM::storeDataIntoEEPROM(false);
-    }
+    }*/
     break;
 #endif    
 #if UI_BED_COATING
@@ -3002,15 +3003,51 @@ void UIDisplay::menuAdjustHeight(const UIMenu *men,float offset)
 }
 #endif
 
+#if UI_Z_PROBE_HEIGHT_USER_CHANGE
+void UIDisplay::menuAdjustZProbeHeight(const UIMenu *men,float offset)
+{
+#if EEPROM_MODE != 0
+    //If there is something to change
+    if (EEPROM::zProbeHeight() != offset)
+    {   
+        HAL::eprSetFloat(EPR_Z_PROBE_HEIGHT, offset);
+        EEPROM::storeDataIntoEEPROM(false);
+    }
+#endif
+    Printer::zProbeHeight = offset;
+    //Display message
+    
+    pushMenu(men, false);
+    BEEP_SHORT;
+    //Printer::homeAxis(true, true, true);
+    //Commands::printCurrentPosition(PSTR("UI_ACTION_HOMEALL "));
+    menuLevel = 0;
+    activeAction = 0;
+    //UI_STATUS_UPD_F(Com::translatedF(UI_TEXT_PRINTER_READY_ID));
+    
+}
+#endif
+
+
 void UIDisplay::finishAction(unsigned int action)
 {
+    /*
 #if UI_BED_COATING
     if (action == UI_ACTION_COATING_CUSTOM)
     {
         menuAdjustHeight(&ui_menu_coating_custom,Printer::zBedOffset);
     }
 #endif
+*/
+#if UI_Z_PROBE_HEIGHT_USER_CHANGE
+    if (action == UI_ACTION_Z_OFFSET_CHANGE)
+    {
+        menuAdjustZProbeHeight(&ui_menu_z_offset_change,Printer::zProbeHeight);
+    }
+#endif
+    
 }
+
 // Actions are events from user input. Depending on the current state, each
 // action can behave differently. Other actions do always the same like home, disable extruder etc.
 int UIDisplay::executeAction(unsigned int action, bool allowMoves)

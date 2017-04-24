@@ -631,6 +631,9 @@ class UIDisplay {
 #if UI_BED_COATING
     void menuAdjustHeight(const UIMenu *men, float offset);
 #endif
+#if UI_Z_PROBE_HEIGHT_USER_CHANGE
+    void menuAdjustZProbeHeight(const UIMenu *men, float offset);
+#endif     
     char cwd[SD_MAX_FOLDER_DEPTH * LONG_FILENAME_LENGTH + 2];
     uint8_t folderLevel;
 };
