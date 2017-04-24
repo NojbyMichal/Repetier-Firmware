@@ -2780,6 +2780,16 @@ ZPOS2:
         Commands::changeFlowrateMultiply(Printer::extrudeMultiply);
     }
     break;
+#ifdef USER_QUICK_MENU_Z_OFFSET_USER_CHANGE   
+    case UI_ACTION_Z_OFFSET_CHANGE:
+    INCREMENT_MIN_MAX(Printer::zOffsetHeight,0.01,-5.0,5.0);
+    if (EEPROM::zProbeHeight() != Printer::zOffsetHeight)
+    {
+        HAL::eprSetFloat(EPR_Z_PROBE_HEIGHT,Printer::zOffsetHeight);
+        EEPROM::storeDataIntoEEPROM(false);
+    }
+    break;
+#endif    
 #if UI_BED_COATING
     case UI_ACTION_COATING_CUSTOM:
         INCREMENT_MIN_MAX(Printer::zBedOffset,0.01,-1.0,199.0);

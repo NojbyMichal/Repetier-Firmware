@@ -67,8 +67,10 @@ float Printer::extrusionFactor = 1.0;
 uint8_t Printer::interruptEvent = 0;
 #if EEPROM_MODE != 0
 float Printer::zBedOffset = HAL::eprGetFloat(EPR_Z_PROBE_Z_OFFSET);
+float Printer::zOffsetHeight = HAL::eprGetFloat(EPR_Z_PROBE_HEIGHT);
 #else
 float Printer::zBedOffset = Z_PROBE_Z_OFFSET;
+float Printer::zOffsetHeight = Z_PROBE_HEIGHT;
 #endif
 #if FEATURE_AUTOLEVEL
 float Printer::autolevelTransformation[9]; ///< Transformation matrix
