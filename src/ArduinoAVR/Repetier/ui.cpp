@@ -2783,7 +2783,7 @@ ZPOS2:
     break;
 #if UI_Z_PROBE_HEIGHT_USER_CHANGE   
     case UI_ACTION_Z_OFFSET_CHANGE:
-    INCREMENT_MIN_MAX(Printer::zProbeHeight,0.1,-3.0,3.0);
+    INCREMENT_MIN_MAX(Printer::zProbeHeight,0.01,-3.0,3.0);
     /*if (EEPROM::zProbeHeight() != Printer::zProbeHeight)
     {
         HAL::eprSetFloat(EPR_Z_PROBE_HEIGHT,Printer::zProbeHeight);

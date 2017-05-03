@@ -669,7 +669,7 @@
 #define UI_TEXT_DITTO_1_EN "%D1 1 copy"
 #define UI_TEXT_DITTO_2_EN "%D2 2 copies"
 #define UI_TEXT_DITTO_3_EN "%D3 3 copies"
-#define UI_TEXT_ZPROBE_HEIGHT_EN "Z-probe height:%zh"
+#define UI_TEXT_ZPROBE_HEIGHT_EN "Z-probe hgt:%zh"
 
 #define UI_TEXT_OFFSETS_EN "Set print offsets"
 #define UI_TEXT_X_OFFSET_EN "Set X offset:%T0mm"
