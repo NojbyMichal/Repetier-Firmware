@@ -302,7 +302,7 @@ void GCode::checkAndPushCommand()
 		}
 		requestResend();
 		return;
-	}*/
+	}
 	if(GCode::hasFatalError() && !(hasM() && M==999)) {
 		GCode::reportFatalError();
 	} else {
@@ -939,7 +939,6 @@ bool GCode::parseAscii(char *line,bool fromSerial)
     params = 0;
     params2 = 0;
     internalCommand = !fromSerial;
-	bool hasChecksum = false;
     char c;
     while ( (c = *(pos++)) )
     {
@@ -1156,7 +1155,6 @@ bool GCode::parseAscii(char *line,bool fromSerial)
                 }
                 return false; // mismatch
             }
-			hasChecksum = true;
             break;
         }
         default:

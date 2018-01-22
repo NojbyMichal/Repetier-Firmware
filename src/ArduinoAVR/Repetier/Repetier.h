@@ -590,10 +590,6 @@ inline void memcopy4(void *dest,void *source) {
 #define ACCELERATION_FACTOR_TOP 100
 #endif
 
-#ifndef KEEP_ALIVE_INTERVAL
-#define KEEP_ALIVE_INTERVAL 2000
-#endif
-
 #include "HAL.h"
 #define MAX_VFAT_ENTRIES (2)
 /** Total size of the buffer used to store the long filenames */
@@ -961,7 +957,7 @@ extern long baudrate;
 
 extern unsigned int counterPeriodical;
 extern volatile uint8_t executePeriodical;
-extern uint8_t counter500ms;
+extern uint8_t counter250ms;
 extern void writeMonitor();
 #if FEATURE_FAN_CONTROL
 extern uint8_t fanKickstart;

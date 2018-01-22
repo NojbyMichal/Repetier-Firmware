@@ -72,10 +72,10 @@ void Commands::checkForPeriodicalActions(bool allowNewMoves) {
     executePeriodical = 0;
     EVENT_TIMER_100MS;
     Extruder::manageTemperatures();
-    if(--counter500ms == 0) {
+    if(--counter250ms == 0) {
         if(manageMonitor)
             writeMonitor();
-        counter500ms = 5;
+        counter250ms = 5;
         EVENT_TIMER_500MS;
     }
     // If called from queueDelta etc. it is an error to start a new move since it

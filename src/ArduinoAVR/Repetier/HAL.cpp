@@ -459,9 +459,9 @@ void HAL::i2cWrite( unsigned char data ) {
     // wait until transmission completed
     while(!(TWCR & (1 << TWINT)));
     // check value of TWI Status Register. Mask prescaler bits
-    //twst = TW_STATUS & 0xF8;
-    //if( twst != TW_MT_DATA_ACK) return 1;
-    //return 0;
+    twst = TW_STATUS & 0xF8;
+    if( twst != TW_MT_DATA_ACK) return 1;
+    return 0;
 }
 
 
@@ -487,7 +487,7 @@ unsigned char HAL::i2cReadNak(void) {
 }
 
 #if FEATURE_SERVO
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega128__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega2561__)
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega128__) ||defined(__AVR_ATmega1281__)||defined(__AVR_ATmega2561__)
 #define SERVO2500US F_CPU/3200
 #define SERVO5000US F_CPU/1600
 unsigned int HAL::servoTimings[4] = {0, 0, 0, 0};

@@ -2568,6 +2568,7 @@ int UIDisplay::okAction(bool allowMoves) {
                 Printer::setBlockingReceive(false);
             }
             break;
+            
 #if EXTRUDER_JAM_CONTROL
             case UI_ACTION_WIZARD_JAM_REHEAT: // user saw problem and takes action
                 popMenu(false);
@@ -2977,6 +2978,16 @@ ZPOS2:
         Commands::changeFlowrateMultiply(Printer::extrudeMultiply);
     }
     break;
+#if UI_Z_PROBE_HEIGHT_USER_CHANGE   
+    case UI_ACTION_Z_OFFSET_CHANGE:
+    INCREMENT_MIN_MAX(Printer::zProbeHeight,0.01,-3.0,3.0);
+    /*if (EEPROM::zProbeHeight() != Printer::zProbeHeight)
+    {
+        HAL::eprSetFloat(EPR_Z_PROBE_HEIGHT,Printer::zProbeHeight);
+        EEPROM::storeDataIntoEEPROM(false);
+    }*/
+    break;
+#endif    
 #if UI_BED_COATING
     case UI_ACTION_COATING_CUSTOM:
         INCREMENT_MIN_MAX(Printer::zBedOffset, 0.01, -1.0, 199.0);
@@ -3196,6 +3207,32 @@ void UIDisplay::menuAdjustHeight(const UIMenu *men, float offset) {
 }
 #endif
 
+#if UI_Z_PROBE_HEIGHT_USER_CHANGE
+void UIDisplay::menuAdjustZProbeHeight(const UIMenu *men,float offset)
+{
+#if EEPROM_MODE != 0
+    //If there is something to change
+    if (EEPROM::zProbeHeight() != offset)
+    {   
+        HAL::eprSetFloat(EPR_Z_PROBE_HEIGHT, offset);
+        EEPROM::storeDataIntoEEPROM(false);
+    }
+#endif
+    Printer::zProbeHeight = offset;
+    //Display message
+    
+    pushMenu(men, false);
+    BEEP_SHORT;
+    //Printer::homeAxis(true, true, true);
+    //Commands::printCurrentPosition(PSTR("UI_ACTION_HOMEALL "));
+    menuLevel = 0;
+    activeAction = 0;
+    //UI_STATUS_UPD_F(Com::translatedF(UI_TEXT_PRINTER_READY_ID));
+    
+}
+#endif
+
+
 void UIDisplay::finishAction(unsigned int action) {
     if(EVENT_UI_FINISH_ACTION(action))
         return;
@@ -3229,7 +3266,16 @@ void UIDisplay::finishAction(unsigned int action) {
     break;
 #endif
     }
+*/
+#if UI_Z_PROBE_HEIGHT_USER_CHANGE
+    if (action == UI_ACTION_Z_OFFSET_CHANGE)
+    {
+        menuAdjustZProbeHeight(&ui_menu_z_offset_change,Printer::zProbeHeight);
+    }
+#endif
+    
 }
+
 // Actions are events from user input. Depending on the current state, each
 // action can behave differently. Other actions do always the same like home, disable extruder etc.
 int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
@@ -3858,6 +3904,37 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
             Com::printFLN(PSTR(" of "), sd.filesize);
             break;
 #endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1
+
+        case UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1: 
+            GCode::executeFString(Com::tUserQuickMenuItemCustomScript1);
+            break;
+#endif            
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2
+
+        case UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2: 
+            GCode::executeFString(Com::tUserQuickMenuItemCustomScript2);
+            break;
+#endif   
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3
+
+        case UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3: 
+            GCode::executeFString(Com::tUserQuickMenuItemCustomScript3);
+            break;
+#endif   
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4
+
+        case UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4: 
+            GCode::executeFString(Com::tUserQuickMenuItemCustomScript4);
+            break;
+#endif   
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5
+
+        case UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5: 
+            GCode::executeFString(Com::tUserQuickMenuItemCustomScript5);
+            break;
+#endif               
+
         case UI_ACTION_TEMP_DEFECT:
             Printer::setAnyTempsensorDefect();
             break;

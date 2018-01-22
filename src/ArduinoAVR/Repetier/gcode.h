@@ -264,8 +264,6 @@ public:
 	inline static bool hasFatalError() {
 		return fatalErrorMsg != NULL;
 	}
-	static void keepAlive(enum FirmwareState state);
-	static uint32_t keepAliveInterval;
     friend class SDCard;
     friend class UIDisplay;
 	static FSTRINGPARAM(fatalErrorMsg);
