@@ -481,6 +481,21 @@ FSTRINGVAR(tEPRSegmentsPerSecondTravel)
 FSTRINGVAR(tTrinamicMotorCurrent)
 FSTRINGVAR(tTrinamicMicrostepMode)
 #endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1
+FSTRINGVAR(tUserQuickMenuItemCustomScript1)
+#endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2
+FSTRINGVAR(tUserQuickMenuItemCustomScript2)
+#endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3
+FSTRINGVAR(tUserQuickMenuItemCustomScript3)
+#endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4
+FSTRINGVAR(tUserQuickMenuItemCustomScript4)
+#endif
+#ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5
+FSTRINGVAR(tUserQuickMenuItemCustomScript5)
+#endif
 
 static void cap(FSTRINGPARAM(text));
 static void config(FSTRINGPARAM(text));

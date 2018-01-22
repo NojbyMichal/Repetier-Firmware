@@ -255,6 +255,13 @@
 
 // 1500-1699 reserved for custom actions
 
+#define UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1         1500
+#define UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2         1501
+#define UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3         1502
+#define UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4         1503
+#define UI_ACTION_USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5         1504
+#define UI_ACTION_Z_OFFSET_CHANGE       1505
+
 // 1700-1956 language selectors
 
 #define UI_ACTION_LANGUAGE_EN           1700
@@ -664,6 +671,9 @@ class UIDisplay {
 #if UI_BED_COATING
     void menuAdjustHeight(const UIMenu *men, float offset);
 #endif
+#if UI_Z_PROBE_HEIGHT_USER_CHANGE
+    void menuAdjustZProbeHeight(const UIMenu *men, float offset);
+#endif 
     char cwd[SD_MAX_FOLDER_DEPTH * LONG_FILENAME_LENGTH + 2];
     uint8_t folderLevel;
 };
