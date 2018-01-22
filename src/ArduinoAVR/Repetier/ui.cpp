@@ -3265,15 +3265,14 @@ void UIDisplay::finishAction(unsigned int action) {
     }
     break;
 #endif
-    }
-*/
-#if UI_Z_PROBE_HEIGHT_USER_CHANGE
-    if (action == UI_ACTION_Z_OFFSET_CHANGE)
-    {
-        menuAdjustZProbeHeight(&ui_menu_z_offset_change,Printer::zProbeHeight);
-    }
-#endif
     
+#if UI_Z_PROBE_HEIGHT_USER_CHANGE
+    case UI_ACTION_Z_OFFSET_CHANGE:
+    
+        menuAdjustZProbeHeight(&ui_menu_z_offset_change,Printer::zProbeHeight);
+    break;
+#endif
+    }
 }
 
 // Actions are events from user input. Depending on the current state, each

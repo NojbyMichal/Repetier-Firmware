@@ -98,7 +98,7 @@
 #define LANGUAGE_FI_ID 11
 
 #define NUM_LANGUAGES_KNOWN 12
-#define NUM_TRANSLATED_WORDS 311
+#define NUM_TRANSLATED_WORDS 317
 
 // For selectable translations we refer to each text by a id which gets
 // defined here. The list starts at 0 and defines the position in the
@@ -172,9 +172,7 @@
 #define UI_TEXT_OPS_CLASSIC_ID 65 //      "%O1 OPS Classic"
 #define UI_TEXT_OPS_FAST_ID 66 //         "%O2 OPS Fast"
 #define UI_TEXT_OPS_RETRACT_ID 67 //      "Retract   :%Or"
-#define UI_TEXT_OPS_BACKSLASH_ID 68 //    "Backsl.   :%Ob"
-#define UI_TEXT_OPS_MINDIST_ID 69 //      "Min.dist  :%Od"
-#define UI_TEXT_OPS_MOVE_AFTER_ID 70 //   "Move after:%Oa"
+#define UI_TEXT_OPS_BACKSLASH_ID 68 //    "Backsl.   :%Ob"*
 #define UI_TEXT_ANTI_OOZE_ID 71 //        "Anti Ooze"
 #define UI_TEXT_PRINT_FILE_ID 72 //       "Print file"
 #define UI_TEXT_PAUSE_PRINT_ID 73 //      "Pause Print"
