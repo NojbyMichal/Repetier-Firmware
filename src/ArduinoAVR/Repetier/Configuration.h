@@ -1834,7 +1834,7 @@ The following settings override uiconfig.h!
 27 or CONTROLLER_REPRAPWORLD_GLCD = ReprapWorld Graphical LCD
 */
 
-#define FEATURE_CONTROLLER NO_CONTROLLER
+#define FEATURE_CONTROLLER CONTROLLER_REPRAPDISCOUNT_GLCD
 
 /* You can have one keypad connected via single analog pin as seen on
  some printers with Melzi V2.0 board, 20x4 LCD and 5 buttons keypad. This must be
@@ -1895,10 +1895,10 @@ info pages with next/previous button/click-encoder */
 Unfortunately, the encoder have a different count of phase changes between clicks.
 Select an encoder speed from 0 = fastest to 2 = slowest that results in one menu move per click.
 */
-#define UI_ENCODER_SPEED 1
+#define UI_ENCODER_SPEED 2
 
 // Set to 1 to reverse encoder direction
-#define UI_REVERSE_ENCODER 0
+#define UI_REVERSE_ENCODER 1
 
 /* There are 2 ways to change positions. You can move by increments of 1/0.1 mm resulting in more menu entries
 and requiring many turns on your encode. The alternative is to enable speed dependent positioning. It will change
@@ -1922,7 +1922,7 @@ same setting.
 /** \brief Lowest repeat time. */
 #define UI_KEY_MIN_REPEAT 50
 
-#define FEATURE_BEEPER 1
+#define FEATURE_BEEPER 0
 /**
 Beeper sound definitions for short beeps during key actions
 and longer beeps for important actions.
@@ -1964,9 +1964,9 @@ If you have leveling with bed coating or fixed z min you can use this menu to ad
 #define USER_QUICK_MENU_Z_PROBE_HEIGHT_USER_CHANGE
 #define UI_Z_PROBE_HEIGHT_USER_CHANGE 1
 
-#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1 "G28\n G92 E0\n G91\n M109 S210\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E50 F6000\n G1 E50 F1000\n G1 E50 F200\n G90\n G92 E0\n M84"
+#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1 "G28\n G92 E0\n G91\n M109 S210\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F200\n G1 E50 F200\n G1 E50 F200\n G1 E50 F200\n G90\n G92 E0\n M84"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1_TEXT "Load Filament"
-#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2 "G28\n G92 E0\n G91\n M109 S210\n G1 E20 F200\n G1 E-100 F6000\n G90\n G92 E0\n M84"
+#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2 "G28\n G92 E0\n G91\n M109 S210\n G1 E20 F200\n G1 E-100 F6000\n G1 E-100 F6000\n G1 E-100 F6000\n G1 E-100 F6000\n G1 E-100 F6000\n G1 E-100 F6000\n G1 E-100 F6000\n G1 E-100 F6000\n G1 E-100 F6000\n G1 E-100 F6000\n G90\n G92 E0\n M84"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2_TEXT "Unload Filament"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3 "G28\n G92 E0\n G91\n M109 S210\n G1 E50 F200\n G90\n G92 E0\n M84"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3_TEXT "Purge Filament"
