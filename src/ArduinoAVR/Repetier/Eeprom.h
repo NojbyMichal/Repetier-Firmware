@@ -74,6 +74,7 @@ have problems with other modules using the eeprom */
 #define EPR_BACKLASH_Y            161
 #define EPR_BACKLASH_Z            165
 
+
 #define EPR_Z_PROBE_X_OFFSET      800
 #define EPR_Z_PROBE_Y_OFFSET      804
 #define EPR_Z_PROBE_HEIGHT        808
@@ -129,6 +130,44 @@ have problems with other modules using the eeprom */
 #define EPR_BENDING_CORRECTION_C              1044
 #define EPR_BED_PREHEAT_TEMP                  1048
 #define EPR_X2AXIS_STEPS_PER_MM               1052
+
+
+#define EPR_MEMORY_X1                1200
+#define EPR_MEMORY_Y1                1204
+#define EPR_MEMORY_Z1                1208
+
+#define EPR_MEMORY_X2                1212
+#define EPR_MEMORY_Y2                1216
+#define EPR_MEMORY_Z2                1220
+
+#define EPR_OFFSET_X1                1236
+#define EPR_OFFSET_Y1                1240
+#define EPR_OFFSET_Z1                1244
+
+#define EPR_OFFSET_X2                1248
+#define EPR_OFFSET_Y2                1252
+#define EPR_OFFSET_Z2                1256
+
+#define epr_BackupTemp              1274
+#define epr_BackupTempB             1278
+#define epr_BackupFeedrate          1282
+#define epr_BackupSDposition        1286
+#define epr_EmergencyByte           1290
+#define epr_BackupExId              1292
+#define epr_Backup_OffsetX          1296
+#define epr_Backup_OffsetY          1300
+#define epr_Backup_OffsetZ          1304
+#define epr_Backup_MEMX             1308
+#define epr_Backup_MEMY             1312
+#define epr_Backup_MEMZ             1316
+#define epr_Backup_Fanspeed         1320
+
+
+#define epr_BackupSDfilename        1324   //position of the first byte of the sd filename ,this will take positions to ~1340
+
+
+
+
 #if EEPROM_MODE != 0
 #define EEPROM_FLOAT(x) HAL::eprGetFloat(EPR_##x)
 #define EEPROM_INT32(x) HAL::eprGetInt32(EPR_##x)

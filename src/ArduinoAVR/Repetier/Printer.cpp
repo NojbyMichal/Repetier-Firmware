@@ -1131,6 +1131,13 @@ void Printer::setup() {
     WRITE(BLUE_STATUS_LED, HIGH);
     WRITE(RED_STATUS_LED, LOW);
 #endif // RED_BLUE_STATUS_LEDS
+
+#if defined (AC_LOST_CONTROL) && AC_LOST_PIN > -1
+    SET_INPUT(AC_LOST_PIN);
+    PULLUP(AC_LOST_PIN, AC_LOST_PIN_PULLUP);
+
+#endif //defined
+
 #if defined(DRV_TMC2130)
     // TMC2130 motor drivers
 #if TMC2130_ON_X
@@ -2123,7 +2130,7 @@ void Printer::handleInterruptEvent() {
     if(interruptEvent == 0) return;
     int event = interruptEvent;
     interruptEvent = 0;
-    switch(event) {
+    switch(event) {	
 #if EXTRUDER_JAM_CONTROL
     case PRINTER_INTERRUPT_EVENT_JAM_DETECTED:
         if(isJamcontrolDisabled()) break;
@@ -2172,6 +2179,93 @@ void Printer::handleInterruptEvent() {
     }
     break;
 #endif // EXTRUDER_JAM_CONTROL    case PRINTER_INTERRUPT_EVENT_JAM_DETECTED:
+#if AC_LOST_CONTROL
+	case PRINTER_INTERRUPT_EVENT_AC_LOST_DETECTED:
+	{
+		// ***** 1 - WRITE ON
+		Com::printFLN(PSTR("!!! AC LOST !!!"));
+		// ***** 2 DISABLE BED
+		#if HAVE_HEATED_BED && HEATED_BED_HEATER_PIN > -1
+			WRITE(HEATED_BED_HEATER_PIN, HEATER_PINS_INVERTED);
+		#endif
+		// ***** 3 - STOP PRINT
+		// flush buffers
+		// stop print
+		//
+		
+		 if(!Printer::debugDryrun() && PrintLine::linesCount > 0) {  // kill printer if actually printing
+			Printer::stopPrint();
+			
+           // Printer::kill(false);
+        }
+		
+		Printer::setMenuMode(MENU_MODE_SD_PRINTING,false);
+		Printer::setMenuMode(MENU_MODE_PAUSED,false);
+		
+		Printer::setPrinting(0);
+		
+		Printer::stopPrint();
+	
+		Commands::waitUntilEndOfAllMoves();
+		Printer::updateCurrentPosition(false);
+		
+		HAL::eprSetFloat(EPR_MEMORY_X1,Printer::realXPosition());                   //store position from ram to eeprom
+        HAL::eprSetFloat(EPR_MEMORY_Y1,Printer::realYPosition());
+        HAL::eprSetFloat(EPR_MEMORY_Z1,Printer::realZPosition());
+	
+	    HAL::eprSetFloat(EPR_OFFSET_X1,Printer::coordinateOffset[X_AXIS]);           //store offset values from ram to eeprom
+        HAL::eprSetFloat(EPR_OFFSET_Y1,Printer::coordinateOffset[Y_AXIS]);
+        HAL::eprSetFloat(EPR_OFFSET_Z1,Printer::coordinateOffset[Z_AXIS]);
+
+        Com::printF(PSTR("EEPROM Saved to position 1: X:"),HAL::eprGetFloat(EPR_MEMORY_X1));     //print some messages
+        Com::printF(PSTR("  Y:"),HAL::eprGetFloat(EPR_MEMORY_Y1));
+        Com::printFLN(PSTR("  Z:"),HAL::eprGetFloat(EPR_MEMORY_Z1));
+
+		Com::printF(PSTR("Saved Offset 1: X:"),HAL::eprGetFloat(EPR_OFFSET_X1));
+        Com::printF(PSTR("  Y:"),HAL::eprGetFloat(EPR_OFFSET_Y1));
+        Com::printFLN(PSTR("  Z:"),HAL::eprGetFloat(EPR_OFFSET_Z1));
+
+	
+		// ***** 4 - Memorize last position
+		Printer::MemoryPosition();  // not good, write own func
+		/*
+		Commands::waitUntilEndOfAllMoves();
+		updateCurrentPosition(false);
+		realPosition(memoryX, memoryY, memoryZ);
+		memoryE = currentPositionSteps[E_AXIS] * invAxisStepsPerMM[E_AXIS];
+		memoryF = feedrate;
+	*/
+		 
+		// ***** 3 Raise Z
+		
+		// ***** 4 - disable heaters
+		for(uint8_t i = 0; i < NUM_EXTRUDER + 3; i++)
+        pwm_pos[i] = 0;
+		#if EXT0_HEATER_PIN > -1 && NUM_EXTRUDER > 0
+			WRITE(EXT0_HEATER_PIN, HEATER_PINS_INVERTED);
+		#endif
+		#if defined(EXT1_HEATER_PIN) && EXT1_HEATER_PIN > -1 && NUM_EXTRUDER > 1
+			WRITE(EXT1_HEATER_PIN, HEATER_PINS_INVERTED);
+		#endif
+		#if defined(EXT2_HEATER_PIN) && EXT2_HEATER_PIN > -1 && NUM_EXTRUDER > 2
+			WRITE(EXT2_HEATER_PIN, HEATER_PINS_INVERTED);
+		#endif
+		#if defined(EXT3_HEATER_PIN) && EXT3_HEATER_PIN > -1 && NUM_EXTRUDER > 3
+			WRITE(EXT3_HEATER_PIN, HEATER_PINS_INVERTED);
+		#endif
+		#if defined(EXT4_HEATER_PIN) && EXT4_HEATER_PIN > -1 && NUM_EXTRUDER > 4
+			WRITE(EXT4_HEATER_PIN, HEATER_PINS_INVERTED);
+		#endif
+		#if defined(EXT5_HEATER_PIN) && EXT5_HEATER_PIN > -1 && NUM_EXTRUDER > 5
+			WRITE(EXT5_HEATER_PIN, HEATER_PINS_INVERTED);
+		#endif
+		#if FAN_PIN > -1 && FEATURE_FAN_CONTROL
+			WRITE(FAN_PIN, 0);
+		#endif
+
+
+	}
+#endif	
     }
 }
 

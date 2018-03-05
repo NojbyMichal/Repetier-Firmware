@@ -122,6 +122,8 @@ union wizardVar {
 #define PRINTER_INTERRUPT_EVENT_JAM_SIGNAL3 5
 #define PRINTER_INTERRUPT_EVENT_JAM_SIGNAL4 6
 #define PRINTER_INTERRUPT_EVENT_JAM_SIGNAL5 7
+#define PRINTER_INTERRUPT_EVENT_AC_LOST_DETECTED 8
+
 // define an integer number of steps more than large enough to get to end stop from anywhere
 #define HOME_DISTANCE_STEPS (Printer::zMaxSteps-Printer::zMinSteps+1000)
 #define HOME_DISTANCE_MM (HOME_DISTANCE_STEPS * invAxisStepsPerMM[Z_AXIS])

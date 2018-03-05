@@ -1972,6 +1972,12 @@ If you have leveling with bed coating or fixed z min you can use this menu to ad
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3_TEXT "Purge Filament"
  //#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4
  //#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5
+ 
+#define AC_LOST_CONTROL 1
+#define AC_LOST_PIN ORIG_Y_MIN_PIN
+#define AC_LOST_PIN_PULLUP true
+
+
 
 
 // ####### Advanced stuff for very special function #########
