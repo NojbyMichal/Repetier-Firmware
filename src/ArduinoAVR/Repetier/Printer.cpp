@@ -2185,6 +2185,7 @@ void Printer::handleInterruptEvent() {
 		// ***** 1 - WRITE ON
 		Com::printFLN(PSTR("!!! AC LOST !!!"));
 		// ***** 2 DISABLE BED
+/*
 		#if HAVE_HEATED_BED && HEATED_BED_HEATER_PIN > -1
 			WRITE(HEATED_BED_HEATER_PIN, HEATER_PINS_INVERTED);
 		#endif
@@ -2234,7 +2235,7 @@ void Printer::handleInterruptEvent() {
 		realPosition(memoryX, memoryY, memoryZ);
 		memoryE = currentPositionSteps[E_AXIS] * invAxisStepsPerMM[E_AXIS];
 		memoryF = feedrate;
-	*/
+	
 		 
 		// ***** 3 Raise Z
 		
@@ -2262,7 +2263,7 @@ void Printer::handleInterruptEvent() {
 		#if FAN_PIN > -1 && FEATURE_FAN_CONTROL
 			WRITE(FAN_PIN, 0);
 		#endif
-
+			*/
 
 	}
 #endif	

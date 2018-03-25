@@ -136,20 +136,9 @@ union wizardVar {
 #define towerCMinSteps Printer::zMinSteps
 
 #if defined (AC_LOST_CONTROL)  //PRINTER_INTERRUPT_EVENT_AC_LOST_DETECTED
-#define _TEST_AC_LOST(pin) {\
-	uint8_t sig = !READ(pin);\
-	if(sig != extruder[x].jamLastSignal) {\
-	   Printer::setInterruptEvent(PRINTER_INTERRUPT_EVENT_AC_LOST_DETECTED, true); \
-	}\
-	}
+#define TEST_AC_LOST(pin) {	uint8_t AC_sig = READ(pin);	if(AC_sig == 0) {Com::printFLN(PSTR("ZERO")); Printer::setInterruptEvent(PRINTER_INTERRUPT_EVENT_AC_LOST_DETECTED, true);}	}
 #endif
-	/*
-		extruder[x].jamLastSignal = sig;\
-		if(sig)\
-		{extruder[x].tempControl.setFilamentChange(true);extruder[x].tempControl.setJammed(true);} \
-		else if(!Printer::isDebugJamOrDisabled() && extruder[x].tempControl.isJammed()) \
-		{extruder[x].resetJamSteps();}}\
-		*/
+
 		
 	
 class Plane {

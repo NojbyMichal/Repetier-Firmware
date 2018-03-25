@@ -2726,6 +2726,12 @@ void Commands::processMCode(GCode *com) {
         else
             GCode::resetFatalError();
         break;
+#ifdef AC_LOST_CONTROL
+    case 900:
+        Com::printFLN(PSTR("AC_LOST_CONTROL M900 signal:"), (int16_t)READ(AC_LOST_PIN));
+        TEST_AC_LOST(AC_LOST_PIN);
+        break;
+#endif // AC_LOST_CONTROL
 #if defined(DRV_TMC2130)
     case 914: // Configure stallguard threshold on Trinamic TMC2130
         Com::printF(PSTR("Trinamic SGT"));

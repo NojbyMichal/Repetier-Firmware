@@ -767,6 +767,7 @@ ISR(TIMER1_COMPA_vect) {
 This timer is called 3906 timer per second. It is used to update pwm values for heater and some other frequent jobs.
 */
 ISR(PWM_TIMER_VECTOR) {
+    TEST_AC_LOST(AC_LOST_PIN);
     static uint8_t pwm_count_cooler = 0;
     static uint8_t pwm_count_heater = 0;
     static uint8_t pwm_pos_set[NUM_PWM];
