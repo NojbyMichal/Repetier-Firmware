@@ -516,17 +516,20 @@ void Printer::updateDerivedParameter() {
 	if(minimumSpeed2 > minimumSpeed) {
 		minimumSpeed = minimumSpeed2;
 	}
+	/*
     if(maxJerk < 2 * minimumSpeed) {// Enforce minimum start speed if target is faster and jerk too low
         maxJerk = 2 * minimumSpeed;
         Com::printFLN(PSTR("XY jerk was too low, setting to "), maxJerk);
     }
+	*/
     accel = RMath::max(maxAccelerationMMPerSquareSecond[Z_AXIS], maxTravelAccelerationMMPerSquareSecond[Z_AXIS]);
 #if DRIVE_SYSTEM != DELTA
     float minimumZSpeed = 0.5 * accel * sqrt(2.0f / (axisStepsPerMM[Z_AXIS] * accel));
-    if(maxZJerk < 2 * minimumZSpeed) {
+    /*
+	if(maxZJerk < 2 * minimumZSpeed) {
         maxZJerk = 2 * minimumZSpeed;
         Com::printFLN(PSTR("Z jerk was too low, setting to "), maxZJerk);
-    }
+    }*/
 #endif
 /*
     maxInterval = F_CPU / (minimumSpeed * axisStepsPerMM[X_AXIS]);
