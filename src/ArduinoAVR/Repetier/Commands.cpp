@@ -2497,7 +2497,7 @@ void Commands::processMCode(GCode *com) {
 #if EXTRUDER_JAM_CONTROL
 #ifdef DEBUG_JAM
     case 512:
-        Com::printFLN(PSTR("Jam signal:"), (int16_t)READ(EXT0_JAM_PIN));
+        Com::printFLN(PSTR("Filament sensor signal:"), (int16_t)READ(EXT0_JAM_PIN));
         break;
 #endif // DEBUG_JAM
     case 513:

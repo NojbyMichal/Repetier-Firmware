@@ -496,6 +496,21 @@ FSTRINGVAR(tUserQuickMenuItemCustomScript4)
 #ifdef USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5
 FSTRINGVAR(tUserQuickMenuItemCustomScript5)
 #endif
+#ifdef UI_SERVICE_MENU_ITEM1
+FSTRINGVAR(tServiceMenuItem1)
+#endif
+#ifdef UI_SERVICE_MENU_ITEM2
+FSTRINGVAR(tServiceMenuItem2)
+#endif
+#ifdef UI_SERVICE_MENU_ITEM3
+FSTRINGVAR(tServiceMenuItem3)
+#endif
+#ifdef UI_SERVICE_MENU_ITEM4
+FSTRINGVAR(tServiceMenuItem4)
+#endif
+#ifdef UI_SERVICE_MENU_ITEM5
+FSTRINGVAR(tServiceMenuItem5)
+#endif
 
 static void cap(FSTRINGPARAM(text));
 static void config(FSTRINGPARAM(text));

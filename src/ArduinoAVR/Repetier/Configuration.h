@@ -1973,6 +1973,19 @@ If you have leveling with bed coating or fixed z min you can use this menu to ad
  //#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4
  //#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5
 
+#define SERVICE_MENU
+#define UI_SERVICE_MENU_ITEM1 "M190 S55\n G32 S2"
+#define SERVICE_MENU_ITEM1_TEXT "Z home calib"
+#define UI_SERVICE_MENU_ITEM2 "M303 S205 C10 X10"
+#define SERVICE_MENU_ITEM2_TEXT "PID tuning"
+#define UI_SERVICE_MENU_ITEM3 "M512"
+#define SERVICE_MENU_ITEM3_TEXT "Fila Sens Check"
+//#define UI_SERVICE_MENU_ITEM4 ""
+//#define SERVICE_MENU_ITEM4_TEXT ""
+//#define UI_SERVICE_MENU_ITEM5 ""
+//#define SERVICE_MENU_ITEM5_TEXT ""
+
+
 
 // ####### Advanced stuff for very special function #########
 

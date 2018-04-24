@@ -3927,6 +3927,41 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
             GCode::executeFString(Com::tUserQuickMenuItemCustomScript5);
             break;
 #endif   
+#ifdef UI_ACTION_SERVICE_MENU_ITEM1
+
+        case UI_ACTION_SERVICE_MENU_ITEM1: 
+            GCode::executeFString(Com::tServiceMenuItem1);
+            break;
+#endif      
+
+#ifdef UI_ACTION_SERVICE_MENU_ITEM2
+
+        case UI_ACTION_SERVICE_MENU_ITEM2: 
+            GCode::executeFString(Com::tServiceMenuItem2);
+            break;
+#endif   
+#ifdef UI_ACTION_SERVICE_MENU_ITEM3
+
+        case UI_ACTION_SERVICE_MENU_ITEM3: 
+            GCode::executeFString(Com::tServiceMenuItem3);
+            break;
+#endif   
+
+#ifdef UI_ACTION_SERVICE_MENU_ITEM4
+
+        case UI_ACTION_SERVICE_MENU_ITEM4: 
+            GCode::executeFString(Com::tServiceMenuItem4);
+            break;
+#endif   
+
+#ifdef UI_ACTION_SERVICE_MENU_ITEM5
+
+        case UI_ACTION_SERVICE_MENU_ITEM5: 
+            GCode::executeFString(Com::tServiceMenuItem5);
+            break;
+#endif   
+
+     
         case UI_ACTION_TEMP_DEFECT:
             Printer::setAnyTempsensorDefect();
             break;
