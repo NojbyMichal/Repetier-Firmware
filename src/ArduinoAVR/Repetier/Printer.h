@@ -114,6 +114,7 @@ union wizardVar {
 #define PRINTER_FLAG3_SUPPORTS_STARTSTOP    32
 #define PRINTER_FLAG3_DOOR_OPEN             64
 
+
 // List of possible interrupt events (1-255 allowed)
 #define PRINTER_INTERRUPT_EVENT_JAM_DETECTED 1
 #define PRINTER_INTERRUPT_EVENT_JAM_SIGNAL0 2
@@ -845,7 +846,7 @@ public:
             Extruder::markAllUnjammed();
 #endif
         flag2 = (b ? flag2 | PRINTER_FLAG2_JAMCONTROL_DISABLED : flag2 & ~PRINTER_FLAG2_JAMCONTROL_DISABLED);
-        Com::printFLN(PSTR("Jam control disabled:"), b);
+        Com::printFLN(PSTR("Filament sensor control disabled:"), b);
     }
 
     static INLINE void toggleAnimation() {
@@ -1250,6 +1251,8 @@ public:
     static void pausePrint();
     static void continuePrint();
     static void stopPrint();
+
+	
 #if FEATURE_Z_PROBE || defined(DOXYGEN)
     /** \brief Prepares printer for probing commands.
 

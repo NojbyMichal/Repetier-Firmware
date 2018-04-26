@@ -2198,6 +2198,13 @@ void Commands::processMCode(GCode *com) {
         if(com->hasS())
             Printer::setAutoretract(com->S != 0);
         break;
+	case 212: // M209 S<0/1> Enable/disable Filament sensor control and save to EEPROM
+		if (com->hasS())
+		{
+			Printer::setJamcontrolDisabled(com->S != 0);
+			EEPROM::storeDataIntoEEPROM(false);
+		}	
+		break;
     case 220: // M220 S<Feedrate multiplier in percent>
         changeFeedrateMultiply(com->getS(100));
         break;

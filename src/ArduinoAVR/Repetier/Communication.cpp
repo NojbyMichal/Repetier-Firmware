@@ -500,6 +500,9 @@ FSTRINGVALUE(Com::tServiceMenuItem4,UI_SERVICE_MENU_ITEM4)
 #ifdef UI_SERVICE_MENU_ITEM5
 FSTRINGVALUE(Com::tServiceMenuItem5,UI_SERVICE_MENU_ITEM5)
 #endif
+#ifdef EXTRUDER_JAM_CONTROL
+FSTRINGVALUE(Com::tEPREofControl, "Filament sensor control disabled:")
+#endif
 
 
 

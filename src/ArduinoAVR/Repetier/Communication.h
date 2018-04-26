@@ -511,7 +511,9 @@ FSTRINGVAR(tServiceMenuItem4)
 #ifdef UI_SERVICE_MENU_ITEM5
 FSTRINGVAR(tServiceMenuItem5)
 #endif
-
+#ifdef EXTRUDER_JAM_CONTROL
+FSTRINGVAR(tEPREofControl)
+#endif
 static void cap(FSTRINGPARAM(text));
 static void config(FSTRINGPARAM(text));
 static void config(FSTRINGPARAM(text),int value);
