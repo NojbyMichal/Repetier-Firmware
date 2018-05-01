@@ -1082,9 +1082,10 @@ UI_MENU(ui_menu_service, UI_MENU_SERVICE, UI_MENU_BACKCNT + UI_SERVICE_MENU_ITEM
 UI_MENU_SUBMENU_T(ui_menu_service, UI_TEXT_SERVICE_MENU_ID , ui_menu_service)
 
 #define UI_SERVICE_MENU ,&ui_menu_service
-
+#define UI_MENU_SERVICE_CNT 1
 #else 
 #define UI_SERVICE_MENU
+#define UI_MENU_SERVICE_CNT 0
 #endif
 /*EXAMPLE OF MENU
 #if FAN_PIN>-1 && FEATURE_FAN_CONTROL
