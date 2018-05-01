@@ -88,7 +88,7 @@
 #define EXT0_HEATER_PIN HEATER_0_PIN
 #define EXT0_STEP_PIN ORIG_E0_STEP_PIN
 #define EXT0_DIR_PIN ORIG_E0_DIR_PIN
-#define EXT0_INVERSE 0
+#define EXT0_INVERSE 1
 #define EXT0_ENABLE_PIN ORIG_E0_ENABLE_PIN
 #define EXT0_ENABLE_ON 0
 #define EXT0_MIRROR_STEPPER 0
@@ -100,7 +100,7 @@
 #define EXT0_MAX_START_FEEDRATE 20
 #define EXT0_MAX_ACCELERATION 9000
 #define EXT0_HEAT_MANAGER 1
-#define EXT0_PREHEAT_TEMP 190
+#define EXT0_PREHEAT_TEMP 200
 #define EXT0_WATCHPERIOD 1
 #define EXT0_PID_INTEGRAL_DRIVE_MAX 230
 #define EXT0_PID_INTEGRAL_DRIVE_MIN 40
@@ -115,7 +115,7 @@
 #define EXT0_WAIT_RETRACT_UNITS 0
 #define EXT0_SELECT_COMMANDS ""
 #define EXT0_DESELECT_COMMANDS ""
-#define EXT0_EXTRUDER_COOLER_PIN -1
+#define EXT0_EXTRUDER_COOLER_PIN HEATER_2_PIN
 #define EXT0_EXTRUDER_COOLER_SPEED 255
 #define EXT0_DECOUPLE_TEST_PERIOD 20000
 #define EXT0_JAM_PIN ORIG_X_MIN_PIN
@@ -136,7 +136,7 @@
 #define FILAMENTCHANGE_REHOME 0
 #define FILAMENTCHANGE_SHORTRETRACT 0
 #define FILAMENTCHANGE_LONGRETRACT 0
-#define JAM_METHOD 3
+#define JAM_METHOD 2
 #define JAM_STEPS 220
 #define JAM_SLOWDOWN_STEPS 320
 #define JAM_SLOWDOWN_TO 70
@@ -165,19 +165,19 @@
 
 #define HAVE_HEATED_BED 1
 #define HEATED_BED_PREHEAT_TEMP 55
-#define HEATED_BED_MAX_TEMP 108
+#define HEATED_BED_MAX_TEMP 105
 #define SKIP_M190_IF_WITHIN 3
 #define HEATED_BED_SENSOR_TYPE 14
 #define HEATED_BED_SENSOR_PIN TEMP_1_PIN
 #define HEATED_BED_HEATER_PIN HEATER_1_PIN
 #define HEATED_BED_SET_INTERVAL 5000
 #define HEATED_BED_HEAT_MANAGER 1
-#define HEATED_BED_PID_INTEGRAL_DRIVE_MAX 220
-#define HEATED_BED_PID_INTEGRAL_DRIVE_MIN 10
+#define HEATED_BED_PID_INTEGRAL_DRIVE_MAX 120
+#define HEATED_BED_PID_INTEGRAL_DRIVE_MIN 0
 #define HEATED_BED_PID_PGAIN_OR_DEAD_TIME   120
 #define HEATED_BED_PID_IGAIN   11
 #define HEATED_BED_PID_DGAIN 314
-#define HEATED_BED_PID_MAX 220
+#define HEATED_BED_PID_MAX 120
 #define HEATED_BED_DECOUPLE_TEST_PERIOD 300000
 #define MIN_EXTRUDER_TEMP 90
 #define MAXTEMP 290
@@ -298,7 +298,7 @@ It also can add a delay to wait for spindle to run on full speed.
 #define DOOR_INVERTING 1
 #define ENDSTOP_X_BACK_MOVE 5
 #define ENDSTOP_Y_BACK_MOVE 5
-#define ENDSTOP_Z_BACK_MOVE 2
+#define ENDSTOP_Z_BACK_MOVE 5
 #define ENDSTOP_X_RETEST_REDUCTION_FACTOR 3
 #define ENDSTOP_Y_RETEST_REDUCTION_FACTOR 3
 #define ENDSTOP_Z_RETEST_REDUCTION_FACTOR 3
@@ -332,16 +332,19 @@ It also can add a delay to wait for spindle to run on full speed.
 #define Z_HOME_DIR 1
 #define X_MAX_LENGTH 200
 #define Y_MAX_LENGTH 200
-#define Z_MAX_LENGTH 220
+#define Z_MAX_LENGTH 320
 #define X_MIN_POS 0
 #define Y_MIN_POS 0
 #define Z_MIN_POS 0
+#define PARK_POSITION_X 0
+#define PARK_POSITION_Y 10
+#define PARK_POSITION_Z_RAISE 10
 
 
 #define DISTORTION_CORRECTION 1
 #define DISTORTION_CORRECTION_POINTS 5
 #define DISTORTION_LIMIT_TO 2
-#define DISTORTION_CORRECTION_R 60
+#define DISTORTION_CORRECTION_R 80
 #define DISTORTION_PERMANENT 1
 #define DISTORTION_UPDATE_FREQUENCY 15
 #define DISTORTION_START_DEGRADE 0.5
@@ -359,12 +362,12 @@ It also can add a delay to wait for spindle to run on full speed.
 #define FEATURE_BABYSTEPPING 1
 #define BABYSTEP_MULTIPLICATOR 1
 
-#define DELTA_SEGMENTS_PER_SECOND_PRINT 180 // Move accurate setting for print moves
-#define DELTA_SEGMENTS_PER_SECOND_MOVE 70 // Less accurate setting for other moves
+#define DELTA_SEGMENTS_PER_SECOND_PRINT 100 // Move accurate setting for print moves
+#define DELTA_SEGMENTS_PER_SECOND_MOVE 100 // Less accurate setting for other moves
 #define EXACT_DELTA_MOVES 1
 
 // Delta settings
-#define DELTA_DIAGONAL_ROD 215 // mm
+#define DELTA_DIAGONAL_ROD 299.5 // mm
 #define DELTA_ALPHA_A 210
 #define DELTA_ALPHA_B 330
 #define DELTA_ALPHA_C 90
@@ -376,9 +379,9 @@ It also can add a delay to wait for spindle to run on full speed.
 #define DELTA_DIAGONAL_CORRECTION_C 0
 #define END_EFFECTOR_HORIZONTAL_OFFSET 0
 #define CARRIAGE_HORIZONTAL_OFFSET 0
-#define DELTA_MAX_RADIUS 90
-#define ROD_RADIUS 105.35
-#define PRINTER_RADIUS 105.35
+#define DELTA_MAX_RADIUS 125
+#define ROD_RADIUS 150.85
+#define PRINTER_RADIUS 150.85
 #define DELTA_HOME_ON_POWER 0
 #define STEP_COUNTER
 #define DELTA_X_ENDSTOP_OFFSET_STEPS 0
@@ -402,7 +405,7 @@ It also can add a delay to wait for spindle to run on full speed.
 #define RAISE_Z_ON_TOOLCHANGE 0
 #define ZHOME_MIN_TEMPERATURE 0
 #define ZHOME_HEAT_ALL 1
-#define ZHOME_HEAT_HEIGHT 20
+#define ZHOME_HEAT_HEIGHT 0// VT was 20
 #define ZHOME_X_POS 999999
 #define ZHOME_Y_POS 999999
 #define ENABLE_BACKLASH_COMPENSATION 0
@@ -464,17 +467,17 @@ It also can add a delay to wait for spindle to run on full speed.
 #define TMC2130_X_CS_PIN 42
 #define TMC2130_Y_CS_PIN 44
 #define TMC2130_Z_CS_PIN 66
-#define TMC2130_EXT0_CS_PIN -1
+#define TMC2130_EXT0_CS_PIN 65
 #define TMC2130_EXT1_CS_PIN -1
 #define TMC2130_EXT2_CS_PIN -1
 
 // Per-axis current setting in mA { X, Y, Z, E0, E1, E2}
-#define MOTOR_CURRENT { 500,500,500,500,500,500 }
+#define MOTOR_CURRENT { 800,800,800,800,800,800 }
 
 /**  Global settings - these apply to all configured drivers
 Per-axis values will override these
 */
-#define TMC2130_STEALTHCHOP         1  // Enable extremely quiet stepping
+#define TMC2130_STEALTHCHOP         0  // Enable extremely quiet stepping
 #define TMC2130_INTERPOLATE_256  1  // Enable internal driver microstep interpolation
 #define TMC2130_STALLGUARD          0  // Sensorless homing sensitivity (between -63 and +64)
 
@@ -558,7 +561,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define Z_PROBE_PIN ORIG_Z_MIN_PIN
 #define Z_PROBE_PULLUP 0
 #define Z_PROBE_ON_HIGH 0
-#define Z_PROBE_X_OFFSET -20
+#define Z_PROBE_X_OFFSET 20
 #define Z_PROBE_Y_OFFSET 0
 #define Z_PROBE_WAIT_BEFORE_TEST 0
 #define Z_PROBE_SPEED 10
@@ -574,12 +577,12 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define Z_PROBE_MIN_TEMPERATURE 150
 #define FEATURE_AUTOLEVEL 1
 #define FEATURE_SOFTWARE_LEVELING 0
-#define Z_PROBE_X1 -51.96
-#define Z_PROBE_Y1 -30
-#define Z_PROBE_X2 51.96
-#define Z_PROBE_Y2 -30
+#define Z_PROBE_X1 -69.28
+#define Z_PROBE_Y1 -40
+#define Z_PROBE_X2 69.28
+#define Z_PROBE_Y2 -40
 #define Z_PROBE_X3 0
-#define Z_PROBE_Y3 60
+#define Z_PROBE_Y3 80
 #define BED_LEVELING_METHOD 0
 #define BED_CORRECTION_METHOD 0
 #define BED_LEVELING_GRID_SIZE 5
@@ -626,7 +629,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define LANGUAGE_CZ_ACTIVE 1
 #define LANGUAGE_PL_ACTIVE 0
 #define LANGUAGE_TR_ACTIVE 0
-#define UI_PRINTER_NAME "Kossel"
+#define UI_PRINTER_NAME "DeltiX R18"
 #define UI_PRINTER_COMPANY "TRILAB"
 #define UI_PAGES_DURATION 4000
 #define UI_SPEEDDEPENDENT_POSITIONING 0
@@ -664,14 +667,18 @@ Values must be in range 1..255
 
 #define USER_QUICK_MENU_Z_PROBE_HEIGHT_USER_CHANGE
 #define UI_Z_PROBE_HEIGHT_USER_CHANGE 1
-#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1 "G28\n G92 E0\n G91\n M109 S210\n G1 E500 F1000\n G1 E100 F500\n G1 E100 F100\n G90\n G92 E0\n M84"
+
+#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1 "G28\n G92 E0\n G91\n M109 S210\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E100 F6000\n G1 E50 F6000\n G1 E50 F1000\n G1 E50 F200\n G90\n G92 E0\n M84"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1_TEXT "Load Filament"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2 "G28\n G92 E0\n G91\n M109 S210\n G1 E20 F200\n G1 E-100 F6000\n G90\n G92 E0\n M84"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2_TEXT "Unload Filament"
-#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3 "G28\n G92 E0\n G91\n M109 S210\n G1 E50 F100\n G90\n G92 E0\n M84"
+#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3 "G28\n G92 E0\n G91\n M109 S210\n G1 E50 F200\n G90\n G92 E0\n M84"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3_TEXT "Purge Filament"
+ //#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4
+ //#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5
 
-//#define SERVICE_MENU
+#define SERVICE_MENU
+#define UI_TEXT_SERVICE_MENU_TEXT "Service menu"
 #define UI_SERVICE_MENU_ITEM1 "M190 S55\n G32 S2"
 #define SERVICE_MENU_ITEM1_TEXT "Z home calib"
 #define UI_SERVICE_MENU_ITEM2 "M303 S205 C10 X10"
@@ -697,14 +704,14 @@ Values must be in range 1..255
     "xStepsPerMM": 100,
     "yStepsPerMM": 100,
     "zStepsPerMM": 100,
-    "xInvert": "0",
+    "xInvert": "1",
     "x2Invert": 0,
     "xInvertEnable": 0,
     "eepromMode": 1,
-    "yInvert": "0",
+    "yInvert": "1",
     "y2Invert": 0,
     "yInvertEnable": 0,
-    "zInvert": "0",
+    "zInvert": "1",
     "z2Invert": 0,
     "z3Invert": 0,
     "z4Invert": 0,
@@ -721,7 +728,7 @@ Values must be in range 1..255
             "heaterPin": "HEATER_0_PIN",
             "maxFeedrate": 200,
             "startFeedrate": 20,
-            "invert": "0",
+            "invert": "1",
             "invertEnable": "0",
             "acceleration": 9000,
             "watchPeriod": 1,
@@ -734,7 +741,7 @@ Values must be in range 1..255
             "waitRetractUnits": 0,
             "waitRetract": 0,
             "stepsPerMM": 400,
-            "coolerPin": -1,
+            "coolerPin": "HEATER_2_PIN",
             "coolerSpeed": 255,
             "selectCommands": "",
             "deselectCommands": "",
@@ -762,7 +769,7 @@ Values must be in range 1..255
                 "dir": "ORIG_E0_DIR_PIN",
                 "enable": "ORIG_E0_ENABLE_PIN"
             },
-            "preheat": 190
+            "preheat": 200
         }
     ],
     "uiLanguage": 0,
@@ -820,7 +827,7 @@ Values must be in range 1..255
     "zMinPos": 0,
     "xLength": 200,
     "yLength": 200,
-    "zLength": 220,
+    "zLength": 320,
     "alwaysCheckEndstops": "0",
     "disableX": "0",
     "disableY": "0",
@@ -832,17 +839,17 @@ Values must be in range 1..255
     "xEndstopBack": 0,
     "yEndstopBack": 0,
     "zEndstopBack": 0,
-    "deltaSegmentsPerSecondPrint": 180,
-    "deltaSegmentsPerSecondTravel": 70,
-    "deltaDiagonalRod": 215,
-    "deltaHorizontalRadius": 105.35,
+    "deltaSegmentsPerSecondPrint": 100,
+    "deltaSegmentsPerSecondTravel": 100,
+    "deltaDiagonalRod": 299.5,
+    "deltaHorizontalRadius": 150.85,
     "deltaAlphaA": 210,
     "deltaAlphaB": 330,
     "deltaAlphaC": 90,
     "deltaDiagonalCorrA": 0,
     "deltaDiagonalCorrB": 0,
     "deltaDiagonalCorrC": 0,
-    "deltaMaxRadius": 90,
+    "deltaMaxRadius": 125,
     "deltaFloorSafetyMarginMM": 15,
     "deltaRadiusCorrA": 0,
     "deltaRadiusCorrB": 0,
@@ -916,7 +923,7 @@ Values must be in range 1..255
     "extrudeMaxLength": 1000,
     "homeOrder": "HOME_ORDER_ZXY",
     "featureController": 2,
-    "uiPrinterName": "Kossel",
+    "uiPrinterName": "DeltiX R18",
     "uiPrinterCompany": "TRILAB",
     "uiPagesDuration": 4000,
     "uiHeadline": "",
@@ -937,19 +944,19 @@ Values must be in range 1..255
     "uiExtruderFeedrate": 2,
     "uiExtruderRetractDistance": 3,
     "uiSpeeddependentPositioning": "0",
-    "maxBedTemperature": 108,
+    "maxBedTemperature": 105,
     "bedSensorType": 14,
     "bedSensorPin": "TEMP_1_PIN",
     "bedHeaterPin": "HEATER_1_PIN",
     "bedHeatManager": 1,
     "bedPreheat": 55,
     "bedUpdateInterval": 5000,
-    "bedPidDriveMin": 10,
-    "bedPidDriveMax": 220,
+    "bedPidDriveMin": 0,
+    "bedPidDriveMax": 120,
     "bedPidP": 120,
     "bedPidI": 11,
     "bedPidD": 314,
-    "bedPidMax": 220,
+    "bedPidMax": 120,
     "bedDecoupleTestPeriod": 300,
     "caseLightPin": -1,
     "caseLightDefaultOn": "1",
@@ -1022,7 +1029,7 @@ Values must be in range 1..255
     "zProbeDisableHeaters": "0",
     "zProbePullup": "0",
     "zProbeOnHigh": "0",
-    "zProbeXOffset": -20,
+    "zProbeXOffset": 20,
     "zProbeYOffset": 0,
     "zProbeWaitBeforeTest": "0",
     "zProbeSpeed": 10,
@@ -1031,12 +1038,12 @@ Values must be in range 1..255
     "zProbeStartScript": "",
     "zProbeFinishedScript": "",
     "featureAutolevel": "1",
-    "zProbeX1": -51.96,
-    "zProbeY1": -30,
-    "zProbeX2": 51.96,
-    "zProbeY2": -30,
+    "zProbeX1": -69.28,
+    "zProbeY1": -40,
+    "zProbeX2": 69.28,
+    "zProbeY2": -40,
     "zProbeX3": 0,
-    "zProbeY3": 60,
+    "zProbeY3": 80,
     "zProbeSwitchingDistance": 1,
     "zProbeRepetitions": 3,
     "zProbeEveryPoint": "",
@@ -1046,7 +1053,7 @@ Values must be in range 1..255
     "uiStartScreenDelay": 1000,
     "xEndstopBackMove": 5,
     "yEndstopBackMove": 5,
-    "zEndstopBackMove": 2,
+    "zEndstopBackMove": 5,
     "xEndstopRetestFactor": 3,
     "yEndstopRetestFactor": 3,
     "zEndstopRetestFactor": 3,
@@ -1080,7 +1087,7 @@ Values must be in range 1..255
     "pauseEndCommands": "M109 S210\\n G91\\n G0 Z-10\\n G90\\n",
     "distortionCorrection": "1",
     "distortionCorrectionPoints": 5,
-    "distortionCorrectionR": 60,
+    "distortionCorrectionR": 80,
     "distortionPermanent": "1",
     "distortionUpdateFrequency": 15,
     "distortionStartDegrade": 0.5,
@@ -1222,7 +1229,7 @@ Values must be in range 1..255
             "maxDistance": 20
         }
     ],
-    "manualConfig": "#define USER_QUICK_MENU_Z_PROBE_HEIGHT_USER_CHANGE\n#define UI_Z_PROBE_HEIGHT_USER_CHANGE 1\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1 \"G28\\n G92 E0\\n G91\\n M109 S210\\n G1 E500 F1000\\n G1 E100 F500\\n G1 E100 F100\\n G90\\n G92 E0\\n M84\"\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1_TEXT \"Load Filament\"\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2 \"G28\\n G92 E0\\n G91\\n M109 S210\\n G1 E20 F200\\n G1 E-100 F6000\\n G90\\n G92 E0\\n M84\"\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2_TEXT \"Unload Filament\"\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3 \"G28\\n G92 E0\\n G91\\n M109 S210\\n G1 E50 F100\\n G90\\n G92 E0\\n M84\"\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3_TEXT \"Purge Filament\"",
+    "manualConfig": "#define USER_QUICK_MENU_Z_PROBE_HEIGHT_USER_CHANGE\n#define UI_Z_PROBE_HEIGHT_USER_CHANGE 1\n\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1 \"G28\\n G92 E0\\n G91\\n M109 S210\\n G1 E400 F1000\\n G1 E100 F500\\n G1 E100 F100\\n G90\\n G92 E0\\n M84\"\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_1_TEXT \"Load Filament\"\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2 \"G28\\n G92 E0\\n G91\\n M109 S210\\n G1 E20 F200\\n G1 E-100 F6000\\n G90\\n G92 E0\\n M84\"\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2_TEXT \"Unload Filament\"\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3 \"G28\\n G92 E0\\n G91\\n M109 S210\\n G1 E50 F100\\n G90\\n G92 E0\\n M84\"\n#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3_TEXT \"Purge Filament\"\n\/\/#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4\n\/\/#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5\n\n#define SERVICE_MENU\n#define UI_SERVICE_MENU_ITEM1 \"M190 S55\\n G32 S2\"\n#define SERVICE_MENU_ITEM1_TEXT \"Z home calib\"\n#define UI_SERVICE_MENU_ITEM2 \"M303 S205 C10 X10\"\n#define SERVICE_MENU_ITEM2_TEXT \"PID tuning\"\n#define UI_SERVICE_MENU_ITEM3 \"M512\"\n#define SERVICE_MENU_ITEM3_TEXT \"Fila Sens Check\"\n\/\/#define UI_SERVICE_MENU_ITEM4 \"\"\n\/\/#define SERVICE_MENU_ITEM4_TEXT \"\"\n\/\/#define UI_SERVICE_MENU_ITEM5 \"\"\n\/\/#define SERVICE_MENU_ITEM5_TEXT \"\"",
     "zHomeMinTemperature": 0,
     "zHomeXPos": 999999,
     "zHomeYPos": 999999,
@@ -1309,25 +1316,25 @@ Values must be in range 1..255
     "automaticPowerup": 0,
     "hasTMC2130": "1",
     "TMC2130Sensorless": "0",
-    "TMC2130Steathchop": "1",
+    "TMC2130Steathchop": "0",
     "TMC2130Interpolate256": "1",
     "TMC2130StallguardSensitivity": 0,
     "TMC2130PWMAmpl": 255,
     "TMC2130PWMGrad": 1,
     "TMC2130PWMAutoscale": "1",
     "TMC2130PWMFreq": 2,
-    "TMC2130CSX": 49,
-    "TMC2130CSY": 53,
+    "TMC2130CSX": 42,
+    "TMC2130CSY": 44,
     "TMC2130CSZ": 66,
-    "TMC2130CSE0": -1,
+    "TMC2130CSE0": 65,
     "TMC2130CSE1": -1,
     "TMC2130CSE2": -1,
-    "TMC2130CurrentX": 600,
-    "TMC2130CurrentY": 600,
-    "TMC2130CurrentZ": 600,
-    "TMC2130CurrentE0": 600,
-    "TMC2130CurrentE1": 600,
-    "TMC2130CurrentE2": 600,
+    "TMC2130CurrentX": 800,
+    "TMC2130CurrentY": 800,
+    "TMC2130CurrentZ": 800,
+    "TMC2130CurrentE0": 800,
+    "TMC2130CurrentE1": 800,
+    "TMC2130CurrentE2": 800,
     "TMC2130CoolstepTresholdX": 300,
     "TMC2130CoolstepTresholdY": 300,
     "TMC2130CoolstepTresholdZ": 300,
@@ -1337,6 +1344,9 @@ Values must be in range 1..255
     "microstepE0": 16,
     "microstepE1": 16,
     "microstepE2": 16,
+    "parkPosX": 0,
+    "parkPosY": 0,
+    "parkPosZ": 10,
     "uiAnimation": "0",
     "uiPresetBedTempPLA": 55,
     "uiPresetBedABS": 100,
@@ -1351,7 +1361,7 @@ Values must be in range 1..255
     "hasUser1": false,
     "hasUser2": false,
     "numExtruder": 1,
-    "version": 100,
+    "version": 100.2,
     "primaryPortName": ""
 }
 ========== End configuration string ==========
