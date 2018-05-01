@@ -20,7 +20,7 @@ which based on Tonokip RepRap firmware rewrite based off of Hydra-mmm firmware.
 */
 
 #include "Repetier.h"
-
+extern bool AC_repeat;
 const int8_t sensitive_pins[] PROGMEM = SENSITIVE_PINS; // Sensitive pin list for M42
 int Commands::lowestRAMValue = MAX_RAM;
 int Commands::lowestRAMValueSend = MAX_RAM;
@@ -2728,8 +2728,8 @@ void Commands::processMCode(GCode *com) {
         break;
 #ifdef AC_LOST_CONTROL
     case 900:
-        Com::printFLN(PSTR("AC_LOST_CONTROL M900 signal:"), (int16_t)READ(AC_LOST_PIN));
-        TEST_AC_LOST(AC_LOST_PIN);
+        Com::printFLN(PSTR("AC_repeat = true"));
+        AC_repeat = true;
         break;
 #endif // AC_LOST_CONTROL
 #if defined(DRV_TMC2130)

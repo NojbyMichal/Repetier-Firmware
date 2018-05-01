@@ -1073,7 +1073,7 @@ UI_MENU_ACTIONCOMMAND(ui_menu_quick_debug, "Write Debug", UI_ACTION_WRITE_DEBUG)
 #else
 #define DEBUG_PRINT_COUNT 0
 #endif
-#define DEBUG_PRINT_EXTRA
+//#define DEBUG_PRINT_EXTRA
 #if FEATURE_RETRACTION
 /* * Extruder 1
 O Extruder 2

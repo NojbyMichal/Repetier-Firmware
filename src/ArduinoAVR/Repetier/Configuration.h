@@ -469,7 +469,7 @@ It also can add a delay to wait for spindle to run on full speed.
 #define TMC2130_EXT2_CS_PIN -1
 
 // Per-axis current setting in mA { X, Y, Z, E0, E1, E2}
-#define MOTOR_CURRENT { 800,800,800,800,800,800 }
+#define MOTOR_CURRENT { 500,500,500,500,500,500 }
 
 /**  Global settings - these apply to all configured drivers
 Per-axis values will override these
@@ -670,12 +670,6 @@ Values must be in range 1..255
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2_TEXT "Unload Filament"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3 "G28\n G92 E0\n G91\n M109 S210\n G1 E50 F100\n G90\n G92 E0\n M84"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3_TEXT "Purge Filament"
-
-#define AC_LOST_CONTROL 1
-#define AC_LOST_PIN ORIG_X_MIN_PIN
-#define AC_LOST_PIN_PULLUP true
-
-
 
 #endif
 

@@ -48,7 +48,7 @@ to test your data throughput or search for communication problems. */
 //#define DEBUG_ECHO_ASCII
 /** Allows M111 so set bit 6 (32) which disables moves, at the first tried step. In combination
 with a dry run, you can test the speed of path computations, which are still performed. */
-#define INCLUDE_DEBUG_NO_MOVE 1
+//#define INCLUDE_DEBUG_NO_MOVE 1
 /** Writes the free RAM to output, if it is less then at the last test. Should always return
 values >500 for safety, since it doesn't catch every function call. Nice to tweak cache
 usage or for searching for memory induced errors. Switch it off for production, it costs execution time. */
@@ -61,7 +61,7 @@ usage or for searching for memory induced errors. Switch it off for production, 
 /** This enables code to make M666 drop an ok, so you get problems with communication. It is to test host robustness. */
 //#define DEBUG_COM_ERRORS
 /** Adds a menu point in quick settings to write debug informations to the host in case of hangs where the ui still works. */
-//#define DEBUG_PRINT
+#define DEBUG_PRINT
 //#define DEBUG_DELTA_OVERFLOW
 //#define DEBUG_DELTA_REALPOS
 //#define DEBUG_SPLIT
@@ -73,7 +73,7 @@ usage or for searching for memory induced errors. Switch it off for production, 
 // Debug reason for not mounting a sd card
 //#define DEBUG_SD_ERROR
 // Uncomment the following line to enable debugging. You can better control debugging below the following line
-//#define DEBUG
+#define DEBUG
 
 #define DEBUG_MSG(x) {if(Printer::debugEcho()) { Com::printFLN(PSTR(x));HAL::delayMilliseconds(20);}}
 #define DEBUG_MSG2(x,y) {if(Printer::debugEcho()) {Com::printFLN(PSTR(x),y);HAL::delayMilliseconds(20);}}
@@ -1015,6 +1015,11 @@ public:
         if(!sdactive) return;
         sdpos = newpos;
         file.seekSet(sdpos);
+    }
+    inline uint32_t getIndex()
+    {
+        Com::printFLN(PSTR(" sdpos = "),sdpos);
+        return sdpos;
     }
     void printStatus();
     void ls();

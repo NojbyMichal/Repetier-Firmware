@@ -1,6 +1,8 @@
 #include "Repetier.h"
 #include <compat/twi.h>
 
+unsigned int AC_lost_counterPeriodical = 0;
+bool AC_repeat = false;
 #if ANALOG_INPUTS > 0
 uint8 osAnalogInputCounter[ANALOG_INPUTS];
 uint osAnalogInputBuildup[ANALOG_INPUTS];
@@ -767,7 +769,6 @@ ISR(TIMER1_COMPA_vect) {
 This timer is called 3906 timer per second. It is used to update pwm values for heater and some other frequent jobs.
 */
 ISR(PWM_TIMER_VECTOR) {
-    TEST_AC_LOST(AC_LOST_PIN);
     static uint8_t pwm_count_cooler = 0;
     static uint8_t pwm_count_heater = 0;
     static uint8_t pwm_pos_set[NUM_PWM];
@@ -976,6 +977,12 @@ ISR(PWM_TIMER_VECTOR) {
 #endif
 #endif
     counterPeriodical++; // Approximate a 100ms timer
+    AC_lost_counterPeriodical++;
+    if(AC_lost_counterPeriodical >= 4) //shoud run each 1ms
+    {
+        AC_lost_counterPeriodical=0;
+        Printer::ACtestLost();
+    }
     if(counterPeriodical >= (int)(F_CPU / 40960)) {
         counterPeriodical = 0;
         executePeriodical = 1;

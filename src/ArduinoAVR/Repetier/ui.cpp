@@ -3884,7 +3884,7 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
             Com::printF(PSTR(" Buf. Write Idx:"), (int)GCode::bufferWriteIndex);
             Com::printF(PSTR(" Comment:"), (int)GCode::commentDetected);
             Com::printF(PSTR(" Buf. Len:"), (int)GCode::bufferLength);
-            Com::printF(PSTR(" Wait resend:"), (int)GCode::waitingForResend);
+            //Com::printF(PSTR(" Wait resend:"), (int)GCode::waitingForResend);
             Com::printFLN(PSTR(" Recv. Write Pos:"), (int)GCode::commandsReceivingWritePosition);
             //Com::printF(PSTR("Min. XY Speed:"),Printer::minimumSpeed);
             //Com::printF(PSTR(" Min. Z Speed:"),Printer::minimumZSpeed);

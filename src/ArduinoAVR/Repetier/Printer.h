@@ -135,9 +135,7 @@ union wizardVar {
 #define towerBMinSteps Printer::yMinSteps
 #define towerCMinSteps Printer::zMinSteps
 
-#if defined (AC_LOST_CONTROL)  //PRINTER_INTERRUPT_EVENT_AC_LOST_DETECTED
-#define TEST_AC_LOST(pin) {	uint8_t AC_sig = READ(pin);	if(AC_sig == 0) {Com::printFLN(PSTR("ZERO")); Printer::setInterruptEvent(PRINTER_INTERRUPT_EVENT_AC_LOST_DETECTED, true);}	}
-#endif
+
 
 		
 	
@@ -1273,6 +1271,9 @@ public:
     static void configTMC2130(TMC2130Stepper* tmc_driver, bool tmc_stealthchop, int8_t tmc_sgt,
       uint8_t tmc_pwm_ampl, uint8_t tmc_pwm_grad, bool tmc_pwm_autoscale, uint8_t tmc_pwm_freq);
     static void tmcPrepareHoming(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min);
+#endif
+#if defined (AC_LOST_CONTROL)    
+static void ACtestLost();
 #endif
 };
 

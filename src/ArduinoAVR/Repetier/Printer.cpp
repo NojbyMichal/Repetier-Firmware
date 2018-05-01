@@ -2130,7 +2130,7 @@ void Printer::handleInterruptEvent() {
     if(interruptEvent == 0) return;
     int event = interruptEvent;
     interruptEvent = 0;
-    switch(event) {	
+    switch(event) {		
 #if EXTRUDER_JAM_CONTROL
     case PRINTER_INTERRUPT_EVENT_JAM_DETECTED:
         if(isJamcontrolDisabled()) break;
@@ -2179,94 +2179,8 @@ void Printer::handleInterruptEvent() {
     }
     break;
 #endif // EXTRUDER_JAM_CONTROL    case PRINTER_INTERRUPT_EVENT_JAM_DETECTED:
-#if AC_LOST_CONTROL
-	case PRINTER_INTERRUPT_EVENT_AC_LOST_DETECTED:
-	{
-		// ***** 1 - WRITE ON
-		Com::printFLN(PSTR("!!! AC LOST !!!"));
-		// ***** 2 DISABLE BED
-/*
-		#if HAVE_HEATED_BED && HEATED_BED_HEATER_PIN > -1
-			WRITE(HEATED_BED_HEATER_PIN, HEATER_PINS_INVERTED);
-		#endif
-		// ***** 3 - STOP PRINT
-		// flush buffers
-		// stop print
-		//
-		
-		 if(!Printer::debugDryrun() && PrintLine::linesCount > 0) {  // kill printer if actually printing
-			Printer::stopPrint();
-			
-           // Printer::kill(false);
-        }
-		
-		Printer::setMenuMode(MENU_MODE_SD_PRINTING,false);
-		Printer::setMenuMode(MENU_MODE_PAUSED,false);
-		
-		Printer::setPrinting(0);
-		
-		Printer::stopPrint();
-	
-		Commands::waitUntilEndOfAllMoves();
-		Printer::updateCurrentPosition(false);
-		
-		HAL::eprSetFloat(EPR_MEMORY_X1,Printer::realXPosition());                   //store position from ram to eeprom
-        HAL::eprSetFloat(EPR_MEMORY_Y1,Printer::realYPosition());
-        HAL::eprSetFloat(EPR_MEMORY_Z1,Printer::realZPosition());
-	
-	    HAL::eprSetFloat(EPR_OFFSET_X1,Printer::coordinateOffset[X_AXIS]);           //store offset values from ram to eeprom
-        HAL::eprSetFloat(EPR_OFFSET_Y1,Printer::coordinateOffset[Y_AXIS]);
-        HAL::eprSetFloat(EPR_OFFSET_Z1,Printer::coordinateOffset[Z_AXIS]);
 
-        Com::printF(PSTR("EEPROM Saved to position 1: X:"),HAL::eprGetFloat(EPR_MEMORY_X1));     //print some messages
-        Com::printF(PSTR("  Y:"),HAL::eprGetFloat(EPR_MEMORY_Y1));
-        Com::printFLN(PSTR("  Z:"),HAL::eprGetFloat(EPR_MEMORY_Z1));
 
-		Com::printF(PSTR("Saved Offset 1: X:"),HAL::eprGetFloat(EPR_OFFSET_X1));
-        Com::printF(PSTR("  Y:"),HAL::eprGetFloat(EPR_OFFSET_Y1));
-        Com::printFLN(PSTR("  Z:"),HAL::eprGetFloat(EPR_OFFSET_Z1));
-
-	
-		// ***** 4 - Memorize last position
-		Printer::MemoryPosition();  // not good, write own func
-		/*
-		Commands::waitUntilEndOfAllMoves();
-		updateCurrentPosition(false);
-		realPosition(memoryX, memoryY, memoryZ);
-		memoryE = currentPositionSteps[E_AXIS] * invAxisStepsPerMM[E_AXIS];
-		memoryF = feedrate;
-	
-		 
-		// ***** 3 Raise Z
-		
-		// ***** 4 - disable heaters
-		for(uint8_t i = 0; i < NUM_EXTRUDER + 3; i++)
-        pwm_pos[i] = 0;
-		#if EXT0_HEATER_PIN > -1 && NUM_EXTRUDER > 0
-			WRITE(EXT0_HEATER_PIN, HEATER_PINS_INVERTED);
-		#endif
-		#if defined(EXT1_HEATER_PIN) && EXT1_HEATER_PIN > -1 && NUM_EXTRUDER > 1
-			WRITE(EXT1_HEATER_PIN, HEATER_PINS_INVERTED);
-		#endif
-		#if defined(EXT2_HEATER_PIN) && EXT2_HEATER_PIN > -1 && NUM_EXTRUDER > 2
-			WRITE(EXT2_HEATER_PIN, HEATER_PINS_INVERTED);
-		#endif
-		#if defined(EXT3_HEATER_PIN) && EXT3_HEATER_PIN > -1 && NUM_EXTRUDER > 3
-			WRITE(EXT3_HEATER_PIN, HEATER_PINS_INVERTED);
-		#endif
-		#if defined(EXT4_HEATER_PIN) && EXT4_HEATER_PIN > -1 && NUM_EXTRUDER > 4
-			WRITE(EXT4_HEATER_PIN, HEATER_PINS_INVERTED);
-		#endif
-		#if defined(EXT5_HEATER_PIN) && EXT5_HEATER_PIN > -1 && NUM_EXTRUDER > 5
-			WRITE(EXT5_HEATER_PIN, HEATER_PINS_INVERTED);
-		#endif
-		#if FAN_PIN > -1 && FEATURE_FAN_CONTROL
-			WRITE(FAN_PIN, 0);
-		#endif
-			*/
-
-	}
-#endif	
     }
 }
 
@@ -2728,7 +2642,7 @@ void Printer::stopPrint() {
 #if defined(DRV_TMC2130)
     void Printer::configTMC2130(TMC2130Stepper* tmc_driver, bool tmc_stealthchop, int8_t tmc_sgt,
       uint8_t tmc_pwm_ampl, uint8_t tmc_pwm_grad, bool tmc_pwm_autoscale, uint8_t tmc_pwm_freq) {
-        while(!tmc_driver->stst());                     // Wait for motor stand-still
+        //while(!tmc_driver->stst());                     // Wait for motor stand-still
         tmc_driver->begin();                            // Initiate pins and registeries
         tmc_driver->I_scale_analog(true);               // Set current reference source
         tmc_driver->interpolate(true);                  // Set internal microstep interpolation
@@ -2751,5 +2665,123 @@ void Printer::stopPrint() {
         tmc_driver->diag1_active_high(true);            // StallGuard pulses active high
     }
 #endif
+#endif
 
+#if defined (AC_LOST_CONTROL)  //PRINTER_INTERRUPT_EVENT_AC_LOST_DETECTED
+extern bool AC_repeat;
+extern SDCard sd;
+    void Printer::ACtestLost()
+    {
+    	uint8_t AC_sig = READ(AC_LOST_PIN);
+    	if((AC_sig == 0) && (AC_repeat) )
+    	{
+    		AC_repeat = false;
+    		Com::printFLN(PSTR("AC TRIGGER"));
+    		//DISABLE HEATBED for save power (1)
+    		#if HAVE_HEATED_BED && HEATED_BED_HEATER_PIN > -1
+			WRITE(HEATED_BED_HEATER_PIN, HEATER_PINS_INVERTED);
+			Extruder::setHeatedBedTemperature(0,false);
+			Com::printFLN(PSTR("HEATBED OFF"));
+			#endif
+			//disable HEATER (2)
+			//Extruder::setTemperatureForExtruder(0, 0, false, false);
+			//block communication (3)
+			//Printer::setBlockingReceive(true);
+
+			// Com::printF(PSTR("Buf. Read Idx:"), (int)GCode::bufferReadIndex);
+           // Com::printF(PSTR(" Buf. Write Idx:"), (int)GCode::bufferWriteIndex);
+           // Com::printF(PSTR(" Comment:"), (int)GCode::commentDetected);
+           //Com::printF(PSTR(" Buf. Len:"), (int)GCode::bufferLength);
+            //Com::printF(PSTR(" Wait resend:"), (int)GCode::waitingForResend);
+            //Com::printFLN(PSTR(" Recv. Write Pos:"), (int)GCode::commandsReceivingWritePosition);
+            //Com::printF(PSTR("Min. XY Speed:"),Printer::minimumSpeed);
+            //Com::printF(PSTR(" Min. Z Speed:"),Printer::minimumZSpeed);
+            Com::printF(PSTR(" Buffer:"), PrintLine::linesCount);
+            Com::printF(PSTR(" Lines pos:"), (int)PrintLine::linesPos);
+            Com::printFLN(PSTR(" Write Pos:"), (int)PrintLine::linesWritePos);
+            Com::printFLN(PSTR("Wait loop:"), debugWaitLoop);
+            Com::printF(PSTR("sd mode:"), (int)sd.sdmode);
+            Com::printF(PSTR(" pos:"), sd.sdpos);
+            Com::printFLN(PSTR(" of "), sd.filesize);
+
+			GCodeSource::removeSource(&sdSource);
+			//some retract ? (4)
+			//store as much energy disable extruder (5)
+			//Extruder::disableAllExtruderMotors();
+            //set current of TMC2130 to low value (6)
+			// get x,y,z microsteps (7)
+			//calculate fileposition to resume (8)
+			
+			//get lentgh of SD commands in planner (9)
+			//get length of sd commands in queue (10)
+			//back up feedrate in mm/min (11)
+
+			
+			//empty planner queue (12)
+        	PrintLine::resetPathPlanner();
+
+        	//Printer::setMenuMode(MENU_MODE_SD_PRINTING,false);
+			//Printer::setMenuMode(MENU_MODE_PAUSED,false);
+		
+			Printer::setPrinting(0);
+
+        	//Com::printFLN(PSTR("BEFORE:"));
+        	//Com::printFLN(PSTR("SDpos:"), sd.sdpos);
+
+			// store the position of extruder to eeprom (13)
+  			//clean command queue (14)
+  			//disable SD card printing (15)
+        	//write the file position to eeprom (16)
+        	//move Z to the next 0th full step (17)
+			PrintLine::moveRelativeDistanceInStepsReal(0, 0, Printer::axisStepsPerMM[Z_AXIS] * 20, 0, Printer::homingFeedrate[Z_AXIS], false, false);
+			//store the mesh bed leveling offset (18)
+        	//store the current position(19)
+        	//store current feedrate, temps,fan speed (20)
+        	//store the AC_LOST flag (21)
+        	//update powercount to eeprom (22)
+        	//save current babystep  ??(24)
+        	Com::printFLN(PSTR("DONE"));
+    	}
+    }
+/*    void Printer::recoverStateACLost()
+    {
+    	//LCD message to recovery print YES/NO (0)
+    	//recover current position X,Y,Z (1)
+    	//recalculate logical to real coordinate system transformation (2)
+    	//restore bed mesh leveling (3) ?? matrix 3x3
+
+
+    	//load babystep (4)
+    	// home (5)
+    	// preheat all enable fans (6)
+		// user confirm to remove all blobs on nozzle (7) 
+		// set relative mode for extruder (8)
+		//extrude some filament to stabilize pressure (9) optional or if automatic ==0
+		// retract def value
+    	//clear power panic flag in eeprom (9)
+    	// restore print from eeprom (10)
+
+		// -- restore fan speed
+		// -- restore feedrate
+		// -- restore eeprom dir depth ??
+		// -- eeprom read filename
+		// -- M23 filename.gco
+		// -- read file position from eeprom
+		// -- move X Y to position where the print was killed
+		// -- move Z -""-
+		// -- unretract
+		// -- set the stored feedrate
+		// -- set the fan
+		// --set position in file M26 S%lu
+		// -- M24 to start print
+
+
+    	//restore position (8)
+    	//restore print (9)
+
+
+
+
+    }
+*/
 #endif
