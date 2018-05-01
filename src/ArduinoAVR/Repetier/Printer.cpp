@@ -2636,7 +2636,7 @@ void Printer::stopPrint() {
 #if defined(DRV_TMC2130)
     void Printer::configTMC2130(TMC2130Stepper* tmc_driver, bool tmc_stealthchop, int8_t tmc_sgt,
       uint8_t tmc_pwm_ampl, uint8_t tmc_pwm_grad, bool tmc_pwm_autoscale, uint8_t tmc_pwm_freq) {
-        while(!tmc_driver->stst());                     // Wait for motor stand-still
+        //while(!tmc_driver->stst());                     // Wait for motor stand-still
         tmc_driver->begin();                            // Initiate pins and registeries
         tmc_driver->I_scale_analog(true);               // Set current reference source
         tmc_driver->interpolate(true);                  // Set internal microstep interpolation
