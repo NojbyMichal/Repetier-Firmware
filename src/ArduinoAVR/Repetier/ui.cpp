@@ -3724,6 +3724,28 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
         break;
 #endif // EXTRUDER_JAM_CONTROL
 #endif // FEATURE_RETRACTION
+		case UI_ACTION_WIZARD_CRASH_DETECTED:
+			Printer::setBlockingReceive(true);
+            Printer::resetWizardStack();
+            Printer::pushWizardVar(Printer::currentPositionSteps[E_AXIS]);
+            Printer::pushWizardVar(Printer::coordinateOffset[X_AXIS]);
+            Printer::pushWizardVar(Printer::coordinateOffset[Y_AXIS]);
+            Printer::pushWizardVar(Printer::coordinateOffset[Z_AXIS]);
+            Printer::MemoryPosition();
+			Extruder::current->retractDistance(FILAMENTCHANGE_SHORTRETRACT);
+            float newZ = FILAMENTCHANGE_Z_ADD + Printer::currentPosition[Z_AXIS];
+            Printer::currentPositionSteps[E_AXIS] = 0;
+            if(Printer::isHomedAll()) { // for safety move only when homed!
+                Printer::moveToReal(Printer::currentPosition[X_AXIS], Printer::currentPosition[Y_AXIS], newZ, 0, Printer::homingFeedrate[Z_AXIS]);
+                Printer::moveToReal(FILAMENTCHANGE_X_POS, FILAMENTCHANGE_Y_POS, newZ, 0, Printer::homingFeedrate[X_AXIS]);
+            }
+            //Extruder::current->retractDistance(FILAMENTCHANGE_LONGRETRACT);
+            Extruder::pauseExtruders(false);
+            Commands::waitUntilEndOfAllMoves();
+			pushMenu(&ui_wiz_jamreheat, true);
+			
+			
+		break;
         case UI_ACTION_X_UP:
         case UI_ACTION_X_DOWN:
             if(!allowMoves) return action;

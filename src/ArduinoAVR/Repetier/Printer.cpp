@@ -2666,7 +2666,60 @@ void Printer::stopPrint() {
     }
 #endif
 #endif
+#if defined (CRASH_DETECT)
+void Printer::TestCrashPins()
+{
+	uint8_t crash = 0;
+	
+	crash |= (READ(CRASH_X_PIN) << 0);
+	crash |= (READ(CRASH_Y_PIN) << 1);
+	crash |= (READ(CRASH_Z_PIN) << 2);
+	
+	if (crash)
+	{
+		
+	}
+		
+	
+}
+void Printer::CrashDetected()
+{
+	Printer::setInterruptEvent(PRINTER_INTERRUPT_EVENT_JAM_DETECTED, true);
+	uid.executeAction(UI_ACTION_WIZARD_JAM_EOF, true);
+	
+	            Printer::setJamcontrolDisabled(true);
+            Printer::setBlockingReceive(true);
+            Printer::resetWizardStack();
+            Printer::pushWizardVar(Printer::currentPositionSteps[E_AXIS]);
+            Printer::pushWizardVar(Printer::coordinateOffset[X_AXIS]);
+            Printer::pushWizardVar(Printer::coordinateOffset[Y_AXIS]);
+            Printer::pushWizardVar(Printer::coordinateOffset[Z_AXIS]);
+            Printer::MemoryPosition();
+            Extruder::current->retractDistance(FILAMENTCHANGE_SHORTRETRACT);
+            float newZ = FILAMENTCHANGE_Z_ADD + Printer::currentPosition[Z_AXIS];
+            Printer::currentPositionSteps[E_AXIS] = 0;
+            if(Printer::isHomedAll()) { // for safety move only when homed!
+                Printer::moveToReal(Printer::currentPosition[X_AXIS], Printer::currentPosition[Y_AXIS], newZ, 0, Printer::homingFeedrate[Z_AXIS]);
+                Printer::moveToReal(FILAMENTCHANGE_X_POS, FILAMENTCHANGE_Y_POS, newZ, 0, Printer::homingFeedrate[X_AXIS]);
+            }
+            //Extruder::current->retractDistance(FILAMENTCHANGE_LONGRETRACT);
+            Extruder::pauseExtruders(false);
+            Commands::waitUntilEndOfAllMoves();
+#if FILAMENTCHANGE_REHOME
+            Printer::disableXStepper();
+            Printer::disableYStepper();
+#if Z_HOME_DIR > 0 && FILAMENTCHANGE_REHOME == 2
+            Printer::disableZStepper();
+#endif
+#endif
+            pushMenu(&ui_wiz_jamreheat, true);
+			
+			
+			UI_ACTION_WIZARD_FILAMENTCHANGE
+			
+}
 
+#endif
 #if defined (AC_LOST_CONTROL)  //PRINTER_INTERRUPT_EVENT_AC_LOST_DETECTED
 extern bool AC_repeat;
 extern SDCard sd;
