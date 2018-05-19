@@ -2717,6 +2717,11 @@ void Commands::processMCode(GCode *com) {
     }
     break;
 #endif
+    case 969:
+    Com::printFLN(PSTR("CRASH DETECTED"));
+        Printer::CrashDetected();
+
+    break;
 	case 998:
 		UI_MESSAGE(com->S);
 		break;

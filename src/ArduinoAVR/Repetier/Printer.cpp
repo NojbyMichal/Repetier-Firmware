@@ -2697,22 +2697,29 @@ void Printer::stopPrint() {
 #endif
 #endif
 //#if defined (CRASH_DETECT)
-    uint8_t crashX = 1;
-	uint8_t crashY = 1;
-	uint8_t crashZ = 1;
+//  uint8_t crashX = 1;
+//	uint8_t crashY = 1;
+//	uint8_t crashZ = 1;
 void Printer::TestCrashPins()
 {
-	
-
-	//crash |= (READ(CRASH_X_PIN) << 0);
-	//crash |= (READ(CRASH_Y_PIN) << 1);
-	//crash |= (READ(CRASH_Z_PIN) << 2);
+	Com::printFLN(PSTR("X crash:"), (int16_t)READ(CRASH_X_PIN));
+	Com::printFLN(PSTR("Y crash:"), (int16_t)READ(CRASH_Y_PIN));
+	Com::printFLN(PSTR("Z crash:"), (int16_t)READ(CRASH_Z_PIN));
+	uint8_t crash = 0;
+	crash |= (READ(CRASH_X_PIN) << 0);
+	crash |= (READ(CRASH_Y_PIN) << 1);
+	crash |= (READ(CRASH_Z_PIN) << 2);
+	if (crash) 
+	{
+		GCode::executeFString("M969");
+		crash = 0;
+	}
+	/*
 	if (crashX && READ(CRASH_X_PIN))
 	{
 		Com::printFLN(PSTR("CRASH DETECTED  X!!!"));
 		crashX = 0;
 	}
-	/*
 	if (crashZ && READ(CRASH_Z_PIN))
 	{
 		Com::printFLN(PSTR("CRASH DETECTED  Z!!!"));
@@ -2729,6 +2736,11 @@ void Printer::TestCrashPins()
 }
 void Printer::CrashDetected()
 {
+
+	 		Com::printF(PSTR("sd mode:"), (int)sd.sdmode);
+            Com::printF(PSTR(" pos:"), sd.sdpos);
+            Com::printFLN(PSTR(" of "), sd.filesize);
+            //GCode::executeFString("M112");
 	/*
 	Com::printFLN(PSTR("}"));
 	Printer::setInterruptEvent(PRINTER_INTERRUPT_EVENT_JAM_DETECTED, true);
@@ -2783,6 +2795,12 @@ extern SDCard sd;
 			Extruder::setHeatedBedTemperature(0,false);
 			Com::printFLN(PSTR("HEATBED OFF"));
 			#endif
+
+			/*
+
+			sd.file.seekSet(sd.sdpos);
+
+			*/
 			//disable HEATER (2)
 			//Extruder::setTemperatureForExtruder(0, 0, false, false);
 			//block communication (3)

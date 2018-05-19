@@ -674,10 +674,10 @@ Values must be in range 1..255
 
 #define CRASH_DETECT 1
 
-#define CRASH_X_PIN  4
-#define CRASH_Y_PIN  5
-#define CRASH_Z_PIN  6
-#define TMC2130_TCOOLTHRS_CRASH 300
+#define CRASH_X_PIN  ORIG_X_MIN_PIN//4
+#define CRASH_Y_PIN  ORIG_Y_MIN_PIN //5
+#define CRASH_Z_PIN  ORIG_Z_MIN_PIN //6
+#define TMC2130_TCOOLTHRS_CRASH 100
 
 #endif
 
