@@ -459,6 +459,7 @@ It also can add a delay to wait for spindle to run on full speed.
 #define DRV_TMC2130
 
 // Uncomment if you use the stall guard for homing. Only for cartesian printers and xy direction
+#define SENSORLESS_HOMING
 
 // The drivers with set CS pin will be used, all others are normal step/dir/enable drivers
 #define TMC2130_X_CS_PIN 42
@@ -474,7 +475,7 @@ It also can add a delay to wait for spindle to run on full speed.
 /**  Global settings - these apply to all configured drivers
 Per-axis values will override these
 */
-#define TMC2130_STEALTHCHOP         1  // Enable extremely quiet stepping
+#define TMC2130_STEALTHCHOP         0  // Enable extremely quiet stepping
 #define TMC2130_INTERPOLATE_256  1  // Enable internal driver microstep interpolation
 #define TMC2130_STALLGUARD          0  // Sensorless homing sensitivity (between -63 and +64)
 
@@ -670,6 +671,13 @@ Values must be in range 1..255
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_2_TEXT "Unload Filament"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3 "G28\n G92 E0\n G91\n M109 S210\n G1 E50 F100\n G90\n G92 E0\n M84"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3_TEXT "Purge Filament"
+
+#define CRASH_DETECT 1
+
+#define CRASH_X_PIN  4
+#define CRASH_Y_PIN  5
+#define CRASH_Z_PIN  6
+#define TMC2130_TCOOLTHRS_CRASH 300
 
 #endif
 

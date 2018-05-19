@@ -3724,6 +3724,7 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
         break;
 #endif // EXTRUDER_JAM_CONTROL
 #endif // FEATURE_RETRACTION
+/*
 		case UI_ACTION_WIZARD_CRASH_DETECTED:
 			Printer::setBlockingReceive(true);
             Printer::resetWizardStack();
@@ -3746,6 +3747,7 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
 			
 			
 		break;
+    */
         case UI_ACTION_X_UP:
         case UI_ACTION_X_DOWN:
             if(!allowMoves) return action;

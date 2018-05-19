@@ -2732,6 +2732,13 @@ void Commands::processMCode(GCode *com) {
         AC_repeat = true;
         break;
 #endif // AC_LOST_CONTROL
+#if defined (CRASH_DETECT)
+    case 901:
+        Com::printFLN(PSTR("Stall X:"), (int16_t)READ(CRASH_X_PIN));
+        Com::printFLN(PSTR("Stall Y:"), (int16_t)READ(CRASH_Y_PIN));
+        Com::printFLN(PSTR("Stall Z:"), (int16_t)READ(CRASH_Z_PIN));
+        break;
+#endif
 #if defined(DRV_TMC2130)
     case 914: // Configure stallguard threshold on Trinamic TMC2130
         Com::printF(PSTR("Trinamic SGT"));

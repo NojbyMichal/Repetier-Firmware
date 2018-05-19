@@ -1,7 +1,10 @@
 #include "Repetier.h"
 #include <compat/twi.h>
+#include "Printer.h"
 
 unsigned int AC_lost_counterPeriodical = 0;
+unsigned int TMC_Crash_counterPeriodical = 0;
+
 bool AC_repeat = false;
 #if ANALOG_INPUTS > 0
 uint8 osAnalogInputCounter[ANALOG_INPUTS];
@@ -977,12 +980,22 @@ ISR(PWM_TIMER_VECTOR) {
 #endif
 #endif
     counterPeriodical++; // Approximate a 100ms timer
+#if defined (AC_LOST_CONTROL)     
     AC_lost_counterPeriodical++;
     if(AC_lost_counterPeriodical >= 4) //shoud run each 1ms
     {
         AC_lost_counterPeriodical=0;
         Printer::ACtestLost();
     }
+#endif
+//#if defined (CRASH_DETECT)
+     TMC_Crash_counterPeriodical++;
+    if(TMC_Crash_counterPeriodical >= 4)//shoud run each 1ms
+    {
+    TMC_Crash_counterPeriodical=0;
+    Printer::TestCrashPins();
+    }
+//#endif
     if(counterPeriodical >= (int)(F_CPU / 40960)) {
         counterPeriodical = 0;
         executePeriodical = 1;

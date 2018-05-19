@@ -1138,22 +1138,39 @@ void Printer::setup() {
 
 #endif //defined
 
+#if defined (CRASH_DETECT) && CRASH_X_PIN > -1 && CRASH_Y_PIN > -1 && CRASH_Z_PIN > -1
+SET_INPUT(CRASH_X_PIN);
+SET_INPUT(CRASH_Y_PIN);
+SET_INPUT(CRASH_Z_PIN);
+
+#endif //defined
+
 #if defined(DRV_TMC2130)
     // TMC2130 motor drivers
-#if TMC2130_ON_X
+#if TMC2130_ON_X > 0
     Printer::tmc_driver_x = new TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, TMC2130_X_CS_PIN);
     configTMC2130(Printer::tmc_driver_x, TMC2130_STEALTHCHOP_X, TMC2130_STALLGUARD_X,
     TMC2130_PWM_AMPL_X, TMC2130_PWM_GRAD_X, TMC2130_PWM_AUTOSCALE_X, TMC2130_PWM_FREQ_X);
+#if defined (CRASH_DETECT)
+	tmcPrepareCrashSettings(Printer::tmc_driver_x, TMC2130_TCOOLTHRS_CRASH);
 #endif
+#endif
+
 #if TMC2130_ON_Y > 0
     Printer::tmc_driver_y = new TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, TMC2130_Y_CS_PIN);
     configTMC2130(Printer::tmc_driver_y, TMC2130_STEALTHCHOP_Y, TMC2130_STALLGUARD_Y,
     TMC2130_PWM_AMPL_Y, TMC2130_PWM_GRAD_Y, TMC2130_PWM_AUTOSCALE_Y, TMC2130_PWM_FREQ_Y);
+#if defined (CRASH_DETECT)
+	tmcPrepareCrashSettings(Printer::tmc_driver_y, TMC2130_TCOOLTHRS_CRASH);
+#endif
 #endif
 #if TMC2130_ON_Z > 0
     Printer::tmc_driver_z = new TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, TMC2130_Z_CS_PIN);
     configTMC2130(Printer::tmc_driver_z, TMC2130_STEALTHCHOP_Z, TMC2130_STALLGUARD_Z,
     TMC2130_PWM_AMPL_Z, TMC2130_PWM_GRAD_Z, TMC2130_PWM_AUTOSCALE_Z, TMC2130_PWM_FREQ_Z);
+#if defined (CRASH_DETECT)
+	tmcPrepareCrashSettings(Printer::tmc_driver_z, TMC2130_TCOOLTHRS_CRASH);
+#endif
 #endif
 #if TMC2130_ON_EXT0 > 0
     Printer::tmc_driver_e0 = new TMC2130Stepper(EXT0_ENABLE_PIN, EXT0_DIR_PIN, EXT0_STEP_PIN, TMC2130_EXT0_CS_PIN);
@@ -2665,25 +2682,55 @@ void Printer::stopPrint() {
         tmc_driver->diag1_active_high(true);            // StallGuard pulses active high
     }
 #endif
+#if defined(CRASH_DETECT)
+    void Printer::tmcPrepareCrashSettings(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min) {
+        while(!tmc_driver->stst());                     // Wait for motor stand-still
+        tmc_driver->stealth_max_speed(0);               // Upper speedlimit for stealthChop
+        tmc_driver->stealthChop(false);                 // Turn off stealthChop
+        tmc_driver->coolstep_min_speed(coolstep_sp_min);// Minimum speed for StallGuard trigerring
+        //tmc_driver->sg_filter(false);                   // Turn off StallGuard filtering
+        tmc_driver->diag0_stall(true);
+        tmc_driver->diag0_active_high(true);   
+        tmc_driver->diag1_stall(true);                  // Signal StallGuard on DIAG1 pin
+        tmc_driver->diag1_active_high(true);            // StallGuard pulses active high
+    }
 #endif
-#if defined (CRASH_DETECT)
+#endif
+//#if defined (CRASH_DETECT)
+    uint8_t crashX = 1;
+	uint8_t crashY = 1;
+	uint8_t crashZ = 1;
 void Printer::TestCrashPins()
 {
-	uint8_t crash = 0;
 	
-	crash |= (READ(CRASH_X_PIN) << 0);
-	crash |= (READ(CRASH_Y_PIN) << 1);
-	crash |= (READ(CRASH_Z_PIN) << 2);
-	
-	if (crash)
+
+	//crash |= (READ(CRASH_X_PIN) << 0);
+	//crash |= (READ(CRASH_Y_PIN) << 1);
+	//crash |= (READ(CRASH_Z_PIN) << 2);
+	if (crashX && READ(CRASH_X_PIN))
 	{
-		
+		Com::printFLN(PSTR("CRASH DETECTED  X!!!"));
+		crashX = 0;
 	}
-		
+	/*
+	if (crashZ && READ(CRASH_Z_PIN))
+	{
+		Com::printFLN(PSTR("CRASH DETECTED  Z!!!"));
+		crashZ = 0;
+	}
 	
+	if (crashY && READ(CRASH_Y_PIN))
+	{
+		Com::printFLN(PSTR("CRASH DETECTED  Y!!!"));
+		crashY = 0;
+	}
+	*/
+
 }
 void Printer::CrashDetected()
 {
+	/*
+	Com::printFLN(PSTR("}"));
 	Printer::setInterruptEvent(PRINTER_INTERRUPT_EVENT_JAM_DETECTED, true);
 	uid.executeAction(UI_ACTION_WIZARD_JAM_EOF, true);
 	
@@ -2716,10 +2763,10 @@ void Printer::CrashDetected()
 			
 			
 			UI_ACTION_WIZARD_FILAMENTCHANGE
-			
+	*/		
 }
 
-#endif
+//#endif
 #if defined (AC_LOST_CONTROL)  //PRINTER_INTERRUPT_EVENT_AC_LOST_DETECTED
 extern bool AC_repeat;
 extern SDCard sd;

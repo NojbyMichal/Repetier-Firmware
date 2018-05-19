@@ -1271,9 +1271,16 @@ public:
     static void configTMC2130(TMC2130Stepper* tmc_driver, bool tmc_stealthchop, int8_t tmc_sgt,
       uint8_t tmc_pwm_ampl, uint8_t tmc_pwm_grad, bool tmc_pwm_autoscale, uint8_t tmc_pwm_freq);
     static void tmcPrepareHoming(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min);
+    #if defined (CRASH_DETECT)
+        static void tmcPrepareCrashSettings(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min);
+    #endif
 #endif
 #if defined (AC_LOST_CONTROL)    
 static void ACtestLost();
+#endif
+#if defined (CRASH_DETECT)
+static void CrashDetected();
+static void TestCrashPins();
 #endif
 };
 
