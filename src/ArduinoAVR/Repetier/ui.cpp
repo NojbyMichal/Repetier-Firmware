@@ -2569,6 +2569,21 @@ int UIDisplay::okAction(bool allowMoves) {
                 Printer::setBlockingReceive(false);
             }
             break;
+#if CRASH_DETECT
+
+			case UI_ACTION_WIZARD_CRASH_BEGIN:
+			break;
+			
+			case UI_ACTION_WIZARD_CRASH_WAITHEAT:
+			break;
+			
+			case UI_ACTION_WIZARD_CRASH_REHEAT:
+			break;
+			
+			case UI_ACTION_WIZARD_CRASH_RESTART:
+			break;
+			
+#endif			
 #if EXTRUDER_JAM_CONTROL
             case UI_ACTION_WIZARD_JAM_REHEAT: // user saw problem and takes action
                 popMenu(false);
