@@ -320,6 +320,10 @@
 #define UI_ACTION_WIZARD_JAM_WAITHEAT    5002
 #define UI_ACTION_WIZARD_JAM_EOF         5003
 
+#define UI_ACTION_WIZARD_CRASH_BEGIN     5500
+#define UI_ACTION_WIZARD_CRASH_WAITHEAT  5501
+#define UI_ACTION_WIZARD_CRASH_REHEAT    5502
+#define UI_ACTION_WIZARD_CRASH_RESTART   5503
 // Load basic language definition to make sure all values are defined
 //#include "uilang.h"
 

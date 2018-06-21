@@ -1134,9 +1134,18 @@ void Printer::setup() {
     WRITE(BLUE_STATUS_LED, HIGH);
     WRITE(RED_STATUS_LED, LOW);
 #endif // RED_BLUE_STATUS_LEDS
+
+#if defined (CRASH_DETECT) 
+
+   #if (CRASH_X_PIN > -1 && CRASH_Y_PIN > -1 && CRASH_Z_PIN > -1)
+    SET_INPUT(CRASH_X_PIN);
+    SET_INPUT(CRASH_Y_PIN);
+    SET_INPUT(CRASH_Z_PIN);
+    #endif
+#endif
 #if defined(DRV_TMC2130)
     // TMC2130 motor drivers
-#if TMC2130_ON_X
+#if TMC2130_ON_X > 0
     Printer::tmc_driver_x = new TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, TMC2130_X_CS_PIN);
     configTMC2130(Printer::tmc_driver_x, TMC2130_STEALTHCHOP_X, TMC2130_STALLGUARD_X,
     TMC2130_PWM_AMPL_X, TMC2130_PWM_GRAD_X, TMC2130_PWM_AUTOSCALE_X, TMC2130_PWM_FREQ_X);
@@ -1357,6 +1366,7 @@ void Printer::homeYAxis() {
     }
 }
 void Printer::homeZAxis() { // Delta z homing
+    
     bool homingSuccess = false;
     Endstops::resetAccumulator();
     deltaMoveToTopEndstops(Printer::homingFeedrate[Z_AXIS]);
@@ -2646,6 +2656,13 @@ void Printer::stopPrint() {
         tmc_driver->pwm_freq(tmc_pwm_freq);             // Chopper PWM frequency selection
         tmc_driver->stealthChop(tmc_stealthchop);       // Enable extremely quiet stepping
         tmc_driver->sg_stall_value(tmc_sgt);            // StallGuard sensitivity
+
+            tmc_driver->coolstep_min_speed(0xFFFFF); // 20bit max
+    tmc_driver->THIGH(0);
+    tmc_driver->semin(5);
+    tmc_driver->semax(2);
+    tmc_driver->sedn(0b01);
+    
     }
 
 #if defined(SENSORLESS_HOMING)
@@ -2657,7 +2674,90 @@ void Printer::stopPrint() {
         tmc_driver->sg_filter(false);                   // Turn off StallGuard filtering
         tmc_driver->diag1_stall(true);                  // Signal StallGuard on DIAG1 pin
         tmc_driver->diag1_active_high(true);            // StallGuard pulses active high
+        tmc_driver->diag0_stall(true);
+        tmc_driver->diag0_active_high(true);  
     }
+#endif
+
+
+#if defined(CRASH_DETECT)
+    void Printer::tmcPrepareCrashSettings(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min) {
+        while(!tmc_driver->stst());                     // Wait for motor stand-still
+        tmc_driver->stealth_max_speed(0);               // Upper speedlimit for stealthChop
+        tmc_driver->stealthChop(false);                 // Turn off stealthChop
+        tmc_driver->coolstep_min_speed(coolstep_sp_min);// Minimum speed for StallGuard trigerring
+        //tmc_driver->sg_filter(false);                   // Turn off StallGuard filtering
+        tmc_driver->diag0_stall(true);
+        tmc_driver->diag0_active_high(true);   
+        tmc_driver->diag1_stall(true);                  // Signal StallGuard on DIAG1 pin
+        tmc_driver->diag1_active_high(true);            // StallGuard pulses active high
+        Com::printFLN(PSTR("2"));
+    }
+
+    void Printer::tmcStartCrashSettings()
+    {
+         Com::printFLN(PSTR("ONE"));
+    tmcPrepareCrashSettings(Printer::tmc_driver_x, TMC2130_TCOOLTHRS_CRASH);
+    tmcPrepareCrashSettings(Printer::tmc_driver_y, TMC2130_TCOOLTHRS_CRASH);
+    tmcPrepareCrashSettings(Printer::tmc_driver_z, TMC2130_TCOOLTHRS_CRASH);
+    Com::printFLN(PSTR("OK!!!!"));
+    }
+    void Printer::tmcFinishCrashSettings()
+    {
+    configTMC2130(Printer::tmc_driver_x, TMC2130_STEALTHCHOP_X, TMC2130_STALLGUARD_X,
+    TMC2130_PWM_AMPL_X, TMC2130_PWM_GRAD_X, TMC2130_PWM_AUTOSCALE_X, TMC2130_PWM_FREQ_X);
+
+    configTMC2130(Printer::tmc_driver_y, TMC2130_STEALTHCHOP_Y, TMC2130_STALLGUARD_Y,
+    TMC2130_PWM_AMPL_Y, TMC2130_PWM_GRAD_Y, TMC2130_PWM_AUTOSCALE_Y, TMC2130_PWM_FREQ_Y);
+
+    configTMC2130(Printer::tmc_driver_z, TMC2130_STEALTHCHOP_Z, TMC2130_STALLGUARD_Z,
+    TMC2130_PWM_AMPL_Z, TMC2130_PWM_GRAD_Z, TMC2130_PWM_AUTOSCALE_Z, TMC2130_PWM_FREQ_Z);
+    }
+
+#endif
+
+#if defined (CRASH_DETECT)
+void Printer::TestCrashPins()
+{
+    
+    if (READ(CRASH_X_PIN))
+    {
+      Com::printFLN(PSTR("X crash:"), (int16_t)READ(CRASH_X_PIN));  
+    }
+    if (READ(CRASH_Y_PIN))
+    {
+    Com::printFLN(PSTR("Y crash:"), (int16_t)READ(CRASH_Y_PIN));
+    }
+    if (READ(CRASH_Z_PIN))
+    {
+       Com::printFLN(PSTR("Z crash:"), (int16_t)READ(CRASH_Z_PIN)); 
+    }
+    
+    
+    
+
+uint8_t crash = 0;
+    
+    crash |= (READ(CRASH_X_PIN) << 0);
+    crash |= (READ(CRASH_Y_PIN) << 1);
+    crash |= (READ(CRASH_Z_PIN) << 2);
+    
+    if (crash)
+    {
+        GCode::executeFString("M969");
+        crash = 0;
+    }
+}
+
+void Printer::CrashDetected()
+{
+            Com::printFLN(PSTR("CRASH DETECTED  !!!"));
+            
+            Com::printF(PSTR("sd mode:"), (int)sd.sdmode);
+            Com::printF(PSTR(" pos:"), sd.sdpos);
+            Com::printFLN(PSTR(" of "), sd.filesize);
+            //GCode::executeFString("M112");
+}
 #endif
 
 #endif

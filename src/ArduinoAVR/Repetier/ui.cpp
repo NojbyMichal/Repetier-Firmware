@@ -2540,6 +2540,27 @@ int UIDisplay::okAction(bool allowMoves) {
         action = pgm_read_word(&(men->id));
         if(!EVENT_UI_OVERRIDE_EXECUTE(action, allowMoves))
             switch(action) {
+#if CRASH_DETECT
+        case UI_ACTION_WIZARD_CRASH_BEGIN:
+            
+            uid.popMenu(false);
+            Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_BEGIN"));
+            uid.popMenu(true);
+        break;
+        case UI_ACTION_WIZARD_CRASH_WAITHEAT:
+            Printer::homeAxis(false, false, true);
+            Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_WAITHEAT"));
+        break;
+        case UI_ACTION_WIZARD_CRASH_REHEAT:
+            
+            Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_REHEAT"));
+        break;
+        case UI_ACTION_WIZARD_CRASH_RESTART:
+            
+            Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_RESTART"));
+
+        break;
+#endif                
 #if FEATURE_RETRACTION
             case UI_ACTION_WIZARD_FILAMENTCHANGE: { // filament change is finished
 //            BEEP_SHORT;
@@ -2569,6 +2590,8 @@ int UIDisplay::okAction(bool allowMoves) {
                 Printer::setBlockingReceive(false);
             }
             break;
+#endif             
+
 #if EXTRUDER_JAM_CONTROL
             case UI_ACTION_WIZARD_JAM_REHEAT: // user saw problem and takes action
                 popMenu(false);
@@ -2873,6 +2896,20 @@ ZPOS2:
         PrintLine::moveRelativeDistanceInSteps(0, 0, 0, Printer::axisStepsPerMM[E_AXIS]*increment / Printer::extrusionFactor, UI_SET_EXTRUDER_FEEDRATE, true, false, false);
         Commands::printCurrentPosition();
         break;
+#if CRASH_DETECT
+        case UI_ACTION_WIZARD_CRASH_BEGIN:
+            Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_BEGIN"));
+        break;
+        case UI_ACTION_WIZARD_CRASH_WAITHEAT:
+             Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_WAITHEAT"));
+        break;
+        case UI_ACTION_WIZARD_CRASH_REHEAT:
+            Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_REHEAT"));
+        break;
+        case UI_ACTION_WIZARD_CRASH_RESTART:
+            Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_RESTART"));
+        break;
+#endif  
 #if FEATURE_RETRACTION
     case UI_ACTION_WIZARD_FILAMENTCHANGE: // filament change is finished
         Extruder::current->retractDistance(-increment);
@@ -3665,6 +3702,24 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
             pushMenu(&UI_USERMENU10, false);
             break;
 #endif
+#if CRASH_DETECT
+        case UI_ACTION_WIZARD_CRASH_BEGIN:
+            pushMenu(&ui_menu_crash_ask, true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_BEGIN"));
+        break;
+        case UI_ACTION_WIZARD_CRASH_WAITHEAT:
+            pushMenu(&ui_wiz_crashdetectwaitheat, true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_WAITHEAT"));
+        break;
+        case UI_ACTION_WIZARD_CRASH_REHEAT:
+            pushMenu(&ui_wiz_crashdetectreheat, true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_REHEAT"));
+        break;
+        case UI_ACTION_WIZARD_CRASH_RESTART:
+            pushMenu(&ui_wiz_crashdetectrestart, true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_RESTART"));
+        break;
+#endif            
 #if FEATURE_RETRACTION
         case UI_ACTION_WIZARD_FILAMENTCHANGE: {
             popMenu(false);
@@ -4201,7 +4256,7 @@ const int8_t encoder_table[16] PROGMEM = {0, 0, -1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0
 const int8_t encoder_table[16] PROGMEM = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0}; // Quart speed
 #endif
 #endif
-#endif
+//#endif
 
 #if defined(CUSTOM_EVENTS)
 #include "CustomEventsImpl.h"

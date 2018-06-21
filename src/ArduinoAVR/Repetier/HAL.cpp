@@ -1,5 +1,9 @@
 #include "Repetier.h"
 #include <compat/twi.h>
+#include "Printer.h"
+
+unsigned int TMC_Crash_counterPeriodical = 0;
+unsigned int AC_lost_counterPeriodical = 0;
 
 #if ANALOG_INPUTS > 0
 uint8 osAnalogInputCounter[ANALOG_INPUTS];
@@ -974,6 +978,24 @@ ISR(PWM_TIMER_VECTOR) {
     if(pwm_pos_set[NUM_EXTRUDER] == pwm_count_heater && pwm_pos_set[NUM_EXTRUDER] != HEATER_PWM_MASK) WRITE(HEATED_BED_HEATER_PIN, HEATER_PINS_INVERTED);
 #endif
 #endif
+#if defined (AC_LOST_CONTROL)
+     AC_lost_counterPeriodical++;
+     if(AC_lost_counterPeriodical >= 4) //shoud run each 1ms
+     {
+        AC_lost_counterPeriodical=0;
+        Printer::ACtestLost();
+     }
+#endif
+//#if defined (CRASH_DETECT)
+     TMC_Crash_counterPeriodical++;
+     if(TMC_Crash_counterPeriodical >= 4)//shoud run each 1ms
+     {
+
+        TMC_Crash_counterPeriodical=0;
+        Printer::TestCrashPins();
+     }
+//#endif
+
     counterPeriodical++; // Approximate a 100ms timer
     if(counterPeriodical >= (int)(F_CPU / 40960)) {
         counterPeriodical = 0;

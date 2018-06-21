@@ -257,6 +257,7 @@ It also can add a delay to wait for spindle to run on full speed.
 #define ENDSTOP_PULLUP_X_MAX true
 #define ENDSTOP_X_MAX_INVERTING false
 #define MAX_HARDWARE_ENDSTOP_X true
+
 #define ENDSTOP_PULLUP_Y_MAX true
 #define ENDSTOP_Y_MAX_INVERTING false
 #define MAX_HARDWARE_ENDSTOP_Y true
@@ -505,6 +506,8 @@ but endstops trigger prematurely or don't trigger at all.
 The exact value is dependent on the duration of one microstep,
 but good approximations can be determined by experimentation.
 */
+
+#define SENSORLESS_HOMING 
 #define TMC2130_TCOOLTHRS_X 300
 #define TMC2130_TCOOLTHRS_Y 300
 #define TMC2130_TCOOLTHRS_Z 300
@@ -671,14 +674,47 @@ Values must be in range 1..255
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3 "G28\n G92 E0\n G91\n M109 S210\n G1 E50 F100\n G90\n G92 E0\n M84"
 #define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_3_TEXT "Purge Filament"
 
+#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_4_TEXT ""
+#define USER_QUICK_MENU_ITEM_CUSTOM_SCRIPT_5_TEXT ""
+
+
 #define SERVICE_MENU
-#define UI_TEXT_SERVICE_MENU_TEXT "Service menu"
+#define UI_TEXT_SERVICE_MENU_TEXT "Service 2222"
 #define UI_SERVICE_MENU_ITEM1 "M190 S55\n G32 S2"
-#define SERVICE_MENU_ITEM1_TEXT "Z home calib"
+#define UI_SERVICE_MENU_ITEM1_TEXT "Z home calib"
 #define UI_SERVICE_MENU_ITEM2 "M303 S205 C10 X10"
-#define SERVICE_MENU_ITEM2_TEXT "PID tuning"
+#define UI_SERVICE_MENU_ITEM2_TEXT "PID tuning"
 #define UI_SERVICE_MENU_ITEM3 "M512"
-#define SERVICE_MENU_ITEM3_TEXT "Fila Sens Check"
+#define UI_SERVICE_MENU_ITEM3_TEXT "Fila Sens Check"
+//#define UI_SERVICE_MENU_ITEM4 "M512"
+#define UI_SERVICE_MENU_ITEM4_TEXT ""
+//#define UI_SERVICE_MENU_ITEM5 "M512"
+#define UI_SERVICE_MENU_ITEM5_TEXT ""
+
+
+#define CRASH_DETECT 1
+
+#define CRASH_X_PIN  4
+#define CRASH_Y_PIN  5
+#define CRASH_Z_PIN  6
+#define TMC2130_TCOOLTHRS_CRASH 400
+
+#define UI_TEXT_WIZ_CRASH_11_TEXT "TEXT A"
+#define UI_TEXT_WIZ_CRASH_12_TEXT "TEXT B"
+#define UI_TEXT_WIZ_CRASH_13_TEXT "TEXT C"
+
+#define UI_TEXT_WIZ_CRASH_21_TEXT "TEXT D"
+#define UI_TEXT_WIZ_CRASH_22_TEXT "TEXT E"
+#define UI_TEXT_WIZ_CRASH_23_TEXT "TEXT F"
+
+#define UI_TEXT_WIZ_CRASH_31_TEXT "TEXT G"
+#define UI_TEXT_WIZ_CRASH_32_TEXT "TEXT H"
+#define UI_TEXT_WIZ_CRASH_33_TEXT "TEXT I"
+
+#define UI_TEXT_WIZ_CRASH_41_TEXT "TEXT J"
+#define UI_TEXT_WIZ_CRASH_42_TEXT "TEXT K"
+#define UI_TEXT_WIZ_CRASH_43_TEXT "TEXT L"
+
 
 #endif
 
