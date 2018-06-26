@@ -40,7 +40,7 @@ enum debugFlags {DEB_ECHO = 0x1, DEB_INFO = 0x2, DEB_ERROR = 0x4,DEB_DRYRUN = 0x
 /** Uncomment, to see detailed data for every move. Only for debugging purposes! */
 //#define DEBUG_QUEUE_MOVE
 /** write infos about path planner changes */
-//#define DEBUG_PLANNER
+#define DEBUG_PLANNER
 /** Allows M111 to set bit 5 (16) which disables all commands except M111. This can be used
 to test your data throughput or search for communication problems. */
 #define INCLUDE_DEBUG_COMMUNICATION 1
@@ -65,7 +65,7 @@ usage or for searching for memory induced errors. Switch it off for production, 
 //#define DEBUG_DELTA_OVERFLOW
 //#define DEBUG_DELTA_REALPOS
 //#define DEBUG_SPLIT
-#define DEBUG_JAM
+//#define DEBUG_JAM
 // Find the longest segment length during a print
 //#define DEBUG_SEGMENT_LENGTH
 // Find the maximum real jerk during a print
@@ -73,7 +73,7 @@ usage or for searching for memory induced errors. Switch it off for production, 
 // Debug reason for not mounting a sd card
 //#define DEBUG_SD_ERROR
 // Uncomment the following line to enable debugging. You can better control debugging below the following line
-//#define DEBUG
+#define DEBUG
 
 #define DEBUG_MSG(x) {if(Printer::debugEcho()) { Com::printFLN(PSTR(x));HAL::delayMilliseconds(20);}}
 #define DEBUG_MSG2(x,y) {if(Printer::debugEcho()) {Com::printFLN(PSTR(x),y);HAL::delayMilliseconds(20);}}

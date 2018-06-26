@@ -2543,20 +2543,30 @@ int UIDisplay::okAction(bool allowMoves) {
 #if CRASH_DETECT
         case UI_ACTION_WIZARD_CRASH_BEGIN:
             
-            uid.popMenu(false);
+            //uid.popMenu(false);
             Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_BEGIN"));
-            uid.popMenu(true);
+            //uid.popMenu(true);
         break;
         case UI_ACTION_WIZARD_CRASH_WAITHEAT:
-            Printer::homeAxis(false, false, true);
             Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_WAITHEAT"));
+            pushMenu(&ui_wiz_crashdetectrestart, true);
         break;
-        case UI_ACTION_WIZARD_CRASH_REHEAT:
-            
-            Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_REHEAT"));
+        case UI_ACTION_WIZARD_CRASH_ASKHEAT:
+            pushMenu(&ui_wiz_crashdetectwaitheat, true);
+            Printer::homeAxis(false, false, true);
+            Extruder::unpauseExtruders(false);
+            Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_ASKHEAT"));
+            /*
+            popMenu(false);
+            pushMenu(&ui_wiz_jamwaitheat, true);
+            Extruder::unpauseExtruders();
+            popMenu(false);
+            pushMenu(&ui_wiz_filamentchange, true);
+            */
         break;
         case UI_ACTION_WIZARD_CRASH_RESTART:
-            
+            //pushMenu(&ui_wiz_crashdetectrestart, true);
+            popMenu(true);
             Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_RESTART"));
 
         break;
@@ -2897,14 +2907,19 @@ ZPOS2:
         Commands::printCurrentPosition();
         break;
 #if CRASH_DETECT
+        /*
         case UI_ACTION_WIZARD_CRASH_BEGIN:
             Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_BEGIN"));
         break;
+        */
         case UI_ACTION_WIZARD_CRASH_WAITHEAT:
              Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_WAITHEAT"));
+             Extruder::current->retractDistance(-increment);
+             Commands::waitUntilEndOfAllMoves();
+             Extruder::current->disableCurrentExtruderMotor();
         break;
-        case UI_ACTION_WIZARD_CRASH_REHEAT:
-            Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_REHEAT"));
+        case UI_ACTION_WIZARD_CRASH_ASKHEAT:
+            Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_ASKHEAT"));
         break;
         case UI_ACTION_WIZARD_CRASH_RESTART:
             Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_RESTART"));
@@ -3707,14 +3722,25 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
             pushMenu(&ui_menu_crash_ask, true);
             Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_BEGIN"));
         break;
+        case UI_ACTION_WIZARD_CRASH_CANCEL:
+            Printer::homeAxis(true, true, true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_CANCEL"));
+        break;
+         case UI_ACTION_WIZARD_CRASH_ASKHEAT:
+            pushMenu(&ui_wiz_crashdetectaskheat, true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_ASKHEAT"));
+            //Printer::homeAxis(true, true, true);
+            
+        break;
+
         case UI_ACTION_WIZARD_CRASH_WAITHEAT:
+            //pushMenu(&ui_wiz_crashdetectreheat, true);
+
+            
             pushMenu(&ui_wiz_crashdetectwaitheat, true);
             Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_WAITHEAT"));
         break;
-        case UI_ACTION_WIZARD_CRASH_REHEAT:
-            pushMenu(&ui_wiz_crashdetectreheat, true);
-            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_REHEAT"));
-        break;
+       
         case UI_ACTION_WIZARD_CRASH_RESTART:
             pushMenu(&ui_wiz_crashdetectrestart, true);
             Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_RESTART"));
@@ -3939,7 +3965,7 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
             Com::printF(PSTR(" Buf. Write Idx:"), (int)GCode::bufferWriteIndex);
             Com::printF(PSTR(" Comment:"), (int)GCode::commentDetected);
             Com::printF(PSTR(" Buf. Len:"), (int)GCode::bufferLength);
-            Com::printF(PSTR(" Wait resend:"), (int)GCode::waitingForResend);
+            //Com::printF(PSTR(" Wait resend:"), (int)GCode::waitingForResend);
             Com::printFLN(PSTR(" Recv. Write Pos:"), (int)GCode::commandsReceivingWritePosition);
             //Com::printF(PSTR("Min. XY Speed:"),Printer::minimumSpeed);
             //Com::printF(PSTR(" Min. Z Speed:"),Printer::minimumZSpeed);

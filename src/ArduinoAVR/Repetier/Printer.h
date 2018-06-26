@@ -1276,6 +1276,7 @@ public:
 #endif
 #if defined (CRASH_DETECT)
 static void CrashDetected();
+static void CrashRecover();
 static void TestCrashPins();
 #endif
 };

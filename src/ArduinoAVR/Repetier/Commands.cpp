@@ -2727,9 +2727,8 @@ void Commands::processMCode(GCode *com) {
 #if defined (CRASH_DETECT)
     case 969:
     Com::printFLN(PSTR("CRASH DETECTED"));
-    uid.executeAction(UI_ACTION_WIZARD_CRASH_BEGIN, true);
 
-       // Printer::CrashDetected();
+    Printer::CrashDetected();
 
     break;
     case 968:

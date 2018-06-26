@@ -2719,28 +2719,22 @@ void Printer::stopPrint() {
 #if defined (CRASH_DETECT)
 void Printer::TestCrashPins()
 {
-    
+    uint8_t crash = 0;
     if (READ(CRASH_X_PIN))
     {
+         crash = 1;
       Com::printFLN(PSTR("X crash:"), (int16_t)READ(CRASH_X_PIN));  
     }
     if (READ(CRASH_Y_PIN))
     {
+         crash = 1;
     Com::printFLN(PSTR("Y crash:"), (int16_t)READ(CRASH_Y_PIN));
     }
     if (READ(CRASH_Z_PIN))
     {
+        crash = 1;
        Com::printFLN(PSTR("Z crash:"), (int16_t)READ(CRASH_Z_PIN)); 
     }
-    
-    
-    
-
-uint8_t crash = 0;
-    
-    crash |= (READ(CRASH_X_PIN) << 0);
-    crash |= (READ(CRASH_Y_PIN) << 1);
-    crash |= (READ(CRASH_Z_PIN) << 2);
     
     if (crash)
     {
@@ -2748,7 +2742,7 @@ uint8_t crash = 0;
         crash = 0;
     }
 }
-
+float printingFilePosition = 0;
 void Printer::CrashDetected()
 {
             Com::printFLN(PSTR("CRASH DETECTED  !!!"));
@@ -2756,7 +2750,139 @@ void Printer::CrashDetected()
             Com::printF(PSTR("sd mode:"), (int)sd.sdmode);
             Com::printF(PSTR(" pos:"), sd.sdpos);
             Com::printFLN(PSTR(" of "), sd.filesize);
-            //GCode::executeFString("M112");
+
+
+    printingFilePosition = sd.sdpos;
+    Com::printFLN(PSTR("position: "), printingFilePosition);
+    Com::printFLN(PSTR("SAVED SDPOS"));
+
+    
+    
+    
+    GCodeSource::removeSource(&sdSource);
+    Com::printFLN(PSTR("REMOVED SOURCE"));  
+
+    Printer::setMenuMode(MENU_MODE_SD_PRINTING,false);
+    Printer::setMenuMode(MENU_MODE_PAUSED,false);
+    Printer::setPrinting(0);
+
+    
+    PrintLine::linesWritePos = 0;
+    PrintLine::linesCount = 0;
+    PrintLine::linesPos = 0;
+    
+    Printer::kill(true);
+    
+   
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3);
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3);
+    Extruder::pauseExtruders(false);
+
+
+    uid.executeAction(UI_ACTION_WIZARD_CRASH_BEGIN, true);    
+
+    // chybí retrakce !!!
+    
+    /*
+    homeZAxis();
+    
+    Com::printFLN(PSTR("G28")); 
+    */
+    /*
+    if(Printer::isMenuMode(MENU_MODE_SD_PRINTING)) {
+        sd.stopPrint();
+    }
+    sd.sdmode = 2;
+    sd.sdmode = 0;
+*/
+    sd.sdmode = 0;
+    
+    /*
+     //PrintLine::resetPathPlanner();
+    //Commands::waitUntilEndOfAllMoves();
+
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::currentPosition[Z_AXIS] + 10,
+                            Printer::memoryE - RETRACT_ON_PAUSE,
+                            Printer::maxFeedrate[E_AXIS] / 2);
+    */
+    
+
+    /*
+    Com::printF(PSTR("XS:"), Printer::currentPositionSteps[X_AXIS]);
+            Com::printF(PSTR(" YS:"), Printer::currentPositionSteps[Y_AXIS]);
+            Com::printFLN(PSTR(" ZS:"), Printer::currentPositionSteps[Z_AXIS]);
+
+
+    Com::printFLN(PSTR("RESETTED PLANNER")); 
+
+  
+    Printer::MemoryPosition();
+    Com::printFLN(PSTR("MEMORIZED POSITION"));   
+    // retract E
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, IGNORE_COORDINATE,
+                            Printer::memoryE - RETRACT_ON_PAUSE,
+                            Printer::maxFeedrate[E_AXIS] / 2);
+    Com::printFLN(PSTR("RETRACTED"));
+
+    // raise Z
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::memoryZ + 10,
+                            Printer::memoryE - RETRACT_ON_PAUSE,
+                            Printer::maxFeedrate[E_AXIS] / 2);
+    Com::printFLN(PSTR("RAISED Z")); 
+               
+    //disable heater (bed ?)
+    Extruder::setTemperatureForExtruder(0, 0, false, false);
+    Com::printFLN(PSTR("HOTEND OFF"));  
+    //save everething + position of sd to eeprom
+    
+    // home Z
+    GCode::executeFString("G28");
+    Com::printFLN(PSTR("G28")); 
+    
+    //stop print
+     sd.stopPrint();
+     Printer::setPrinting(false);
+    Com::printFLN(PSTR("STOPPED PRINTING"));    
+
+    //save that crash was detected to eeprom due to lost AC or power down
+    
+    // run wizzard
+    
+    */
+}
+
+void Printer::CrashRecover()
+{
+    if (printingFilePosition !=0)
+    {
+    Com::printFLN(PSTR("RECOVER BEGIN"));   
+    
+    GCode::executeFString("G28");
+    Com::printFLN(PSTR("G28"));     
+    Com::printFLN(PSTR(" filename:"),Printer::printName);       
+    sd.selectFile(Printer::printName);
+    Extruder::setTemperatureForExtruder(210, 0, false, true);
+    //set FAN
+    
+    //set speed 
+
+    //set position of file
+    sd.setIndex(printingFilePosition);
+
+    sd.startPrint();
+
+    Com::printFLN(PSTR("RECOVER END")); 
+        
+    }
+    else
+    {
+    Com::printFLN(PSTR("RECOVER UNSUCCESSFUL"));    
+    }
+    
 }
 #endif
 

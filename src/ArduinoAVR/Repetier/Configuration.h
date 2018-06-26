@@ -679,7 +679,7 @@ Values must be in range 1..255
 
 
 #define SERVICE_MENU
-#define UI_TEXT_SERVICE_MENU_TEXT "Service 2222"
+#define UI_TEXT_SERVICE_MENU_TEXT "Service menu"
 #define UI_SERVICE_MENU_ITEM1 "M190 S55\n G32 S2"
 #define UI_SERVICE_MENU_ITEM1_TEXT "Z home calib"
 #define UI_SERVICE_MENU_ITEM2 "M303 S205 C10 X10"
@@ -699,21 +699,23 @@ Values must be in range 1..255
 #define CRASH_Z_PIN  6
 #define TMC2130_TCOOLTHRS_CRASH 400
 
-#define UI_TEXT_WIZ_CRASH_11_TEXT "TEXT A"
-#define UI_TEXT_WIZ_CRASH_12_TEXT "TEXT B"
-#define UI_TEXT_WIZ_CRASH_13_TEXT "TEXT C"
+#define UI_TEXT_WIZ_CRASH_11_TEXT "Crash Detected"
+#define UI_TEXT_WIZ_CRASH_12_TEXT "Recover print ?"
 
-#define UI_TEXT_WIZ_CRASH_21_TEXT "TEXT D"
-#define UI_TEXT_WIZ_CRASH_22_TEXT "TEXT E"
+#define UI_TEXT_WIZ_CRASH_13_TEXT "nic"
+
+#define UI_TEXT_WIZ_CRASH_21_TEXT "will reheat"
+#define UI_TEXT_WIZ_CRASH_22_TEXT "will home"
+
 #define UI_TEXT_WIZ_CRASH_23_TEXT "TEXT F"
 
-#define UI_TEXT_WIZ_CRASH_31_TEXT "TEXT G"
-#define UI_TEXT_WIZ_CRASH_32_TEXT "TEXT H"
-#define UI_TEXT_WIZ_CRASH_33_TEXT "TEXT I"
+#define UI_TEXT_WIZ_CRASH_31_TEXT "waitheat"
+#define UI_TEXT_WIZ_CRASH_32_TEXT ""
+#define UI_TEXT_WIZ_CRASH_33_TEXT ""
 
-#define UI_TEXT_WIZ_CRASH_41_TEXT "TEXT J"
-#define UI_TEXT_WIZ_CRASH_42_TEXT "TEXT K"
-#define UI_TEXT_WIZ_CRASH_43_TEXT "TEXT L"
+#define UI_TEXT_WIZ_CRASH_41_TEXT "restart"
+#define UI_TEXT_WIZ_CRASH_42_TEXT ""
+#define UI_TEXT_WIZ_CRASH_43_TEXT ""
 
 
 #endif
