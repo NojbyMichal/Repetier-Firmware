@@ -571,8 +571,8 @@ bool SDCard::selectFile(const char *filename, bool silent)
 
     file.close();
     // Filename for progress view
-    strncpy(Printer::printName,filename,20);
-    Printer::printName[20] = 0;
+    strncpy(Printer::printName,filename,101);
+    Printer::printName[101] = 0;
     parent = *fat.vwd();
     if (file.open(&parent, filename, O_READ))
       {

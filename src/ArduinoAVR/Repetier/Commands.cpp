@@ -2725,6 +2725,12 @@ void Commands::processMCode(GCode *com) {
     break;
 #endif
 #if defined (CRASH_DETECT)
+    case 970:
+    Com::printFLN(PSTR("CRASH RECOVER"));
+
+    Printer::CrashRecover();
+
+    break;
     case 969:
     Com::printFLN(PSTR("CRASH DETECTED"));
 
@@ -2732,8 +2738,7 @@ void Commands::processMCode(GCode *com) {
 
     break;
     case 968:
-    uid.executeAction(UI_ACTION_WIZARD_CRASH_WAITHEAT, true);
-    
+    Printer::positionPrint();
     break;
     case 920:
     Com::printFLN(PSTR("tmc CRASH ENABLED"));

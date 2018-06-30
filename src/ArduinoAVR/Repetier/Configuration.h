@@ -704,17 +704,16 @@ Values must be in range 1..255
 
 #define UI_TEXT_WIZ_CRASH_13_TEXT "nic"
 
-#define UI_TEXT_WIZ_CRASH_21_TEXT "will reheat"
-#define UI_TEXT_WIZ_CRASH_22_TEXT "will home"
+#define UI_TEXT_WIZ_CRASH_21_TEXT "Crash Recover 1/4"
+#define UI_TEXT_WIZ_CRASH_22_TEXT "Printer will home "
+#define UI_TEXT_WIZ_CRASH_23_TEXT "and heat extruder"
 
-#define UI_TEXT_WIZ_CRASH_23_TEXT "TEXT F"
+#define UI_TEXT_WIZ_CRASH_31_TEXT "Crash Recover 2/4"
+#define UI_TEXT_WIZ_CRASH_32_TEXT "Clean the nozzle and"
+#define UI_TEXT_WIZ_CRASH_33_TEXT "purge fillament into"
 
-#define UI_TEXT_WIZ_CRASH_31_TEXT "waitheat"
-#define UI_TEXT_WIZ_CRASH_32_TEXT ""
-#define UI_TEXT_WIZ_CRASH_33_TEXT ""
-
-#define UI_TEXT_WIZ_CRASH_41_TEXT "restart"
-#define UI_TEXT_WIZ_CRASH_42_TEXT ""
+#define UI_TEXT_WIZ_CRASH_41_TEXT "Crash Recover 3/4"
+#define UI_TEXT_WIZ_CRASH_42_TEXT "Restart the printing"
 #define UI_TEXT_WIZ_CRASH_43_TEXT ""
 
 

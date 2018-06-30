@@ -20,7 +20,7 @@
 #define _EEPROM_H
 
 // Id to distinguish version changes
-#define EEPROM_PROTOCOL_VERSION 18
+#define EEPROM_PROTOCOL_VERSION 19
 
 /** Where to start with our data block in memory. Can be moved if you
 have problems with other modules using the eeprom */
@@ -130,7 +130,27 @@ have problems with other modules using the eeprom */
 #define EPR_BED_PREHEAT_TEMP                  1048
 #define EPR_X2AXIS_STEPS_PER_MM               1052
 #define EPR_EOF_CONTROL						  1056
-	
+
+
+//1060-1064
+#define EPR_CRASHED                           1060 //1061 is free //byte
+#define EPR_LAST_FAN_SPEED                    1061
+
+#define EPR_LAST_X_POSITION                   1064 //int
+#define EPR_LAST_Y_POSITION                   1068
+#define EPR_LAST_Z_POSITION                   1072  
+#define EPR_LAST_E_POSITION                   1076
+
+#define EPR_LAST_FILE_POSITION                1080
+#define EPR_LAST_EXTR_TEMP                    1084
+#define EPR_LAST_BED_TEMP                     1088
+
+/*
+#define EPR_LAST_TEMP_E0
+#define EPR_LAST_TEMP_BED
+#define EPR_LAST_FEEDRATE
+#define EPR_LAST_FAN_SPEED
+*/	
 #if EEPROM_MODE != 0
 #define EEPROM_FLOAT(x) HAL::eprGetFloat(EPR_##x)
 #define EEPROM_INT32(x) HAL::eprGetInt32(EPR_##x)
@@ -175,6 +195,11 @@ have problems with other modules using the eeprom */
 #define EPR_EXTRUDER_PREHEAT             94 // maybe better temperature
 #ifndef Z_PROBE_BED_DISTANCE
 #define Z_PROBE_BED_DISTANCE 5.0
+
+
+
+
+
 #endif
 
 class EEPROM

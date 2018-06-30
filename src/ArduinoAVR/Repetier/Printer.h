@@ -134,6 +134,7 @@ union wizardVar {
 #define towerBMinSteps Printer::yMinSteps
 #define towerCMinSteps Printer::zMinSteps
 
+
 class Plane {
 public:
     // f(x, y) = ax + by + c
@@ -407,11 +408,17 @@ public:
     // Print status related
     static int currentLayer;
     static int maxLayer; // -1 = unknown
-    static char printName[21]; // max. 20 chars + 0
+    static char printName[101]; // max. 20 chars + 0
     static float progress;
     static fast8_t wizardStackPos;
     static wizardVar wizardStack[WIZARD_STACK_SIZE];
-
+#if defined(CRASH_DETECT)
+    static float lastXposition;
+    static float lastYposition;
+    static float lastZposition;
+    static float lastEposition;
+    static uint32_t printingFilePosition;
+#endif
 #if defined(DRV_TMC2130)
 #if TMC2130_ON_X
     static TMC2130Stepper* tmc_driver_x;
@@ -1275,6 +1282,7 @@ public:
     #endif
 #endif
 #if defined (CRASH_DETECT)
+static void positionPrint();
 static void CrashDetected();
 static void CrashRecover();
 static void TestCrashPins();

@@ -76,13 +76,18 @@ float Printer::extrusionFactor = 1.0;
 uint8_t Printer::interruptEvent = 0;
 int Printer::currentLayer = 0;
 int Printer::maxLayer = -1; // -1 = unknown
-char Printer::printName[21] = ""; // max. 20 chars + 0
+char Printer::printName[101] = ""; // max. 20 chars + 0
 float Printer::progress = 0;
 millis_t Printer::lastTempReport = 0;
 
 #if EEPROM_MODE != 0
 float Printer::zBedOffset = HAL::eprGetFloat(EPR_Z_PROBE_Z_OFFSET);
 float Printer::zProbeHeight  = HAL::eprGetFloat(EPR_Z_PROBE_HEIGHT);
+float Printer::lastXposition = 0; //HAL::eprGetFloat(EPR_LAST_X_POSITION);
+float Printer::lastYposition = 0; //HAL::eprGetFloat(EPR_LAST_Y_POSITION);
+float Printer::lastZposition = 0; //HAL::eprGetFloat(EPR_LAST_Z_POSITION);
+float Printer::lastEposition = 0; //HAL::eprGetFloat(EPR_LAST_E_POSITION);
+uint32_t Printer::printingFilePosition = HAL::eprGetInt32(EPR_LAST_FILE_POSITION);
 #else
 float Printer::zBedOffset = Z_PROBE_Z_OFFSET;
 float Printer::zProbeHeight  = Z_PROBE_HEIGHT;
@@ -2742,23 +2747,56 @@ void Printer::TestCrashPins()
         crash = 0;
     }
 }
-float printingFilePosition = 0;
+
+
+
 void Printer::CrashDetected()
 {
-            Com::printFLN(PSTR("CRASH DETECTED  !!!"));
-            
-            Com::printF(PSTR("sd mode:"), (int)sd.sdmode);
-            Com::printF(PSTR(" pos:"), sd.sdpos);
-            Com::printFLN(PSTR(" of "), sd.filesize);
+    Com::printFLN(PSTR("CRASH DETECTED  !!!"));
 
+
+    Com::printF(PSTR("PrintLine::linesWritePos:"),PrintLine::linesWritePos);
+    Com::printF(PSTR("PrintLine::linesCount:"), PrintLine::linesCount);
+    Com::printF(PSTR("PrintLine::linesPos:"),  PrintLine::linesPos);
+     
+    
+   
+    
+    Com::printF(PSTR(" pos:"), sd.sdpos);
+    Com::printFLN(PSTR(" of "), sd.filesize);
 
     printingFilePosition = sd.sdpos;
+     
+    lastXposition = Printer::currentPosition[X_AXIS];
+    lastYposition = Printer::currentPosition[Y_AXIS];
+    lastZposition = Printer::currentPosition[Z_AXIS];
+    lastEposition = Printer::currentPositionSteps[E_AXIS] * Printer::invAxisStepsPerMM[E_AXIS];
+   Com::printFLN(PSTR("DETECTED: LAST X position: "), lastXposition);  
+   Com::printFLN(PSTR("DETECTED: LAST Y position: "), lastYposition);  
+   Com::printFLN(PSTR("DETECTED: LAST Z position: "), lastZposition);  
+
+
+    HAL::eprSetByte(EPR_CRASHED,1);
+
+    HAL::eprSetFloat(EPR_LAST_X_POSITION,Printer::lastXposition);
+    HAL::eprSetFloat(EPR_LAST_Y_POSITION,Printer::lastYposition);
+    HAL::eprSetFloat(EPR_LAST_Z_POSITION,Printer::lastZposition);
+    HAL::eprSetFloat(EPR_LAST_E_POSITION,Printer::lastEposition);
+    HAL::eprSetInt32(EPR_LAST_FILE_POSITION,Printer::printingFilePosition);
+
+    HAL::eprSetFloat(EPR_LAST_EXTR_TEMP,Extruder::current->tempControl.currentTemperatureC);
+    HAL::eprSetFloat(EPR_LAST_BED_TEMP,Extruder::getHeatedBedTemperature());
+    HAL::eprSetByte(EPR_LAST_FAN_SPEED,Printer::fanSpeed);
+
+
+
+    EEPROM::storeDataIntoEEPROM(false);
+
     Com::printFLN(PSTR("position: "), printingFilePosition);
     Com::printFLN(PSTR("SAVED SDPOS"));
+ 
+    
 
-    
-    
-    
     GCodeSource::removeSource(&sdSource);
     Com::printFLN(PSTR("REMOVED SOURCE"));  
 
@@ -2772,108 +2810,144 @@ void Printer::CrashDetected()
     PrintLine::linesPos = 0;
     
     Printer::kill(true);
-    
-   
-    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
-                            IGNORE_COORDINATE,
-                            Printer::maxFeedrate[Z_AXIS] / 3);
-    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
-                            IGNORE_COORDINATE,
-                            Printer::maxFeedrate[Z_AXIS] / 3);
-    Extruder::pauseExtruders(false);
 
+
+
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                             currentPosition[E_AXIS]-5,
+                            Printer::maxFeedrate[Z_AXIS] / 3);
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3);
+    //smazat bude ve wizardu
+    Extruder::setHeatedBedTemperature( HAL::eprGetFloat(EPR_LAST_BED_TEMP),false);
+    Extruder::setTemperatureForExtruder(0,0,false,false);
+
+    
+    //Extruder::pauseExtruders(false);
+
+    sd.sdmode = 0;
+    
 
     uid.executeAction(UI_ACTION_WIZARD_CRASH_BEGIN, true);    
+}
 
-    // chybí retrakce !!!
-    
-    /*
-    homeZAxis();
-    
-    Com::printFLN(PSTR("G28")); 
-    */
-    /*
-    if(Printer::isMenuMode(MENU_MODE_SD_PRINTING)) {
-        sd.stopPrint();
-    }
-    sd.sdmode = 2;
-    sd.sdmode = 0;
-*/
-    sd.sdmode = 0;
-    
-    /*
-     //PrintLine::resetPathPlanner();
-    //Commands::waitUntilEndOfAllMoves();
-
-    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::currentPosition[Z_AXIS] + 10,
-                            Printer::memoryE - RETRACT_ON_PAUSE,
-                            Printer::maxFeedrate[E_AXIS] / 2);
-    */
-    
-
-    /*
-    Com::printF(PSTR("XS:"), Printer::currentPositionSteps[X_AXIS]);
-            Com::printF(PSTR(" YS:"), Printer::currentPositionSteps[Y_AXIS]);
-            Com::printFLN(PSTR(" ZS:"), Printer::currentPositionSteps[Z_AXIS]);
+void Printer::positionPrint()
+{
 
 
-    Com::printFLN(PSTR("RESETTED PLANNER")); 
+    lastXposition = HAL::eprGetFloat(EPR_LAST_X_POSITION);
+    lastYposition = HAL::eprGetFloat(EPR_LAST_Y_POSITION);
+    lastZposition = HAL::eprGetFloat(EPR_LAST_Z_POSITION);
+    lastEposition = HAL::eprGetFloat(EPR_LAST_E_POSITION);
 
-  
-    Printer::MemoryPosition();
-    Com::printFLN(PSTR("MEMORIZED POSITION"));   
-    // retract E
-    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, IGNORE_COORDINATE,
-                            Printer::memoryE - RETRACT_ON_PAUSE,
-                            Printer::maxFeedrate[E_AXIS] / 2);
-    Com::printFLN(PSTR("RETRACTED"));
 
-    // raise Z
-    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::memoryZ + 10,
-                            Printer::memoryE - RETRACT_ON_PAUSE,
-                            Printer::maxFeedrate[E_AXIS] / 2);
-    Com::printFLN(PSTR("RAISED Z")); 
-               
-    //disable heater (bed ?)
-    Extruder::setTemperatureForExtruder(0, 0, false, false);
-    Com::printFLN(PSTR("HOTEND OFF"));  
-    //save everething + position of sd to eeprom
-    
-    // home Z
-    GCode::executeFString("G28");
-    Com::printFLN(PSTR("G28")); 
-    
-    //stop print
-     sd.stopPrint();
-     Printer::setPrinting(false);
-    Com::printFLN(PSTR("STOPPED PRINTING"));    
+    Com::printFLN(PSTR("position: "), printingFilePosition);
 
-    //save that crash was detected to eeprom due to lost AC or power down
-    
-    // run wizzard
-    
-    */
+
+   Com::printFLN(PSTR("DETECTED: LAST X position: "), lastXposition);  
+   Com::printFLN(PSTR("DETECTED: LAST Y position: "), lastYposition);  
+   Com::printFLN(PSTR("DETECTED: LAST Z position: "), lastZposition);  
+   Com::printFLN(PSTR("DETECTED: LAST E position: "), lastEposition);  
+
+   Com::printFLN(PSTR("DETECTED: LAST EXTRUDER TEMP:"), HAL::eprGetFloat(EPR_LAST_EXTR_TEMP));  
+   Com::printFLN(PSTR("DETECTED: LAST BED TEMP:"),  HAL::eprGetFloat(EPR_LAST_BED_TEMP));  
+   Com::printFLN(PSTR("DETECTED: LAST FAN SPEED:"),  HAL::eprGetByte(EPR_LAST_FAN_SPEED));  
+
+   Printer::destinationSteps[E_AXIS] = Printer::currentPositionSteps[E_AXIS] = Printer::convertToMM(lastEposition) * Printer::axisStepsPerMM[E_AXIS];
+   Com::printFLN(PSTR("CURRENT:  E position: "), Printer::currentPositionSteps[E_AXIS]);  
+
+   /*
+   Commands::setFanSpeed(int speed, bool immediately)
+   Printer::fanSpeed = speed;
+    uint8_t Printer::fanSpeed = 0;
+   */
+
+
 }
 
 void Printer::CrashRecover()
 {
+   /* 
+    lastXposition = HAL::eprGetFloat(EPR_LAST_X_POSITION);
+    lastYposition = HAL::eprGetFloat(EPR_LAST_Y_POSITION);
+    lastZposition = HAL::eprGetFloat(EPR_LAST_Z_POSITION);
+    lastEposition = HAL::eprGetFloat(EPR_LAST_E_POSITION)
+                    HAL::eprGetFloat(EPR_LAST_EXTR_TEMP)
+                    HAL::eprGetFloat(EPR_LAST_BED_TEMP)
+                     HAL::eprGetByte(EPR_LAST_FAN_SPEED)
+
+    Com::printFLN(PSTR("position: "), printingFilePosition);
+    Com::printFLN(PSTR("DETECTED: LAST X position: "), lastXposition);  
+    Com::printFLN(PSTR("DETECTED: LAST Y position: "), lastYposition);  
+    Com::printFLN(PSTR("DETECTED: LAST Z position: "), lastZposition);  
+*/
     if (printingFilePosition !=0)
     {
-    Com::printFLN(PSTR("RECOVER BEGIN"));   
-    
-    GCode::executeFString("G28");
-    Com::printFLN(PSTR("G28"));     
+    Com::printFLN(PSTR("RECOVER BEGIN"));  
+
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3);
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3);
+
+       
     Com::printFLN(PSTR(" filename:"),Printer::printName);       
     sd.selectFile(Printer::printName);
-    Extruder::setTemperatureForExtruder(210, 0, false, true);
+
+    Printer::homeAxis(false, false, true);
+    
+
+    Com::printF(PSTR("XS:"), Printer::currentPositionSteps[X_AXIS]);
+    Com::printF(PSTR(" YS:"), Printer::currentPositionSteps[Y_AXIS]);
+    Com::printFLN(PSTR(" ZS:"), Printer::currentPositionSteps[Z_AXIS]);
+    //Extruder::setTemperatureForExtruder(210, 0, false, true);
     //set FAN
     
     //set speed 
 
     //set position of file
     sd.setIndex(printingFilePosition);
+    // move to last Z position
+  
+    
 
-    sd.startPrint();
+//XYZ
+     Printer::moveToReal(HAL::eprGetFloat(EPR_LAST_X_POSITION), HAL::eprGetFloat(EPR_LAST_Y_POSITION), HAL::eprGetFloat(EPR_LAST_Z_POSITION),
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3,false);
+//E
+     Printer::destinationSteps[E_AXIS] = Printer::currentPositionSteps[E_AXIS] = Printer::convertToMM(HAL::eprGetFloat(EPR_LAST_E_POSITION)) * Printer::axisStepsPerMM[E_AXIS];
+// set extr temp
+ //    Extruder::setTemperatureForExtruder(HAL::eprGetFloat(EPR_LAST_EXTR_TEMP),0,false,false);
+// set bed temp
+ //    Extruder::setHeatedBedTemperature( HAL::eprGetFloat(EPR_LAST_BED_TEMP),false);
+// set fan
+
+//set multiply
+     Commands::changeFeedrateMultiply(25);
+
+    
+     updateCurrentPosition(true);
+     /*
+     Printer::moveToReal(20, 20, 200,
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3,false);
+    
+*/
+    
+    sd.sdmode = 1;
+
+    Printer::setMenuMode(MENU_MODE_SD_PRINTING, true);
+    Printer::setMenuMode(MENU_MODE_PAUSED, false);
+    Printer::setPrinting(true);
+
+    UI_STATUS_F(PSTR(""));
+    #if NEW_COMMUNICATION
+    GCodeSource::registerSource(&sdSource);
+    #endif
 
     Com::printFLN(PSTR("RECOVER END")); 
         

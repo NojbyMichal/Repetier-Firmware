@@ -3727,8 +3727,9 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
             Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_CANCEL"));
         break;
          case UI_ACTION_WIZARD_CRASH_ASKHEAT:
-            pushMenu(&ui_wiz_crashdetectaskheat, true);
-            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_ASKHEAT"));
+            GCode::executeFString("M970");
+            //pushMenu(&ui_wiz_crashdetectaskheat, true);
+            //Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_ASKHEAT"));
             //Printer::homeAxis(true, true, true);
             
         break;

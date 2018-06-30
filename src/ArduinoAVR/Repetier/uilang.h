@@ -483,7 +483,7 @@
 #define UI_TEXT_HOME_X_EN           "Home X"
 #define UI_TEXT_HOME_Y_EN           "Home Y"
 #define UI_TEXT_HOME_Z_EN           "Home Z"
-#define UI_TEXT_PREHEAT_SINGLE_EN      "Preheat Single Extr."
+#define UI_TEXT_PREHEAT_SINGLE_EN   "Preheat Single Extr."
 #define UI_TEXT_PREHEAT_ALL_EN      "Preheat All Extr."
 #define UI_TEXT_LIGHTS_ONOFF_EN     "Lights:%lo"
 #define UI_TEXT_COOLDOWN_EN         "Cooldown"

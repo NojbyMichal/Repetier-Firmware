@@ -448,6 +448,16 @@ void EEPROM::storeDataIntoEEPROM(uint8_t corrupted)
 #if MIXING_EXTRUDER
     storeMixingRatios(false);
 #endif
+
+#if CRASH_DETECT
+    HAL::eprSetFloat(EPR_LAST_X_POSITION,Printer::lastXposition);
+    HAL::eprSetFloat(EPR_LAST_Y_POSITION,Printer::lastYposition);
+    HAL::eprSetFloat(EPR_LAST_Z_POSITION,Printer::lastZposition);
+    HAL::eprSetInt32(EPR_LAST_FILE_POSITION,Printer::printingFilePosition);
+    HAL::eprSetFloat(EPR_LAST_EXTR_TEMP,Extruder::current->tempControl.currentTemperatureC);
+   
+#endif  
+
 #if EXTRUDER_JAM_CONTROL
 	HAL::eprSetByte(EPR_EOF_CONTROL,Printer::isJamcontrolDisabled());
 #endif 
@@ -610,6 +620,9 @@ void EEPROM::readDataFromEEPROM(bool includeExtruder)
 #if MIXING_EXTRUDER
         readMixingRatios();
 #endif
+#if CRASH_DETECT
+
+#endif        
 #if EXTRUDER_JAM_CONTROL
 	Printer::setJamcontrolDisabled(HAL::eprGetByte(EPR_EOF_CONTROL));
 #endif 
@@ -1069,8 +1082,9 @@ writeFloat(EPR_X2AXIS_STEPS_PER_MM, Com::tEPRX2StepsPerMM, 4);
         }
 #endif
 #if EXTRUDER_JAM_CONTROL
-	writeByte(EPR_EOF_CONTROL,Com::tEPREofControl);
+    writeByte(EPR_EOF_CONTROL,Com::tEPREofControl);
 #endif 
+
     }
 #else
     Com::printErrorF(Com::tNoEEPROMSupport);
