@@ -961,6 +961,7 @@ extern long baudrate;
 
 extern unsigned int counterPeriodical;
 extern volatile uint8_t executePeriodical;
+extern volatile uint8_t executeTMCPeriodical;
 extern uint8_t counter500ms;
 extern void writeMonitor();
 #if FEATURE_FAN_CONTROL

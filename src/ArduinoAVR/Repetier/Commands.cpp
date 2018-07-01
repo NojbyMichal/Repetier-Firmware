@@ -58,6 +58,7 @@ void Commands::commandLoop() {
     //}
 }
 
+bool TMC_enable = true;
 void Commands::checkForPeriodicalActions(bool allowNewMoves) {
     Printer::handleInterruptEvent();
     EVENT_PERIODICAL;
@@ -68,6 +69,16 @@ void Commands::checkForPeriodicalActions(bool allowNewMoves) {
         }
     }
 #endif
+    if(executeTMCPeriodical && TMC_enable){
+        if((READ(CRASH_X_PIN) == 1)|| (READ(CRASH_Y_PIN) == 1) || (READ(CRASH_Z_PIN) == 1) )
+        {
+            executeTMCPeriodical = 0;
+            TMC_enable = false;
+            Printer::CrashDetected();
+
+
+        }
+    }
     if(!executePeriodical) return; // gets true every 100ms
     executePeriodical = 0;
     EVENT_TIMER_100MS;

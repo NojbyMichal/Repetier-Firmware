@@ -87,6 +87,7 @@ float Printer::lastXposition = 0; //HAL::eprGetFloat(EPR_LAST_X_POSITION);
 float Printer::lastYposition = 0; //HAL::eprGetFloat(EPR_LAST_Y_POSITION);
 float Printer::lastZposition = 0; //HAL::eprGetFloat(EPR_LAST_Z_POSITION);
 float Printer::lastEposition = 0; //HAL::eprGetFloat(EPR_LAST_E_POSITION);
+volatile uint8_t executeTMCPeriodical = 0;
 uint32_t Printer::printingFilePosition = HAL::eprGetInt32(EPR_LAST_FILE_POSITION);
 #else
 float Printer::zBedOffset = Z_PROBE_Z_OFFSET;
@@ -2662,7 +2663,7 @@ void Printer::stopPrint() {
         tmc_driver->stealthChop(tmc_stealthchop);       // Enable extremely quiet stepping
         tmc_driver->sg_stall_value(tmc_sgt);            // StallGuard sensitivity
 
-            tmc_driver->coolstep_min_speed(0xFFFFF); // 20bit max
+    tmc_driver->coolstep_min_speed(0xFFFFF); // 20bit max
     tmc_driver->THIGH(0);
     tmc_driver->semin(5);
     tmc_driver->semax(2);
@@ -2686,29 +2687,35 @@ void Printer::stopPrint() {
 
 
 #if defined(CRASH_DETECT)
-    void Printer::tmcPrepareCrashSettings(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min) {
+    void Printer::tmcPrepareCrashSettings(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min,bool crash) {
         while(!tmc_driver->stst());                     // Wait for motor stand-still
         tmc_driver->stealth_max_speed(0);               // Upper speedlimit for stealthChop
         tmc_driver->stealthChop(false);                 // Turn off stealthChop
         tmc_driver->coolstep_min_speed(coolstep_sp_min);// Minimum speed for StallGuard trigerring
         //tmc_driver->sg_filter(false);                   // Turn off StallGuard filtering
-        tmc_driver->diag0_stall(true);
-        tmc_driver->diag0_active_high(true);   
-        tmc_driver->diag1_stall(true);                  // Signal StallGuard on DIAG1 pin
-        tmc_driver->diag1_active_high(true);            // StallGuard pulses active high
+        tmc_driver->diag0_stall(crash);
+        tmc_driver->diag0_active_high(crash);   
+        tmc_driver->diag1_stall(crash);                  // Signal StallGuard on DIAG1 pin
+        tmc_driver->diag1_active_high(crash);            // StallGuard pulses active high
         Com::printFLN(PSTR("2"));
     }
 
     void Printer::tmcStartCrashSettings()
     {
-         Com::printFLN(PSTR("ONE"));
-    tmcPrepareCrashSettings(Printer::tmc_driver_x, TMC2130_TCOOLTHRS_CRASH);
-    tmcPrepareCrashSettings(Printer::tmc_driver_y, TMC2130_TCOOLTHRS_CRASH);
-    tmcPrepareCrashSettings(Printer::tmc_driver_z, TMC2130_TCOOLTHRS_CRASH);
+        
+    tmcPrepareCrashSettings(Printer::tmc_driver_x, TMC2130_TCOOLTHRS_CRASH,true);
+    tmcPrepareCrashSettings(Printer::tmc_driver_y, TMC2130_TCOOLTHRS_CRASH,true);
+    tmcPrepareCrashSettings(Printer::tmc_driver_z, TMC2130_TCOOLTHRS_CRASH,true);
     Com::printFLN(PSTR("OK!!!!"));
     }
     void Printer::tmcFinishCrashSettings()
     {
+         Com::printFLN(PSTR("TWO"));
+    tmcPrepareCrashSettings(Printer::tmc_driver_x, TMC2130_TCOOLTHRS_X,false);
+    tmcPrepareCrashSettings(Printer::tmc_driver_y, TMC2130_TCOOLTHRS_Y,false);
+    tmcPrepareCrashSettings(Printer::tmc_driver_z, TMC2130_TCOOLTHRS_Z,false);
+        Com::printFLN(PSTR("OK!!!!"));
+        /*
     configTMC2130(Printer::tmc_driver_x, TMC2130_STEALTHCHOP_X, TMC2130_STALLGUARD_X,
     TMC2130_PWM_AMPL_X, TMC2130_PWM_GRAD_X, TMC2130_PWM_AUTOSCALE_X, TMC2130_PWM_FREQ_X);
 
@@ -2717,41 +2724,17 @@ void Printer::stopPrint() {
 
     configTMC2130(Printer::tmc_driver_z, TMC2130_STEALTHCHOP_Z, TMC2130_STALLGUARD_Z,
     TMC2130_PWM_AMPL_Z, TMC2130_PWM_GRAD_Z, TMC2130_PWM_AUTOSCALE_Z, TMC2130_PWM_FREQ_Z);
+    */
     }
 
 #endif
 
 #if defined (CRASH_DETECT)
-void Printer::TestCrashPins()
-{
-    uint8_t crash = 0;
-    if (READ(CRASH_X_PIN))
-    {
-         crash = 1;
-      Com::printFLN(PSTR("X crash:"), (int16_t)READ(CRASH_X_PIN));  
-    }
-    if (READ(CRASH_Y_PIN))
-    {
-         crash = 1;
-    Com::printFLN(PSTR("Y crash:"), (int16_t)READ(CRASH_Y_PIN));
-    }
-    if (READ(CRASH_Z_PIN))
-    {
-        crash = 1;
-       Com::printFLN(PSTR("Z crash:"), (int16_t)READ(CRASH_Z_PIN)); 
-    }
-    
-    if (crash)
-    {
-        GCode::executeFString("M969");
-        crash = 0;
-    }
-}
-
-
+extern bool TMC_enable;
 
 void Printer::CrashDetected()
 {
+    /*
     Com::printFLN(PSTR("CRASH DETECTED  !!!"));
 
 
@@ -2764,20 +2747,44 @@ void Printer::CrashDetected()
     
     Com::printF(PSTR(" pos:"), sd.sdpos);
     Com::printFLN(PSTR(" of "), sd.filesize);
-
+*/
     printingFilePosition = sd.sdpos;
      
     lastXposition = Printer::currentPosition[X_AXIS];
     lastYposition = Printer::currentPosition[Y_AXIS];
     lastZposition = Printer::currentPosition[Z_AXIS];
     lastEposition = Printer::currentPositionSteps[E_AXIS] * Printer::invAxisStepsPerMM[E_AXIS];
+
+
+  /*
    Com::printFLN(PSTR("DETECTED: LAST X position: "), lastXposition);  
    Com::printFLN(PSTR("DETECTED: LAST Y position: "), lastYposition);  
    Com::printFLN(PSTR("DETECTED: LAST Z position: "), lastZposition);  
-
+*/
 
     HAL::eprSetByte(EPR_CRASHED,1);
 
+
+
+    EEPROM::storeDataIntoEEPROM(false);
+/*
+    Com::printFLN(PSTR("position: "), printingFilePosition);
+    Com::printFLN(PSTR("SAVED SDPOS"));
+ */
+    
+
+    GCodeSource::removeSource(&sdSource);
+   // Com::printFLN(PSTR("REMOVED SOURCE"));  
+
+    Printer::setMenuMode(MENU_MODE_SD_PRINTING,false);
+    Printer::setMenuMode(MENU_MODE_PAUSED,false);
+    Printer::setPrinting(0);
+
+    
+    PrintLine::linesWritePos = 0;
+    PrintLine::linesCount = 0;
+    PrintLine::linesPos = 0;
+    
     HAL::eprSetFloat(EPR_LAST_X_POSITION,Printer::lastXposition);
     HAL::eprSetFloat(EPR_LAST_Y_POSITION,Printer::lastYposition);
     HAL::eprSetFloat(EPR_LAST_Z_POSITION,Printer::lastZposition);
@@ -2790,25 +2797,6 @@ void Printer::CrashDetected()
 
 
 
-    EEPROM::storeDataIntoEEPROM(false);
-
-    Com::printFLN(PSTR("position: "), printingFilePosition);
-    Com::printFLN(PSTR("SAVED SDPOS"));
- 
-    
-
-    GCodeSource::removeSource(&sdSource);
-    Com::printFLN(PSTR("REMOVED SOURCE"));  
-
-    Printer::setMenuMode(MENU_MODE_SD_PRINTING,false);
-    Printer::setMenuMode(MENU_MODE_PAUSED,false);
-    Printer::setPrinting(0);
-
-    
-    PrintLine::linesWritePos = 0;
-    PrintLine::linesCount = 0;
-    PrintLine::linesPos = 0;
-    
     Printer::kill(true);
 
 
@@ -2820,9 +2808,10 @@ void Printer::CrashDetected()
                             IGNORE_COORDINATE,
                             Printer::maxFeedrate[Z_AXIS] / 3);
     //smazat bude ve wizardu
+   /*
     Extruder::setHeatedBedTemperature( HAL::eprGetFloat(EPR_LAST_BED_TEMP),false);
     Extruder::setTemperatureForExtruder(0,0,false,false);
-
+*/
     
     //Extruder::pauseExtruders(false);
 
@@ -2868,6 +2857,7 @@ void Printer::positionPrint()
 
 void Printer::CrashRecover()
 {
+    TMC_enable = true;
    /* 
     lastXposition = HAL::eprGetFloat(EPR_LAST_X_POSITION);
     lastYposition = HAL::eprGetFloat(EPR_LAST_Y_POSITION);
@@ -2884,7 +2874,7 @@ void Printer::CrashRecover()
 */
     if (printingFilePosition !=0)
     {
-    Com::printFLN(PSTR("RECOVER BEGIN"));  
+  //  Com::printFLN(PSTR("RECOVER BEGIN"));  
 
     Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
                             IGNORE_COORDINATE,
@@ -2894,15 +2884,16 @@ void Printer::CrashRecover()
                             Printer::maxFeedrate[Z_AXIS] / 3);
 
        
-    Com::printFLN(PSTR(" filename:"),Printer::printName);       
+  //  Com::printFLN(PSTR(" filename:"),Printer::printName);       
     sd.selectFile(Printer::printName);
 
     Printer::homeAxis(false, false, true);
     
-
+/*
     Com::printF(PSTR("XS:"), Printer::currentPositionSteps[X_AXIS]);
     Com::printF(PSTR(" YS:"), Printer::currentPositionSteps[Y_AXIS]);
     Com::printFLN(PSTR(" ZS:"), Printer::currentPositionSteps[Z_AXIS]);
+    */
     //Extruder::setTemperatureForExtruder(210, 0, false, true);
     //set FAN
     
@@ -2949,7 +2940,7 @@ void Printer::CrashRecover()
     GCodeSource::registerSource(&sdSource);
     #endif
 
-    Com::printFLN(PSTR("RECOVER END")); 
+ //   Com::printFLN(PSTR("RECOVER END")); 
         
     }
     else

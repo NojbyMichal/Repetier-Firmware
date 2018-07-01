@@ -992,8 +992,11 @@ ISR(PWM_TIMER_VECTOR) {
      {
 
         TMC_Crash_counterPeriodical=0;
-        Printer::TestCrashPins();
+            executeTMCPeriodical = 1;
+        
+
      }
+        
 //#endif
 
     counterPeriodical++; // Approximate a 100ms timer

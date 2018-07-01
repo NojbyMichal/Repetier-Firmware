@@ -697,7 +697,7 @@ Values must be in range 1..255
 #define CRASH_X_PIN  4
 #define CRASH_Y_PIN  5
 #define CRASH_Z_PIN  6
-#define TMC2130_TCOOLTHRS_CRASH 400
+#define TMC2130_TCOOLTHRS_CRASH 100 //400
 
 #define UI_TEXT_WIZ_CRASH_11_TEXT "Crash Detected"
 #define UI_TEXT_WIZ_CRASH_12_TEXT "Recover print ?"

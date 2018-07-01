@@ -61,6 +61,8 @@ uint16_t servoPosition = 1500;
 #endif
 #endif
 
+extern bool TMC_enable;
+
 static TemperatureController *currHeaterForSetup;    // pointer to extruder or heatbed temperature controller
 
 #if UI_AUTORETURN_TO_MENU_AFTER != 0
@@ -2554,7 +2556,8 @@ int UIDisplay::okAction(bool allowMoves) {
         case UI_ACTION_WIZARD_CRASH_ASKHEAT:
             pushMenu(&ui_wiz_crashdetectwaitheat, true);
             Printer::homeAxis(false, false, true);
-            Extruder::unpauseExtruders(false);
+            Extruder::setTemperatureForExtruder(HAL::eprGetFloat(EPR_LAST_EXTR_TEMP), Extruder::current->id);
+            //Extruder::unpauseExtruders(false);
             Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_ASKHEAT"));
             /*
             popMenu(false);
@@ -2566,8 +2569,10 @@ int UIDisplay::okAction(bool allowMoves) {
         break;
         case UI_ACTION_WIZARD_CRASH_RESTART:
             //pushMenu(&ui_wiz_crashdetectrestart, true);
-            popMenu(true);
+            Printer::CrashRecover();
             Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_RESTART"));
+            menuLevel = 1; 
+            popMenu(true);
 
         break;
 #endif                
@@ -2907,23 +2912,11 @@ ZPOS2:
         Commands::printCurrentPosition();
         break;
 #if CRASH_DETECT
-        /*
-        case UI_ACTION_WIZARD_CRASH_BEGIN:
-            Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_BEGIN"));
-        break;
-        */
         case UI_ACTION_WIZARD_CRASH_WAITHEAT:
-             Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_WAITHEAT"));
              Extruder::current->retractDistance(-increment);
              Commands::waitUntilEndOfAllMoves();
              Extruder::current->disableCurrentExtruderMotor();
-        break;
-        case UI_ACTION_WIZARD_CRASH_ASKHEAT:
-            Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_ASKHEAT"));
-        break;
-        case UI_ACTION_WIZARD_CRASH_RESTART:
-            Com::printFLN(PSTR("next-prev: UI_ACTION_WIZARD_CRASH_RESTART"));
-        break;
+        break; 
 #endif  
 #if FEATURE_RETRACTION
     case UI_ACTION_WIZARD_FILAMENTCHANGE: // filament change is finished
@@ -3724,21 +3717,22 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
         break;
         case UI_ACTION_WIZARD_CRASH_CANCEL:
             Printer::homeAxis(true, true, true);
+            TMC_enable = 1;
+            Printer::kill(true);
+            popMenu(true);
             Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_CANCEL"));
         break;
          case UI_ACTION_WIZARD_CRASH_ASKHEAT:
-            GCode::executeFString("M970");
-            //pushMenu(&ui_wiz_crashdetectaskheat, true);
-            //Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_ASKHEAT"));
-            //Printer::homeAxis(true, true, true);
+            pushMenu(&ui_wiz_crashdetectaskheat, true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_ASKHEAT"));
+            
             
         break;
 
         case UI_ACTION_WIZARD_CRASH_WAITHEAT:
-            //pushMenu(&ui_wiz_crashdetectreheat, true);
-
-            
             pushMenu(&ui_wiz_crashdetectwaitheat, true);
+            extruder[0].tempControl.waitForTargetTemperature();
+            pushMenu(&ui_wiz_crashdetectrestart, true);
             Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_WAITHEAT"));
         break;
        
