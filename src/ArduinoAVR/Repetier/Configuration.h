@@ -476,7 +476,7 @@ It also can add a delay to wait for spindle to run on full speed.
 Per-axis values will override these
 */
 #define TMC2130_STEALTHCHOP         0  // Enable extremely quiet stepping
-#define TMC2130_INTERPOLATE_256  1  // Enable internal driver microstep interpolation
+#define TMC2130_INTERPOLATE_256     1  // Enable internal driver microstep interpolation
 #define TMC2130_STALLGUARD          0  // Sensorless homing sensitivity (between -63 and +64)
 
 /** PWM values for chopper tuning
@@ -508,9 +508,9 @@ but good approximations can be determined by experimentation.
 */
 
 #define SENSORLESS_HOMING 
-#define TMC2130_TCOOLTHRS_X 300
-#define TMC2130_TCOOLTHRS_Y 300
-#define TMC2130_TCOOLTHRS_Z 300
+#define TMC2130_TCOOLTHRS_X 100
+#define TMC2130_TCOOLTHRS_Y 100
+#define TMC2130_TCOOLTHRS_Z 100
 
 // ################# Misc. settings ##################
 

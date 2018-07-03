@@ -87,6 +87,7 @@ float Printer::lastXposition = 0; //HAL::eprGetFloat(EPR_LAST_X_POSITION);
 float Printer::lastYposition = 0; //HAL::eprGetFloat(EPR_LAST_Y_POSITION);
 float Printer::lastZposition = 0; //HAL::eprGetFloat(EPR_LAST_Z_POSITION);
 float Printer::lastEposition = 0; //HAL::eprGetFloat(EPR_LAST_E_POSITION);
+uint8_t  Printer::crash_enabled = 0;
 volatile uint8_t executeTMCPeriodical = 0;
 uint32_t Printer::printingFilePosition = HAL::eprGetInt32(EPR_LAST_FILE_POSITION);
 #else
@@ -2687,44 +2688,28 @@ void Printer::stopPrint() {
 
 
 #if defined(CRASH_DETECT)
-    void Printer::tmcPrepareCrashSettings(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min,bool crash) {
+    void Printer::tmcPrepareCrashSettings(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min) {
         while(!tmc_driver->stst());                     // Wait for motor stand-still
         tmc_driver->stealth_max_speed(0);               // Upper speedlimit for stealthChop
         tmc_driver->stealthChop(false);                 // Turn off stealthChop
         tmc_driver->coolstep_min_speed(coolstep_sp_min);// Minimum speed for StallGuard trigerring
-        //tmc_driver->sg_filter(false);                   // Turn off StallGuard filtering
-        tmc_driver->diag0_stall(crash);
-        tmc_driver->diag0_active_high(crash);   
-        tmc_driver->diag1_stall(crash);                  // Signal StallGuard on DIAG1 pin
-        tmc_driver->diag1_active_high(crash);            // StallGuard pulses active high
+        tmc_driver->sg_filter(false);                   // Turn off StallGuard filtering
+        tmc_driver->diag0_stall(true);
+        tmc_driver->diag0_active_high(true);   
+        tmc_driver->diag1_stall(true);                  // Signal StallGuard on DIAG1 pin
+        tmc_driver->diag1_active_high(true);            // StallGuard pulses active high
         Com::printFLN(PSTR("2"));
     }
 
     void Printer::tmcStartCrashSettings()
     {
-        
-    tmcPrepareCrashSettings(Printer::tmc_driver_x, TMC2130_TCOOLTHRS_CRASH,true);
-    tmcPrepareCrashSettings(Printer::tmc_driver_y, TMC2130_TCOOLTHRS_CRASH,true);
-    tmcPrepareCrashSettings(Printer::tmc_driver_z, TMC2130_TCOOLTHRS_CRASH,true);
-    Com::printFLN(PSTR("OK!!!!"));
+        Printer::crash_enabled = 1;
+    Com::printFLN(PSTR("ENABLED CRASH DETECTION"));
     }
     void Printer::tmcFinishCrashSettings()
     {
-         Com::printFLN(PSTR("TWO"));
-    tmcPrepareCrashSettings(Printer::tmc_driver_x, TMC2130_TCOOLTHRS_X,false);
-    tmcPrepareCrashSettings(Printer::tmc_driver_y, TMC2130_TCOOLTHRS_Y,false);
-    tmcPrepareCrashSettings(Printer::tmc_driver_z, TMC2130_TCOOLTHRS_Z,false);
-        Com::printFLN(PSTR("OK!!!!"));
-        /*
-    configTMC2130(Printer::tmc_driver_x, TMC2130_STEALTHCHOP_X, TMC2130_STALLGUARD_X,
-    TMC2130_PWM_AMPL_X, TMC2130_PWM_GRAD_X, TMC2130_PWM_AUTOSCALE_X, TMC2130_PWM_FREQ_X);
-
-    configTMC2130(Printer::tmc_driver_y, TMC2130_STEALTHCHOP_Y, TMC2130_STALLGUARD_Y,
-    TMC2130_PWM_AMPL_Y, TMC2130_PWM_GRAD_Y, TMC2130_PWM_AUTOSCALE_Y, TMC2130_PWM_FREQ_Y);
-
-    configTMC2130(Printer::tmc_driver_z, TMC2130_STEALTHCHOP_Z, TMC2130_STALLGUARD_Z,
-    TMC2130_PWM_AMPL_Z, TMC2130_PWM_GRAD_Z, TMC2130_PWM_AUTOSCALE_Z, TMC2130_PWM_FREQ_Z);
-    */
+        Printer::crash_enabled = 0;
+        Com::printFLN(PSTR("DISABLED CRASH DETECTION"));
     }
 
 #endif

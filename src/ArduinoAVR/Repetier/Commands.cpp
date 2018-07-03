@@ -59,17 +59,9 @@ void Commands::commandLoop() {
 }
 
 bool TMC_enable = true;
+
 void Commands::checkForPeriodicalActions(bool allowNewMoves) {
-    Printer::handleInterruptEvent();
-    EVENT_PERIODICAL;
-#if defined(DOOR_PIN) && DOOR_PIN > -1
-    if(Printer::updateDoorOpen()) {
-        if(Printer::mode == PRINTER_MODE_LASER) {
-            LaserDriver::changeIntensity(0);
-        }
-    }
-#endif
-    if(executeTMCPeriodical && TMC_enable){
+	if(executeTMCPeriodical && TMC_enable && (Printer::crash_enabled ==1)){
         if((READ(CRASH_X_PIN) == 1)|| (READ(CRASH_Y_PIN) == 1) || (READ(CRASH_Z_PIN) == 1) )
         {
             executeTMCPeriodical = 0;
@@ -79,6 +71,16 @@ void Commands::checkForPeriodicalActions(bool allowNewMoves) {
 
         }
     }
+    Printer::handleInterruptEvent();
+    EVENT_PERIODICAL;
+#if defined(DOOR_PIN) && DOOR_PIN > -1
+    if(Printer::updateDoorOpen()) {
+        if(Printer::mode == PRINTER_MODE_LASER) {
+            LaserDriver::changeIntensity(0);
+        }
+    }
+#endif
+
     if(!executePeriodical) return; // gets true every 100ms
     executePeriodical = 0;
     EVENT_TIMER_100MS;
