@@ -2566,6 +2566,7 @@ int UIDisplay::okAction(bool allowMoves) {
         case UI_ACTION_WIZARD_CRASH_RESTART:
             //pushMenu(&ui_wiz_crashdetectrestart, true);
             Printer::CrashRecover();
+            TMC_enable = true;
             Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_RESTART"));
             menuLevel = 1; 
             popMenu(true);
