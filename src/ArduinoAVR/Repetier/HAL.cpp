@@ -988,15 +988,13 @@ ISR(PWM_TIMER_VECTOR) {
 #endif
 //#if defined (CRASH_DETECT)
      TMC_Crash_counterPeriodical++;
-     if(TMC_Crash_counterPeriodical >= 4)//shoud run each 1ms
+     if(TMC_Crash_counterPeriodical >= 2)//shoud run each 2 tick of timer
      {
+        executeTMCPeriodical = 1;
 
-        TMC_Crash_counterPeriodical=0;
-            executeTMCPeriodical = 1;
-        
-
+        TMC_Crash_counterPeriodical =0;
+       // Printer::TestCrashPins();
      }
-        
 //#endif
 
     counterPeriodical++; // Approximate a 100ms timer

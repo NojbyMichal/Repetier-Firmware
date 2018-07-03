@@ -418,7 +418,6 @@ public:
     static float lastZposition;
     static float lastEposition;
     static uint32_t printingFilePosition;
-    static uint8_t crash_enabled;
 #endif
 #if defined(DRV_TMC2130)
 #if TMC2130_ON_X

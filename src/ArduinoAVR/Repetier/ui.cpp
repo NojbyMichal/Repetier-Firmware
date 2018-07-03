@@ -1,19 +1,15 @@
 /*
     This file is part of Repetier-Firmware.
-
     Repetier-Firmware is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
     Repetier-Firmware is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License
     along with Repetier-Firmware.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 
 #define UI_MAIN 1
@@ -1393,7 +1389,7 @@ void UIDisplay::parse(const char *txt, bool ram) {
                 //char c2 = (ram ? *(txt++) : pgm_read_byte(txt++));
                 txt++; // just skip c sign
                 ivalue = 0;
-				c2 = 'c';
+                c2 = 'c';
             } else ivalue = UI_TEMP_PRECISION;
 
             if(c2 == 'r') { // Extruder relative mode
@@ -1520,7 +1516,7 @@ void UIDisplay::parse(const char *txt, bool ram) {
 #endif
 {
                     parse(statusMsg, true);
-					}
+                    }
                 break;
             }
             if(c2 == 'c') {
@@ -2423,7 +2419,7 @@ void UIDisplay::popMenu(bool refresh) {
 
 void UIDisplay::showMessage(int id) {
     uid.menuLevel = 0;
-	Printer::setUIErrorMessage(true);
+    Printer::setUIErrorMessage(true);
     switch(id) {
     case 1:
         uid.pushMenu(&ui_msg_leveling_error, true);
@@ -2625,7 +2621,7 @@ int UIDisplay::okAction(bool allowMoves) {
                 break;
             case UI_ACTION_STATE:
                 break;
-				
+                
 #if FEATURE_AUTOLEVEL & FEATURE_Z_PROBE
             case UI_ACTION_AUTOLEVEL2:
                 uid.popMenu(false);
@@ -3755,8 +3751,8 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
             Printer::pushWizardVar(Printer::coordinateOffset[X_AXIS]);
             Printer::pushWizardVar(Printer::coordinateOffset[Y_AXIS]);
             Printer::pushWizardVar(Printer::coordinateOffset[Z_AXIS]);
-			if(!Printer::isMenuMode(MENU_MODE_SD_PRINTING + MENU_MODE_PAUSED))
-				Printer::MemoryPosition();
+            if(!Printer::isMenuMode(MENU_MODE_SD_PRINTING + MENU_MODE_PAUSED))
+                Printer::MemoryPosition();
             Extruder::current->retractDistance(FILAMENTCHANGE_SHORTRETRACT);
             float newZ = FILAMENTCHANGE_Z_ADD + Printer::currentPosition[Z_AXIS];
             Printer::currentPositionSteps[E_AXIS] = 0;

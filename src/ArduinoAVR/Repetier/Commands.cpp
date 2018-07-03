@@ -57,11 +57,11 @@ void Commands::commandLoop() {
     Printer::defaultLoopActions();
     //}
 }
-
-bool TMC_enable = true;
-
+bool TMC_enable = false;
 void Commands::checkForPeriodicalActions(bool allowNewMoves) {
-	if(executeTMCPeriodical && TMC_enable && (Printer::crash_enabled ==1)){
+
+    Printer::handleInterruptEvent();
+    if(executeTMCPeriodical && TMC_enable){
         if((READ(CRASH_X_PIN) == 1)|| (READ(CRASH_Y_PIN) == 1) || (READ(CRASH_Z_PIN) == 1) )
         {
             executeTMCPeriodical = 0;
@@ -71,7 +71,6 @@ void Commands::checkForPeriodicalActions(bool allowNewMoves) {
 
         }
     }
-    Printer::handleInterruptEvent();
     EVENT_PERIODICAL;
 #if defined(DOOR_PIN) && DOOR_PIN > -1
     if(Printer::updateDoorOpen()) {
@@ -80,7 +79,6 @@ void Commands::checkForPeriodicalActions(bool allowNewMoves) {
         }
     }
 #endif
-
     if(!executePeriodical) return; // gets true every 100ms
     executePeriodical = 0;
     EVENT_TIMER_100MS;
@@ -2757,9 +2755,15 @@ void Commands::processMCode(GCode *com) {
     Com::printFLN(PSTR("tmc CRASH ENABLED"));
     Printer::tmcStartCrashSettings();
     break;
-    case 921:
+    /*case 921:
     Com::printFLN(PSTR("tmc CRASH DISABLED"));
     Printer::tmcFinishCrashSettings();
+    break;*/
+    case 925:
+    if(com->hasS()) {
+    TMC_enable = (com->S);
+    }
+    Com::printFLN(PSTR("CRASH is (1=on,0=off): "),TMC_enable);
     break;
 #endif
 	case 998:

@@ -482,9 +482,9 @@ Per-axis values will override these
 /** PWM values for chopper tuning
 only change if you know what you're doing
 */
-#define TMC2130_PWM_AMPL          255
-#define TMC2130_PWM_GRAD            1
-#define TMC2130_PWM_AUTOSCALE    1
+#define TMC2130_PWM_AMPL          230//255
+#define TMC2130_PWM_GRAD            2//1
+#define TMC2130_PWM_AUTOSCALE       1
 #define TMC2130_PWM_FREQ            2
 
 /**  Per-axis parameters
@@ -508,9 +508,9 @@ but good approximations can be determined by experimentation.
 */
 
 #define SENSORLESS_HOMING 
-#define TMC2130_TCOOLTHRS_X 100
-#define TMC2130_TCOOLTHRS_Y 100
-#define TMC2130_TCOOLTHRS_Z 100
+#define TMC2130_TCOOLTHRS_X 200
+#define TMC2130_TCOOLTHRS_Y 200
+#define TMC2130_TCOOLTHRS_Z 200
 
 // ################# Misc. settings ##################
 
@@ -697,7 +697,7 @@ Values must be in range 1..255
 #define CRASH_X_PIN  4
 #define CRASH_Y_PIN  5
 #define CRASH_Z_PIN  6
-#define TMC2130_TCOOLTHRS_CRASH 100 //400
+#define TMC2130_TCOOLTHRS_CRASH 400
 
 #define UI_TEXT_WIZ_CRASH_11_TEXT "Crash Detected"
 #define UI_TEXT_WIZ_CRASH_12_TEXT "Recover print ?"
