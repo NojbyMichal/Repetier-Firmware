@@ -2753,7 +2753,7 @@ extern bool TMC_enable;
 
 void Printer::CrashDetected()
 {
-    Com::printFLN(PSTR("CRASH DETECTED  !!!"));
+   /* Com::printFLN(PSTR("CRASH DETECTED  !!!"));
 
 
     Com::printF(PSTR("PrintLine::linesWritePos:"),PrintLine::linesWritePos);
@@ -2765,31 +2765,40 @@ void Printer::CrashDetected()
     
     Com::printF(PSTR(" pos:"), sd.sdpos);
     Com::printFLN(PSTR(" of "), sd.filesize);
-
+*/
     printingFilePosition = sd.sdpos;
      
     lastXposition = Printer::currentPosition[X_AXIS];
     lastYposition = Printer::currentPosition[Y_AXIS];
     lastZposition = Printer::currentPosition[Z_AXIS];
     lastEposition = Printer::currentPositionSteps[E_AXIS] * Printer::invAxisStepsPerMM[E_AXIS];
-   Com::printFLN(PSTR("DETECTED: LAST X position: "), lastXposition);  
+ /*  Com::printFLN(PSTR("DETECTED: LAST X position: "), lastXposition);  
    Com::printFLN(PSTR("DETECTED: LAST Y position: "), lastYposition);  
    Com::printFLN(PSTR("DETECTED: LAST Z position: "), lastZposition);  
-
+*/
     GCodeSource::removeSource(&sdSource);
-    Com::printFLN(PSTR("REMOVED SOURCE")); 
+   // Com::printFLN(PSTR("REMOVED SOURCE")); 
 
     PrintLine::linesWritePos = 0;
     PrintLine::linesCount = 0;
     PrintLine::linesPos = 0;
 
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::lastZposition + 10,
+                             currentPosition[E_AXIS]-2,
+                            RETRACTION_UNDO_SPEED  );
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::lastZposition + 10,
+                            IGNORE_COORDINATE,
+                            60);
+     Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::lastZposition + 10,
+                            IGNORE_COORDINATE,
+                           60);
 
 
     //EEPROM::storeDataIntoEEPROM(false);
-
+/*
     Com::printFLN(PSTR("position: "), printingFilePosition);
     Com::printFLN(PSTR("SAVED SDPOS"));
- 
+ */
     
 
     
@@ -2811,26 +2820,9 @@ void Printer::CrashDetected()
     HAL::eprSetFloat(EPR_LAST_BED_TEMP,Extruder::getHeatedBedTemperature());
     HAL::eprSetByte(EPR_LAST_FAN_SPEED,Printer::fanSpeed);
 
-    //Printer::kill(true);
 
-
-
-    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::lastZposition + 10,
-                             currentPosition[E_AXIS]-2,
-                            RETRACTION_UNDO_SPEED  );
-    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::lastZposition + 10,
-                            IGNORE_COORDINATE,
-                            60);
-     Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::lastZposition + 10,
-                            IGNORE_COORDINATE,
-                           60);
-
-    //smazat bude ve wizardu
     Extruder::setHeatedBedTemperature( HAL::eprGetFloat(EPR_LAST_BED_TEMP),false);
     Extruder::setTemperatureForExtruder(0,0,false,false);
-
-    
-    //Extruder::pauseExtruders(false);
 
     sd.sdmode = 0;
     
