@@ -2752,6 +2752,7 @@ void Commands::processMCode(GCode *com) {
     Printer::positionPrint();
     break;
     case 920:
+    HAL::setTMCtimer();
     Com::printFLN(PSTR("tmc CRASH ENABLED"));
     Printer::tmcStartCrashSettings();
     break;
@@ -2762,6 +2763,14 @@ void Commands::processMCode(GCode *com) {
     case 925:
     if(com->hasS()) {
     TMC_enable = (com->S);
+
+    }
+    if(com->S ==1){
+        TIMSK4 |= (1 << OCIE4A);
+    }
+    else
+    {
+        TIMSK4 &= !(1 << OCIE4A);
     }
     Com::printFLN(PSTR("CRASH is (1=on,0=off): "),TMC_enable);
     break;

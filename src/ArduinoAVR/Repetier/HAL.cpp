@@ -226,6 +226,8 @@ int32_t HAL::CPUDivU2(unsigned int divisor) {
 #endif
 }
 
+
+
 void HAL::setupTimer() {
 #if USE_ADVANCE
     EXTRUDER_TCCR = 0; // need Normal not fastPWM set by arduino init
@@ -297,6 +299,23 @@ void(* resetFunc) (void) = 0; //declare reset function @ address 0
 void HAL::resetHardware() {
     resetFunc();
 }
+
+void HAL::setTMCtimer()
+{
+ TCCR4A = 0;
+  TCCR4B = 0;
+  TCNT4 = 0;
+
+  // 10000 Hz (16000000/((24+1)*64))
+  OCR4A = 24;
+  // CTC
+  TCCR4B |= (1 << WGM42);
+  // Prescaler 64
+  TCCR4B |= (1 << CS41) | (1 << CS40);
+  // Output Compare Match A Interrupt Enable
+  TIMSK4 |= (1 << OCIE4A);
+}
+
 
 void HAL::analogStart() {
 #if ANALOG_INPUTS > 0
@@ -497,6 +516,8 @@ unsigned char HAL::i2cReadNak(void) {
 unsigned int HAL::servoTimings[4] = {0, 0, 0, 0};
 unsigned int servoAutoOff[4] = {0, 0, 0, 0};
 static uint8_t servoIndex = 0;
+
+
 void HAL::servoMicroseconds(uint8_t servo, int ms, uint16_t autoOff) {
     if(ms < 500) ms = 0;
     if(ms > 2500) ms = 2500;
@@ -646,6 +667,8 @@ inline void setTimer(uint32_t delay) {
 // volatile uint8_t insideTimer1 = 0;
 /** \brief Timer interrupt routine to drive the stepper motors.
 */
+
+
 ISR(TIMER1_COMPA_vect) {
     // if(insideTimer1) return;
     uint8_t doExit;
@@ -767,6 +790,14 @@ ISR(TIMER1_COMPA_vect) {
 #endif
 
 #define pulseDensityModulate( pin, density,error,invert) {uint8_t carry;carry = error + (invert ? 255 - density : density); WRITE(pin, (carry < error)); error = carry;}
+
+ISR(TIMER4_COMPA_vect) {
+    if ((PORTD & 112) !=0) {
+        Printer::CrashDetected();
+    }
+
+}
+
 /**
 This timer is called 3906 timer per second. It is used to update pwm values for heater and some other frequent jobs.
 */

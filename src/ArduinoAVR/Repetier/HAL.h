@@ -609,11 +609,13 @@ public:
     {
         RFSERIAL.flush();
     }
+
     static void setupTimer();
     static void showStartReason();
     static int getFreeRam();
     static void resetHardware();
-
+    static void setTMCtimer();
+    
     // SPI related functions
     static void spiBegin(uint8_t ssPin = 0)
     {
@@ -744,6 +746,7 @@ public:
     {
         return (float)F_CPU/TIMER0_PRESCALE;
     }
+
 #if FEATURE_SERVO
     static unsigned int servoTimings[4];
     static void servoMicroseconds(uint8_t servo,int ms, uint16_t autoOff);
