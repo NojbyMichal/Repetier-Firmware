@@ -634,7 +634,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define UI_PAGES_DURATION 4000
 #define UI_SPEEDDEPENDENT_POSITIONING 0
 #define UI_DISABLE_AUTO_PAGESWITCH 1
-#define UI_AUTORETURN_TO_MENU_AFTER 30000
+#define UI_AUTORETURN_TO_MENU_AFTER 0
 #define FEATURE_UI_KEYS 0
 #define UI_ENCODER_SPEED 2
 #define UI_REVERSE_ENCODER 1

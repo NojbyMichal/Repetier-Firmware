@@ -3713,7 +3713,7 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
         break;
         case UI_ACTION_WIZARD_CRASH_CANCEL:
             Printer::homeAxis(true, true, true);
-            TMC_enable = 1;
+            TMC_enable = false;
             Printer::kill(true);
             popMenu(true);
             Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_CANCEL"));
