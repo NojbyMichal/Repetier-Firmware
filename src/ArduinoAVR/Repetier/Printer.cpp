@@ -2654,7 +2654,7 @@ void Printer::stopPrint() {
       uint8_t tmc_pwm_ampl, uint8_t tmc_pwm_grad, bool tmc_pwm_autoscale, uint8_t tmc_pwm_freq) {
         //while(!tmc_driver->stst());                     // Wait for motor stand-still
         tmc_driver->begin();                            // Initiate pins and registeries
-        tmc_driver->I_scale_analog(true);               // Set current reference source
+        //tmc_driver->I_scale_analog(true);               // Set current reference source
         tmc_driver->interpolate(true);                  // Set internal microstep interpolation
         tmc_driver->pwm_ampl(tmc_pwm_ampl);             // Chopper PWM amplitude
         tmc_driver->pwm_grad(tmc_pwm_grad);             // Velocity gradient for chopper PWM amplitude
@@ -2662,13 +2662,11 @@ void Printer::stopPrint() {
         tmc_driver->pwm_freq(tmc_pwm_freq);             // Chopper PWM frequency selection
         tmc_driver->stealthChop(tmc_stealthchop);       // Enable extremely quiet stepping
         tmc_driver->sg_stall_value(tmc_sgt);            // StallGuard sensitivity
-
-            tmc_driver->coolstep_min_speed(0xFFFFF); // 20bit max
-    tmc_driver->THIGH(0);
-    tmc_driver->semin(5);
-    tmc_driver->semax(2);
+        tmc_driver->coolstep_min_speed(0xFFFFF); // 20bit max
+    tmc_driver->sg_min(6);
+    tmc_driver->sg_max(10);
     tmc_driver->sedn(0b01);
-    
+    tmc_driver->mode_sw_speed(393000);
     }
 
 #if defined(SENSORLESS_HOMING)
@@ -2677,7 +2675,7 @@ void Printer::stopPrint() {
         tmc_driver->stealth_max_speed(0);               // Upper speedlimit for stealthChop
         tmc_driver->stealthChop(false);                 // Turn off stealthChop
         tmc_driver->coolstep_min_speed(coolstep_sp_min);// Minimum speed for StallGuard trigerring
-        tmc_driver->sg_filter(true);                   // Turn off StallGuard filtering
+        tmc_driver->sg_filter(true);                   // Turn on StallGuard filtering
         tmc_driver->diag1_stall(true);                  // Signal StallGuard on DIAG1 pin
         tmc_driver->diag1_active_high(true);            // StallGuard pulses active high
         tmc_driver->diag0_stall(true);
@@ -2812,7 +2810,13 @@ void Printer::CrashDetected()
     
     Printer::kill(true);
 
-
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                             IGNORE_COORDINATE,Printer::maxFeedrate[Z_AXIS] / 3);
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                             IGNORE_COORDINATE,Printer::maxFeedrate[Z_AXIS] / 3);
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                             IGNORE_COORDINATE,Printer::maxFeedrate[Z_AXIS] / 3);
+/*
 
     Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
                              currentPosition[E_AXIS]-5,
@@ -2820,6 +2824,7 @@ void Printer::CrashDetected()
     Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
                             IGNORE_COORDINATE,
                             Printer::maxFeedrate[Z_AXIS] / 3);
+ */
     //smazat bude ve wizardu
     Extruder::setHeatedBedTemperature( HAL::eprGetFloat(EPR_LAST_BED_TEMP),false);
     Extruder::setTemperatureForExtruder(0,0,false,false);

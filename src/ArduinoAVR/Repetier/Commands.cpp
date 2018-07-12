@@ -2761,6 +2761,7 @@ void Commands::processMCode(GCode *com) {
     Printer::tmcFinishCrashSettings();
     break;*/
     case 925:
+    Commands::waitUntilEndOfAllMoves();
     if(com->hasS()) {
     TMC_enable = (com->S);
 
