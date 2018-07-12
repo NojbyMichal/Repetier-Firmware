@@ -1829,6 +1829,15 @@ void UIDisplay::parse(const char *txt, bool ram) {
                 break;
             }
 #endif
+#if defined(DRV_TMC2130)
+            if(c2 == 'c'){ //%zc stealthchop
+                
+            }
+
+            if(c2 == 'g'){ //%zg stallguard
+                addInt(Printer::stallGuardVal,2);
+            }
+#endif            
             if(c2 == '2')
                 addFloat(-Printer::coordinateOffset[Z_AXIS], 2, 2);
             else
@@ -3027,6 +3036,12 @@ ZPOS2:
 
     break;
 #endif 
+#if defined(DRV_TMC2130)
+    case UI_ACTION_STALLGUARD_CHANGE:
+    INCREMENT_MIN_MAX(Printer::stallGuardVal,1,-10,10);
+
+    break;
+#endif
 #if UI_BED_COATING
     case UI_ACTION_COATING_CUSTOM:
         INCREMENT_MIN_MAX(Printer::zBedOffset, 0.01, -1.0, 199.0);
@@ -3262,12 +3277,28 @@ void UIDisplay::menuAdjustZProbeHeight(const UIMenu *men,float offset)
     
     pushMenu(men, false);
     BEEP_SHORT;
-    //Printer::homeAxis(true, true, true);
-    //Commands::printCurrentPosition(PSTR("UI_ACTION_HOMEALL "));
-    menuLevel = 0;
     activeAction = 0;
-    //UI_STATUS_UPD_F(Com::translatedF(UI_TEXT_PRINTER_READY_ID));
-    
+
+}
+#endif
+
+#if defined(DRV_TMC2130)
+void UIDisplay::menuAdjustStallGuardVal(const UIMenu *men,int32_t value)
+{
+#if EEPROM_MODE != 0
+    //If there is something to change
+    if (EEPROM::stallGuardThreshold() != value)
+    {   
+        HAL::eprSetInt32(EPR_STEALTHCHOP_VAL, value);
+        EEPROM::storeDataIntoEEPROM(false);
+    }
+#endif
+    Printer::stallGuardVal = value;
+
+    pushMenu(men, false);
+    BEEP_SHORT;
+    activeAction = 0;
+  
 }
 #endif
 
@@ -3308,6 +3339,12 @@ void UIDisplay::finishAction(unsigned int action) {
          menuAdjustZProbeHeight(&ui_menu_z_offset_change,Printer::zProbeHeight);
      break;
  #endif
+     #if defined(DRV_TMC2130)
+    case UI_ACTION_STALLGUARD_CHANGE:
+    menuAdjustStallGuardVal(&ui_menu_stall_guard_threshold_change,Printer::stallGuardVal);
+
+    break;
+#endif
 #endif
     }
 }

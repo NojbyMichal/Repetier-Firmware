@@ -89,7 +89,9 @@ float Printer::lastZposition = 0; //HAL::eprGetFloat(EPR_LAST_Z_POSITION);
 float Printer::lastEposition = 0; //HAL::eprGetFloat(EPR_LAST_E_POSITION);
 volatile uint8_t executeTMCPeriodical = 0;
 uint32_t Printer::printingFilePosition = 0;
+int32_t Printer::stallGuardVal = HAL::eprGetInt32(EPR_STALLGUARD_VAL);
 #else
+int32_t Printer::stallGuardVal = STALLGUARD_VAL;
 float Printer::zBedOffset = Z_PROBE_Z_OFFSET;
 float Printer::zProbeHeight  = Z_PROBE_HEIGHT;
 #endif
