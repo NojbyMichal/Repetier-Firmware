@@ -678,6 +678,8 @@ Values must be in range 1..255
 
 #define SERVICE_MENU
 #define UI_TEXT_SERVICE_MENU_TEXT "Service menu"
+#define UI_TEXT_STALLGUARD_ITEM_TEXT "SGT: %zg"
+
 #define UI_SERVICE_MENU_ITEM1 "G28\n M190 S55\n M322\n G33 R0\n G32 S2\n M322\n G33 R0\n G28"
 #define UI_SERVICE_MENU_ITEM1_TEXT "Z home calib"
 #define UI_SERVICE_MENU_ITEM2 "G28\n M303 S205 C10 X10"
@@ -692,6 +694,8 @@ Values must be in range 1..255
 
 
 #define CRASH_DETECT 1
+
+#define STALLGUARD_VAL TMC2130_STALLGUARD //
 
 #define CRASH_X_PIN  4
 #define CRASH_Y_PIN  5

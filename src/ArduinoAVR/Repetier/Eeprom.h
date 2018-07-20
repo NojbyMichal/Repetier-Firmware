@@ -135,6 +135,8 @@ have problems with other modules using the eeprom */
 //1060-1064
 #define EPR_CRASHED                           1060 //1061 is free //byte
 #define EPR_LAST_FAN_SPEED                    1061
+#define EPR_STALLGUARD_VAL                    1062
+
 
 #define EPR_LAST_X_POSITION                   1064 //int
 #define EPR_LAST_Y_POSITION                   1068
@@ -144,6 +146,8 @@ have problems with other modules using the eeprom */
 #define EPR_LAST_FILE_POSITION                1080
 #define EPR_LAST_EXTR_TEMP                    1084
 #define EPR_LAST_BED_TEMP                     1088
+
+#define EPR_STEALTHCHOP_VAL                   1092
 
 /*
 #define EPR_LAST_TEMP_E0
@@ -289,6 +293,15 @@ static inline void setZProbeHeight(float mm) {
         return Z_PROBE_HEIGHT;
 #endif
     }
+
+static inline int32_t stallGuardThreshold() {
+#if EEPROM_MODE != 0
+        return HAL::eprGetInt32(EPR_STALLGUARD_VAL);
+#else
+        return STALLGUARD_VAL;
+#endif
+    }
+
     static inline float zProbeX1() {
 #if EEPROM_MODE != 0
         return HAL::eprGetFloat(EPR_Z_PROBE_X1);

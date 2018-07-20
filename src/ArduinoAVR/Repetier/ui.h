@@ -267,6 +267,7 @@
 #define UI_ACTION_SERVICE_MENU_ITEM3 1508
 #define UI_ACTION_SERVICE_MENU_ITEM4 1509
 #define UI_ACTION_SERVICE_MENU_ITEM5 1510
+#define UI_ACTION_STALLGUARD_CHANGE  1511
 
 // 1700-1956 language selectors
 
@@ -686,6 +687,9 @@ class UIDisplay {
 #if UI_Z_PROBE_HEIGHT_USER_CHANGE
     void menuAdjustZProbeHeight(const UIMenu *men, float offset);
 #endif 
+#if defined(DRV_TMC2130)
+void menuAdjustStallGuardVal(const UIMenu *men,int32_t value);
+#endif
     char cwd[SD_MAX_FOLDER_DEPTH * LONG_FILENAME_LENGTH + 2];
     uint8_t folderLevel;
 };
