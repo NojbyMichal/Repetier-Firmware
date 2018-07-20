@@ -2663,10 +2663,10 @@ void Printer::stopPrint() {
         tmc_driver->stealthChop(tmc_stealthchop);       // Enable extremely quiet stepping
         tmc_driver->sg_stall_value(tmc_sgt);            // StallGuard sensitivity
         tmc_driver->coolstep_min_speed(0xFFFFF); // 20bit max
-    tmc_driver->sg_min(6);
+     tmc_driver->sg_min(6);
     tmc_driver->sg_max(10);
-    tmc_driver->sedn(0b01);
-    tmc_driver->mode_sw_speed(393000);
+    tmc_driver->sedn(0b01);             //X1        // X2     //X>3 
+    tmc_driver->mode_sw_speed(4000);// 65800// 98500 //197000//262000//393000 //
     }
 
 #if defined(SENSORLESS_HOMING)
@@ -2742,7 +2742,7 @@ void Printer::TestCrashPins()
     
     if (crash == 1)
     {
-        GCode::executeFString("M969");
+        //GCode::executeFString("M969");
         crash = 0;
     }
 }

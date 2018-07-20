@@ -791,8 +791,10 @@ ISR(TIMER1_COMPA_vect) {
 
 #define pulseDensityModulate( pin, density,error,invert) {uint8_t carry;carry = error + (invert ? 255 - density : density); WRITE(pin, (carry < error)); error = carry;}
 
+
 ISR(TIMER4_COMPA_vect) {
-    if ((PORTD & 112) !=0) {
+    // PG5 || PE3 || PH3  //D4 D5 D6
+    if (((PORTG & 32) !=0)|| ((PORTE & 8) !=0) || ((PORTH & 8) !=0)) {
         Printer::CrashDetected();
     }
 
