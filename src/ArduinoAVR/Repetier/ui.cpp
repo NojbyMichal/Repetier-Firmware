@@ -2961,7 +2961,7 @@ ZPOS2:
         break; 
 #endif  
 #if AC_LOST_DETECT
-        case UI_ACTION_WIZARD_CRASH_WAITHEAT:
+        case UI_ACTION_WIZARD_AC_LOST_WAITHEAT:
              Extruder::current->retractDistance(-increment);
              Commands::waitUntilEndOfAllMoves();
              Extruder::current->disableCurrentExtruderMotor();

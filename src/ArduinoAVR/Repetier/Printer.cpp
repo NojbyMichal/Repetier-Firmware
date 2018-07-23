@@ -2753,9 +2753,9 @@ void Printer::stopPrint() {
     }
     void Printer::tmcFinishCrashSettings()
     {
-    tmcPrepareCrashSettings(Printer::tmc_driver_x);
-    tmcPrepareCrashSettings(Printer::tmc_driver_y);
-    tmcPrepareCrashSettings(Printer::tmc_driver_z);
+    tmcDisableCrashSettings(Printer::tmc_driver_x);
+    tmcDisableCrashSettings(Printer::tmc_driver_y);
+    tmcDisableCrashSettings(Printer::tmc_driver_z);
     }
 
 #endif
