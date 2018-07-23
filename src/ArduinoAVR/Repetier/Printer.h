@@ -412,6 +412,8 @@ public:
     static float progress;
     static fast8_t wizardStackPos;
     static wizardVar wizardStack[WIZARD_STACK_SIZE];
+    static uint8_t tmccrash_enable;
+    static uint8_t ac_lost_enable;
 #if defined(CRASH_DETECT)
     static float lastXposition;
     static float lastYposition;

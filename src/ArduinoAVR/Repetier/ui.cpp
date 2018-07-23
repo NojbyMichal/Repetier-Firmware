@@ -57,7 +57,7 @@ uint16_t servoPosition = 1500;
 #endif
 #endif
 
-extern bool TMC_enable;
+//extern bool TMC_enable;
 
 static TemperatureController *currHeaterForSetup;    // pointer to extruder or heatbed temperature controller
 
@@ -2610,7 +2610,7 @@ int UIDisplay::okAction(bool allowMoves) {
         case UI_ACTION_WIZARD_CRASH_RESTART:
             //pushMenu(&ui_wiz_crashdetectrestart, true);
             Printer::CrashRecover();
-            TMC_enable = true;
+            //TMC_enable = true;
             Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_CRASH_RESTART"));
             menuLevel = 1; 
             popMenu(true);
@@ -2961,7 +2961,7 @@ ZPOS2:
         break; 
 #endif  
 #if AC_LOST_DETECT
-        case UI_ACTION_WIZARD_CRASH_WAITHEAT:
+        case UI_ACTION_WIZARD_AC_LOST_WAITHEAT:
              Extruder::current->retractDistance(-increment);
              Commands::waitUntilEndOfAllMoves();
              Extruder::current->disableCurrentExtruderMotor();
@@ -3794,7 +3794,7 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
         break;
         case UI_ACTION_WIZARD_CRASH_CANCEL:
             Printer::homeAxis(true, true, true);
-            TMC_enable = false;
+            //TMC_enable = false;
             Printer::kill(true);
             popMenu(true);
             Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_CANCEL"));
@@ -3820,7 +3820,7 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
 #endif   
 #if AC_LOST_DETECT
         case UI_ACTION_WIZARD_AC_LOST_BEGIN:
-            pushMenu(&ui_menu_aclost_ask, true);
+            pushMenu(&ui_menu_ac_lost_ask, true);
             Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_AC_LOST_BEGIN"));
         break;
         case UI_ACTION_WIZARD_AC_LOST_CANCEL:

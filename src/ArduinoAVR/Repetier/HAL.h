@@ -615,6 +615,8 @@ public:
     static int getFreeRam();
     static void resetHardware();
     static void setTMCtimer();
+    static void setACtimer();
+
     
     // SPI related functions
     static void spiBegin(uint8_t ssPin = 0)
