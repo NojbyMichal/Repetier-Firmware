@@ -316,6 +316,20 @@ void HAL::setTMCtimer()
   TIMSK4 |= (1 << OCIE4A);
 }
 
+void HAL::setACtimer(){
+     TCCR5A = 0;
+  TCCR5B = 0;
+  TCNT5 = 0;
+
+  // 10000 Hz (16000000/((24+1)*64))
+  OCR5A = 24;
+  // CTC
+  TCCR5B |= (1 << WGM52);
+  // Prescaler 64
+  TCCR5B |= (1 << CS51) | (1 << CS50);
+  // Output Compare Match A Interrupt Enable
+  TIMSK5 |= (1 << OCIE5A);
+}
 
 void HAL::analogStart() {
 #if ANALOG_INPUTS > 0
@@ -797,7 +811,13 @@ ISR(TIMER4_COMPA_vect) {
     if (((PORTG & 32) !=0)|| ((PORTE & 8) !=0) || ((PORTH & 8) !=0)) {
         Printer::CrashDetected();
     }
+}
 
+ISR(TIMER5_COMPA_vect) {
+    //PJ1  D14
+    if ((PORTJ & 2)==0) { // cause of pull up
+        Printer::AcLostDetected();
+    }
 }
 
 /**

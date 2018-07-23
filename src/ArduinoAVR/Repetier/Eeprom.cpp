@@ -450,17 +450,17 @@ void EEPROM::storeDataIntoEEPROM(uint8_t corrupted)
 #endif
 
 #if CRASH_DETECT
-    HAL::eprSetFloat(EPR_LAST_X_POSITION,Printer::lastXposition);
-    HAL::eprSetFloat(EPR_LAST_Y_POSITION,Printer::lastYposition);
-    HAL::eprSetFloat(EPR_LAST_Z_POSITION,Printer::lastZposition);
-    HAL::eprSetInt32(EPR_LAST_FILE_POSITION,Printer::printingFilePosition);
-    HAL::eprSetFloat(EPR_LAST_EXTR_TEMP,Extruder::current->tempControl.currentTemperatureC);
-   
-#endif  
+    HAL::eprSetByte(EPR_TMC_CRASH_ENABLE,Printer::tmccrash_enable);
+#endif 
+
+#if AC_LOST_DETECT
+    HAL::eprSetByte(EPR_AC_LOST_ENABLE,Printer::ac_lost_enable);
+#endif 
 
 #if EXTRUDER_JAM_CONTROL
 	HAL::eprSetByte(EPR_EOF_CONTROL,Printer::isJamcontrolDisabled());
 #endif 
+
     if(corrupted)
     {
         HAL::eprSetInt32(EPR_PRINTING_TIME,0);
@@ -620,9 +620,12 @@ void EEPROM::readDataFromEEPROM(bool includeExtruder)
 #if MIXING_EXTRUDER
         readMixingRatios();
 #endif
-#if CRASH_DETECT
-
+#if AC_LOST_DETECT
+         Printer::ac_lost_enable = HAL::eprGetByte(EPR_AC_LOST_ENABLE);
 #endif        
+#if CRASH_DETECT
+         Printer::tmccrash_enable = HAL::eprGetByte(EPR_TMC_CRASH_ENABLE);
+#endif   
 #if EXTRUDER_JAM_CONTROL
 	Printer::setJamcontrolDisabled(HAL::eprGetByte(EPR_EOF_CONTROL));
 #endif 

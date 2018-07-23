@@ -87,10 +87,14 @@ float Printer::lastXposition = 0; //HAL::eprGetFloat(EPR_LAST_X_POSITION);
 float Printer::lastYposition = 0; //HAL::eprGetFloat(EPR_LAST_Y_POSITION);
 float Printer::lastZposition = 0; //HAL::eprGetFloat(EPR_LAST_Z_POSITION);
 float Printer::lastEposition = 0; //HAL::eprGetFloat(EPR_LAST_E_POSITION);
+uint8_t Printer::tmccrash_enable = HAL::eprGetByte(EPR_TMC_CRASH_ENABLE);  
+uint8_t Printer::ac_lost_enable = HAL::eprGetByte(EPR_AC_LOST);
 volatile uint8_t executeTMCPeriodical = 0;
 uint32_t Printer::printingFilePosition = 0;
 int32_t Printer::stallGuardVal = HAL::eprGetInt32(EPR_STALLGUARD_VAL);
 #else
+uint8_t Printer::tmccrash_enable = 0;  
+uint8_t Printer::ac_lost_enable = 0;
 int32_t Printer::stallGuardVal = STALLGUARD_VAL;
 float Printer::zBedOffset = Z_PROBE_Z_OFFSET;
 float Printer::zProbeHeight  = Z_PROBE_HEIGHT;
@@ -1292,6 +1296,41 @@ void Printer::setup() {
 #endif
 #endif
     EVENT_INITIALIZE;
+
+#if defined (AC_LOST_DETECT)
+ if(HAL::eprGetByte(EPR_AC_LOST_ENABLE))
+ {
+    Com::printFLN(PSTR("AC LOST FEATURE ENABLED"));
+    HAL::setACtimer();
+    Printer::ac_lost_enable =1;
+ }else
+ {
+    Printer::ac_lost_enable =0;
+    Com::printFLN(PSTR("AC LOST FEATURE DISABLED"));
+ }
+
+    if(HAL::eprGetByte(EPR_AC_LOST)==1){
+        HAL::eprSetByte(EPR_AC_LOST,0);
+    Printer::AcLostRecover();    
+    }
+    
+#endif
+
+#if defined (CRASH_DETECT)
+if(HAL::eprGetByte(EPR_TMC_CRASH_ENABLE))
+ {
+    Com::printFLN(PSTR("tmc CRASH ENABLED"));
+    Printer::tmcStartCrashSettings();
+    HAL::setTMCtimer();
+    Printer::tmccrash_enable =1;
+ }else
+ {
+    Printer::tmcFinishCrashSettings();
+    Printer::tmccrash_enable =0;
+    Com::printFLN(PSTR("tmc CRASH DISABLED"));
+ } 
+#endif
+
 #ifdef STARTUP_GCODE
     GCode::executeFString(Com::tStartupGCode);
 #endif
@@ -2697,28 +2736,171 @@ void Printer::stopPrint() {
         tmc_driver->diag0_active_high(true);   
         tmc_driver->diag1_stall(true);                  // Signal StallGuard on DIAG1 pin
         tmc_driver->diag1_active_high(true);            // StallGuard pulses active high
-        Com::printFLN(PSTR("2"));
+    }
+     void Printer::tmcDisableCrashSettings(TMC2130Stepper* tmc_driver) {
+        while(!tmc_driver->stst());                     // Wait for motor stand-still
+        tmc_driver->diag0_stall(false);
+        tmc_driver->diag0_active_high(false);   
+        tmc_driver->diag1_stall(false);                  // Signal StallGuard on DIAG1 pin
+        tmc_driver->diag1_active_high(false);            // StallGuard pulses active high
     }
 
     void Printer::tmcStartCrashSettings()
     {
-         Com::printFLN(PSTR("ONE"));
     tmcPrepareCrashSettings(Printer::tmc_driver_x, TMC2130_TCOOLTHRS_CRASH);
     tmcPrepareCrashSettings(Printer::tmc_driver_y, TMC2130_TCOOLTHRS_CRASH);
     tmcPrepareCrashSettings(Printer::tmc_driver_z, TMC2130_TCOOLTHRS_CRASH);
-    Com::printFLN(PSTR("OK!!!!"));
     }
     void Printer::tmcFinishCrashSettings()
     {
-    configTMC2130(Printer::tmc_driver_x, TMC2130_STEALTHCHOP_X, TMC2130_STALLGUARD_X,
-    TMC2130_PWM_AMPL_X, TMC2130_PWM_GRAD_X, TMC2130_PWM_AUTOSCALE_X, TMC2130_PWM_FREQ_X);
-
-    configTMC2130(Printer::tmc_driver_y, TMC2130_STEALTHCHOP_Y, TMC2130_STALLGUARD_Y,
-    TMC2130_PWM_AMPL_Y, TMC2130_PWM_GRAD_Y, TMC2130_PWM_AUTOSCALE_Y, TMC2130_PWM_FREQ_Y);
-
-    configTMC2130(Printer::tmc_driver_z, TMC2130_STEALTHCHOP_Z, TMC2130_STALLGUARD_Z,
-    TMC2130_PWM_AMPL_Z, TMC2130_PWM_GRAD_Z, TMC2130_PWM_AUTOSCALE_Z, TMC2130_PWM_FREQ_Z);
+    tmcPrepareCrashSettings(Printer::tmc_driver_x);
+    tmcPrepareCrashSettings(Printer::tmc_driver_y);
+    tmcPrepareCrashSettings(Printer::tmc_driver_z);
     }
+
+#endif
+#if defined(AC_LOST_DETECT)
+void Printer::AcLostRecover(){
+  if (printingFilePosition !=0)
+    {
+    Com::printFLN(PSTR("RECOVER BEGIN"));  
+
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3);
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3);
+
+       
+    Com::printFLN(PSTR(" filename:"),Printer::printName);       
+    sd.selectFile(Printer::printName);
+
+    Printer::homeAxis(false, false, true);
+    
+
+    Com::printF(PSTR("XS:"), Printer::currentPositionSteps[X_AXIS]);
+    Com::printF(PSTR(" YS:"), Printer::currentPositionSteps[Y_AXIS]);
+    Com::printFLN(PSTR(" ZS:"), Printer::currentPositionSteps[Z_AXIS]);
+    //Extruder::setTemperatureForExtruder(210, 0, false, true);
+    //set FAN
+    
+    //set speed 
+
+    //set position of file
+    sd.setIndex(printingFilePosition);
+    // move to last Z position
+  
+    
+
+//XYZ
+     Printer::moveToReal(HAL::eprGetFloat(EPR_AC_LAST_X_POSITION), HAL::eprGetFloat(EPR_AC_LAST_Y_POSITION), HAL::eprGetFloat(EPR_AC_LAST_Z_POSITION),
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3,false);
+//E
+     Printer::destinationSteps[E_AXIS] = Printer::currentPositionSteps[E_AXIS] = Printer::convertToMM(HAL::eprGetFloat(EPR_AC_LAST_E_POSITION)) * Printer::axisStepsPerMM[E_AXIS];
+// set extr temp
+ //    Extruder::setTemperatureForExtruder(HAL::eprGetFloat(EPR_LAST_EXTR_TEMP),0,false,false);
+// set bed temp
+ //    Extruder::setHeatedBedTemperature( HAL::eprGetFloat(EPR_LAST_BED_TEMP),false);
+// set fan
+
+//set multiply
+    // Commands::changeFeedrateMultiply(25);
+
+    
+     updateCurrentPosition(true);
+     /*
+     Printer::moveToReal(20, 20, 200,
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3,false);
+    
+*/
+    
+    sd.sdmode = 1;
+
+    Printer::setMenuMode(MENU_MODE_SD_PRINTING, true);
+    Printer::setMenuMode(MENU_MODE_PAUSED, false);
+    Printer::setPrinting(true);
+
+    UI_STATUS_F(PSTR(""));
+    #if NEW_COMMUNICATION
+    GCodeSource::registerSource(&sdSource);
+    #endif
+
+    Com::printFLN(PSTR("AC RECOVER END")); 
+        
+    }
+    else
+    {
+    Com::printFLN(PSTR("AC RECOVER UNSUCCESSFUL"));    
+    }
+    
+}    
+ void Printer::AcLostDetected(){
+   Com::printFLN(PSTR("ACLOST DETECTED  !!!"));
+
+    Extruder::setHeatedBedTemperature(0,false);
+    Extruder::setTemperatureForExtruder(0,0,false,false);
+
+    printingFilePosition = sd.sdpos;
+     
+    lastXposition = Printer::currentPosition[X_AXIS];
+    lastYposition = Printer::currentPosition[Y_AXIS];
+    lastZposition = Printer::currentPosition[Z_AXIS];
+    lastEposition = Printer::currentPositionSteps[E_AXIS] * Printer::invAxisStepsPerMM[E_AXIS];
+
+
+
+    
+    HAL::eprSetFloat(EPR_AC_LAST_X_POSITION,Printer::lastXposition);
+    HAL::eprSetFloat(EPR_AC_LAST_Y_POSITION,Printer::lastYposition);
+    HAL::eprSetFloat(EPR_AC_LAST_Z_POSITION,Printer::lastZposition);
+    HAL::eprSetFloat(EPR_AC_LAST_E_POSITION,Printer::lastEposition);
+    HAL::eprSetInt32(EPR_AC_LAST_FILE_POSITION,Printer::printingFilePosition);
+
+    HAL::eprSetFloat(EPR_AC_LAST_EXTR_TEMP,Extruder::current->tempControl.currentTemperatureC);
+    HAL::eprSetFloat(EPR_AC_LAST_BED_TEMP,Extruder::getHeatedBedTemperature());
+    HAL::eprSetByte(EPR_AC_LAST_FAN_SPEED,Printer::fanSpeed);
+
+
+
+    //EEPROM::storeDataIntoEEPROM(false);
+
+    GCodeSource::removeSource(&sdSource);
+    Com::printFLN(PSTR("REMOVED SOURCE"));  
+
+    Printer::setMenuMode(MENU_MODE_SD_PRINTING,false);
+    Printer::setMenuMode(MENU_MODE_PAUSED,false);
+    Printer::setPrinting(0);
+
+    
+    PrintLine::linesWritePos = 0;
+    PrintLine::linesCount = 0;
+    PrintLine::linesPos = 0;
+    
+    Printer::kill(true);
+
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                             IGNORE_COORDINATE,Printer::maxFeedrate[Z_AXIS] / 3);
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                             IGNORE_COORDINATE,Printer::maxFeedrate[Z_AXIS] / 3);
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                             IGNORE_COORDINATE,Printer::maxFeedrate[Z_AXIS] / 3);
+/*
+
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                             currentPosition[E_AXIS]-5,
+                            Printer::maxFeedrate[Z_AXIS] / 3);
+    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
+                            IGNORE_COORDINATE,
+                            Printer::maxFeedrate[Z_AXIS] / 3);
+ */
+    //smazat bude ve wizardu
+    Extruder::setHeatedBedTemperature(0,false);
+    Extruder::setTemperatureForExtruder(0,0,false,false);
+    sd.sdmode = 0; 
+ }   
 
 #endif
 
@@ -2749,7 +2931,7 @@ void Printer::TestCrashPins()
     }
 }
 
-extern bool TMC_enable;
+//extern bool TMC_enable;
 
 void Printer::CrashDetected()
 {
@@ -2876,7 +3058,7 @@ void Printer::positionPrint()
 
 void Printer::CrashRecover()
 {
-    TMC_enable = true;
+ //   TMC_enable = true;
    /* 
     lastXposition = HAL::eprGetFloat(EPR_LAST_X_POSITION);
     lastYposition = HAL::eprGetFloat(EPR_LAST_Y_POSITION);

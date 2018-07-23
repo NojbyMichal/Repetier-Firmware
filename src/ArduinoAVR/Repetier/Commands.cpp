@@ -57,10 +57,11 @@ void Commands::commandLoop() {
     Printer::defaultLoopActions();
     //}
 }
-bool TMC_enable = false;
+//bool TMC_enable = false;
 void Commands::checkForPeriodicalActions(bool allowNewMoves) {
 
     Printer::handleInterruptEvent();
+    /*
     if(executeTMCPeriodical && TMC_enable){
         if((READ(CRASH_X_PIN) == 1)|| (READ(CRASH_Y_PIN) == 1) || (READ(CRASH_Z_PIN) == 1) )
         {
@@ -71,6 +72,8 @@ void Commands::checkForPeriodicalActions(bool allowNewMoves) {
 
         }
     }
+    */
+
     EVENT_PERIODICAL;
 #if defined(DOOR_PIN) && DOOR_PIN > -1
     if(Printer::updateDoorOpen()) {
@@ -2735,6 +2738,25 @@ void Commands::processMCode(GCode *com) {
     }
     break;
 #endif
+#if defined (AC_LOST_DETECT)
+    case 980:
+
+    if(com->hasS()) {
+    //TMC_enable = (com->S);
+
+    if(com->S == 0){
+       HAL::eprSetByte(EPR_AC_LOST,0); 
+    }
+    else if(com->S ==1)
+    {
+        HAL::eprSetByte(EPR_AC_LOST,1);
+    }
+    }
+    Com::printFLN(PSTR("AC_LOST EPR FLAG is (1=on,0=off): "),HAL::eprGetByte(EPR_AC_LOST));
+    break;
+
+#endif    
+
 #if defined (CRASH_DETECT)
     case 970:
     Com::printFLN(PSTR("CRASH RECOVER"));
@@ -2752,30 +2774,89 @@ void Commands::processMCode(GCode *com) {
     Printer::positionPrint();
     break;
     case 920:
-    HAL::setTMCtimer();
-    Com::printFLN(PSTR("tmc CRASH ENABLED"));
-    Printer::tmcStartCrashSettings();
-    break;
-    /*case 921:
-    Com::printFLN(PSTR("tmc CRASH DISABLED"));
-    Printer::tmcFinishCrashSettings();
-    break;*/
-    case 925:
-    Commands::waitUntilEndOfAllMoves();
-    if(com->hasS()) {
-    TMC_enable = (com->S);
 
+    if(com->hasS()) {
+     if(com->S ==1){
+       Printer::tmcStartCrashSettings();
+       Com::printFLN(PSTR("tmc CRASH ENABLED"));
+       HAL::setTMCtimer();
+       HAL::eprSetByte(EPR_TMC_CRASH_ENABLE,1);
+        Printer::tmccrash_enable =1;
     }
-    if(com->S ==1){
-        TIMSK4 |= (1 << OCIE4A);
+    else if(com->S == 0){
+    
+        Printer::tmcFinishCrashSettings();
+        Com::printFLN(PSTR("tmc CRASH DISABLED"));
+        HAL::eprSetByte(EPR_TMC_CRASH_ENABLE,0);
+         Printer::tmccrash_enable =0;
+    }
     }
     else
     {
+     Com::printFLN(PSTR("CRASH FEATURE is (1=on,0=off): "),Printer::tmccrash_enable);    
+    }
+    break;
+    case 925:
+    if(Printer::tmccrash_enable == 1){
+    Commands::waitUntilEndOfAllMoves();
+    if(com->hasS()) {
+    //TMC_enable = (com->S);
+
+    if(com->S ==1){
+        TIMSK4 |= (1 << OCIE4A);
+    }
+    else if(com->S == 0){
+    
         TIMSK4 &= !(1 << OCIE4A);
     }
-    Com::printFLN(PSTR("CRASH is (1=on,0=off): "),TMC_enable);
+    }
+    else
+    {
+    //Com::printFLN(PSTR("CRASH is (1=on,0=off): "),TMC_enable);    
+    }
+    }
     break;
 #endif
+#if defined (AC_LOST_DETECT)
+    case 940:
+    if(com->hasS()) {
+     if(com->S ==1){
+       
+       Com::printFLN(PSTR("AC LOST FEATURE ENABLED"));
+       HAL::setACtimer();
+       HAL::eprSetByte(EPR_AC_LOST_ENABLE,1);
+       Printer::ac_lost_enable = 1;
+
+    }
+    else if(com->S == 0){
+    
+        Com::printFLN(PSTR("AC LOST FEATURE DISABLED"));
+        HAL::eprSetByte(EPR_AC_LOST_ENABLE,0);
+        Printer::ac_lost_enable = 0;
+    }
+    }
+    else
+    {
+        Com::printFLN(PSTR("AC LOST FEATURE:"),Printer::ac_lost_enable);
+    }
+
+    break;
+   case 945:
+   if(Printer::ac_lost_enable == 1){
+    if(com->hasS()) {
+    
+    if(com->S ==1){
+        TIMSK5 |= (1 << OCIE5A);
+    }
+    else if(com->S == 0){
+    
+        TIMSK5 &= !(1 << OCIE5A);
+    }
+    }
+    }
+    break;
+#endif    
+
 	case 998:
 		UI_MESSAGE(com->S);
 		break;

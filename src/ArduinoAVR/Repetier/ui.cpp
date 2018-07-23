@@ -2547,6 +2547,41 @@ int UIDisplay::okAction(bool allowMoves) {
         action = pgm_read_word(&(men->id));
         if(!EVENT_UI_OVERRIDE_EXECUTE(action, allowMoves))
             switch(action) {
+#if AC_LOST_DETECT
+        case UI_ACTION_WIZARD_AC_LOST_BEGIN:
+            
+            //uid.popMenu(false);
+            Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_AC_LOST_BEGIN"));
+            //uid.popMenu(true);
+        break;
+        case UI_ACTION_WIZARD_AC_LOST_WAITHEAT:
+            Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_AC_LOST_WAITHEAT"));
+            pushMenu(&ui_wiz_aclostdetectrestart, true);
+        break;
+        case UI_ACTION_WIZARD_AC_LOST_ASKHEAT:
+            pushMenu(&ui_wiz_aclostdetectwaitheat, true);
+            Printer::homeAxis(false, false, true);
+            Extruder::setTemperatureForExtruder(HAL::eprGetFloat(EPR_AC_LAST_EXTR_TEMP), Extruder::current->id);
+            //Extruder::unpauseExtruders(false);
+            Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_AC_LOST_ASKHEAT"));
+            /*
+            popMenu(false);
+            pushMenu(&ui_wiz_jamwaitheat, true);
+            Extruder::unpauseExtruders();
+            popMenu(false);
+            pushMenu(&ui_wiz_filamentchange, true);
+            */
+        break;
+        case UI_ACTION_WIZARD_AC_LOST_RESTART:
+            //pushMenu(&ui_wiz_crashdetectrestart, true);
+            Printer::AcLostRecover();
+            
+            Com::printFLN(PSTR("ok: UI_ACTION_WIZARD_AC_LOST_RESTART"));
+            menuLevel = 1; 
+            popMenu(true);
+
+        break;
+#endif     
 #if CRASH_DETECT
         case UI_ACTION_WIZARD_CRASH_BEGIN:
             
@@ -2581,7 +2616,8 @@ int UIDisplay::okAction(bool allowMoves) {
             popMenu(true);
 
         break;
-#endif                
+#endif               
+
 #if FEATURE_RETRACTION
             case UI_ACTION_WIZARD_FILAMENTCHANGE: { // filament change is finished
 //            BEEP_SHORT;
@@ -2924,6 +2960,13 @@ ZPOS2:
              Extruder::current->disableCurrentExtruderMotor();
         break; 
 #endif  
+#if AC_LOST_DETECT
+        case UI_ACTION_WIZARD_CRASH_WAITHEAT:
+             Extruder::current->retractDistance(-increment);
+             Commands::waitUntilEndOfAllMoves();
+             Extruder::current->disableCurrentExtruderMotor();
+        break; 
+#endif          
 #if FEATURE_RETRACTION
     case UI_ACTION_WIZARD_FILAMENTCHANGE: // filament change is finished
         Extruder::current->retractDistance(-increment);
@@ -3774,7 +3817,38 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
             pushMenu(&ui_wiz_crashdetectrestart, true);
             Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_CRASH_RESTART"));
         break;
-#endif            
+#endif   
+#if AC_LOST_DETECT
+        case UI_ACTION_WIZARD_AC_LOST_BEGIN:
+            pushMenu(&ui_menu_aclost_ask, true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_AC_LOST_BEGIN"));
+        break;
+        case UI_ACTION_WIZARD_AC_LOST_CANCEL:
+            Printer::homeAxis(true, true, true);
+            HAL::eprSetByte(EPR_AC_LOST,0);
+            Printer::kill(true);
+            popMenu(true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_AC_LOST_CANCEL"));
+        break;
+         case UI_ACTION_WIZARD_AC_LOST_ASKHEAT:
+            pushMenu(&ui_wiz_aclostdetectaskheat, true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_AC_LOST_ASKHEAT"));
+            
+            
+        break;
+
+        case UI_ACTION_WIZARD_AC_LOST_WAITHEAT:
+            pushMenu(&ui_wiz_aclostdetectwaitheat, true);
+            extruder[0].tempControl.waitForTargetTemperature();
+            pushMenu(&ui_wiz_aclostdetectrestart, true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_AC_LOST_WAITHEAT"));
+        break;
+       
+        case UI_ACTION_WIZARD_AC_LOST_RESTART:
+            pushMenu(&ui_wiz_aclostdetectrestart, true);
+            Com::printFLN(PSTR("execute: UI_ACTION_WIZARD_AC_LOST_RESTART"));
+        break;
+#endif          
 #if FEATURE_RETRACTION
         case UI_ACTION_WIZARD_FILAMENTCHANGE: {
             popMenu(false);

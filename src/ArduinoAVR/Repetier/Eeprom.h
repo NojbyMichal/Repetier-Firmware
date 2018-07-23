@@ -132,11 +132,11 @@ have problems with other modules using the eeprom */
 #define EPR_EOF_CONTROL						  1056
 
 
-//1060-1064
+//1060-1124
 #define EPR_CRASHED                           1060 //1061 is free //byte
 #define EPR_LAST_FAN_SPEED                    1061
-#define EPR_STALLGUARD_VAL                    1062
-
+#define EPR_AC_LOST                           1062  
+#define EPR_AC_LAST_FAN_SPEED                 1063
 
 #define EPR_LAST_X_POSITION                   1064 //int
 #define EPR_LAST_Y_POSITION                   1068
@@ -148,6 +148,20 @@ have problems with other modules using the eeprom */
 #define EPR_LAST_BED_TEMP                     1088
 
 #define EPR_STEALTHCHOP_VAL                   1092
+#define EPR_STALLGUARD_VAL                    1096
+
+#define EPR_AC_LAST_X_POSITION                   1100 //int
+#define EPR_AC_LAST_Y_POSITION                   1104
+#define EPR_AC_LAST_Z_POSITION                   1108  
+#define EPR_AC_LAST_E_POSITION                   1112
+
+#define EPR_AC_LAST_FILE_POSITION                1116
+#define EPR_AC_LAST_EXTR_TEMP                    1120
+#define EPR_AC_LAST_BED_TEMP                     1124
+
+#define EPR_TMC_CRASH_ENABLE                  1128  
+#define EPR_AC_LOST_ENABLE                    1129  
+
 
 /*
 #define EPR_LAST_TEMP_E0

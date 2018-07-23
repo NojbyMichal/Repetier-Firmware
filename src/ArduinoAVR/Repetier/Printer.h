@@ -1278,6 +1278,7 @@ public:
     static void tmcPrepareHoming(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min);
     #if defined (CRASH_DETECT)
         static void tmcPrepareCrashSettings(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min);
+        static void tmcDisableCrashSettings(TMC2130Stepper* tmc_driver);
         static void tmcStartCrashSettings();
         static void tmcFinishCrashSettings();
     #endif
@@ -1287,6 +1288,10 @@ static void positionPrint();
 static void CrashDetected();
 static void CrashRecover();
 static void TestCrashPins();
+#endif
+#if defined(AC_LOST_DETECT)
+static void AcLostRecover();
+static void AcLostDetected();
 #endif
 };
 
