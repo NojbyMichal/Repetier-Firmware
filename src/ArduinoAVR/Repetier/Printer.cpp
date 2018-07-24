@@ -3059,20 +3059,7 @@ void Printer::positionPrint()
 void Printer::CrashRecover()
 {
  //   TMC_enable = true;
-   /* 
-    lastXposition = HAL::eprGetFloat(EPR_LAST_X_POSITION);
-    lastYposition = HAL::eprGetFloat(EPR_LAST_Y_POSITION);
-    lastZposition = HAL::eprGetFloat(EPR_LAST_Z_POSITION);
-    lastEposition = HAL::eprGetFloat(EPR_LAST_E_POSITION)
-                    HAL::eprGetFloat(EPR_LAST_EXTR_TEMP)
-                    HAL::eprGetFloat(EPR_LAST_BED_TEMP)
-                     HAL::eprGetByte(EPR_LAST_FAN_SPEED)
 
-    Com::printFLN(PSTR("position: "), printingFilePosition);
-    Com::printFLN(PSTR("DETECTED: LAST X position: "), lastXposition);  
-    Com::printFLN(PSTR("DETECTED: LAST Y position: "), lastYposition);  
-    Com::printFLN(PSTR("DETECTED: LAST Z position: "), lastZposition);  
-*/
     if (printingFilePosition !=0)
     {
     Com::printFLN(PSTR("RECOVER BEGIN"));  
