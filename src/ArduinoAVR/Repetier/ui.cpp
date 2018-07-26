@@ -1334,6 +1334,8 @@ void UIDisplay::parse(const char *txt, bool ram) {
             if (c2 == 'e') addStringOnOff(Printer::debugErrors());
             if (c2 == 'd') addStringOnOff(Printer::debugDryrun());
             if (c2 == 'p') addStringOnOff(Printer::debugEndStop());
+            
+            
             if (c2 == 'x')
 #if MIN_HARDWARE_ENDSTOP_X
                 addStringP(Endstops::xMin() ? ui_selected : ui_unselected);
@@ -1830,8 +1832,11 @@ void UIDisplay::parse(const char *txt, bool ram) {
             }
 #endif
 #if defined(DRV_TMC2130)
+            if (c2 == 'r') addStringOnOff(Printer::getCrash());
+            if (c2 == 's') addStringOnOff(Printer::getStealth());
+
             if(c2 == 'c'){ //%zc stealthchop
-                
+                addInt(Printer::stealthChopVal,1);
             }
 
             if(c2 == 'g'){ //%zg stallguard
@@ -3084,6 +3089,10 @@ ZPOS2:
     INCREMENT_MIN_MAX(Printer::stallGuardVal,1,-10,10);
 
     break;
+    case UI_ACTION_STEALTHCHOP_CHANGE:
+    INCREMENT_MIN_MAX(Printer::stealthChopVal,1,0,1);
+
+    break;
 #endif
 #if UI_BED_COATING
     case UI_ACTION_COATING_CUSTOM:
@@ -3332,17 +3341,41 @@ void UIDisplay::menuAdjustStallGuardVal(const UIMenu *men,int32_t value)
     //If there is something to change
     if (EEPROM::stallGuardThreshold() != value)
     {   
-        HAL::eprSetInt32(EPR_STEALTHCHOP_VAL, value);
+        HAL::eprSetInt32(EPR_STALLGUARD_VAL, value);
         EEPROM::storeDataIntoEEPROM(false);
     }
 #endif
     Printer::stallGuardVal = value;
-
+    Printer::tmc_driver_x->sg_stall_value(value);
+    Printer::tmc_driver_y->sg_stall_value(value);
+    Printer::tmc_driver_z->sg_stall_value(value);
     pushMenu(men, false);
     BEEP_SHORT;
     activeAction = 0;
   
 }
+void UIDisplay::menuAdjustStealthChopVal(const UIMenu *men,uint8_t value)
+{
+#if EEPROM_MODE != 0
+    //If there is something to change
+    if (EEPROM::StealthChopVal() != value)
+    {   
+        HAL::eprSetInt32(EPR_STEALTHCHOP_VAL, value);
+        EEPROM::storeDataIntoEEPROM(false);
+    }
+#endif
+    Printer::stealthChopVal = value;
+    Printer::tmc_driver_x->stealthChop((bool)value);
+    Printer::tmc_driver_y->stealthChop((bool)value);
+    Printer::tmc_driver_z->stealthChop((bool)value);
+    Printer::tmc_driver_e0->stealthChop((bool)value);
+    pushMenu(men, false);
+    BEEP_SHORT;
+    activeAction = 0;
+  
+}
+
+
 #endif
 
 void UIDisplay::finishAction(unsigned int action) {
@@ -3385,6 +3418,10 @@ void UIDisplay::finishAction(unsigned int action) {
      #if defined(DRV_TMC2130)
     case UI_ACTION_STALLGUARD_CHANGE:
     menuAdjustStallGuardVal(&ui_menu_stall_guard_threshold_change,Printer::stallGuardVal);
+
+    break;
+    case UI_ACTION_STEALTHCHOP_CHANGE:
+    //menuAdjustStealthChopVal(&ui_menu_stealthchop_change,Printer::stealthChopVal);
 
     break;
 #endif
@@ -3478,6 +3515,36 @@ int UIDisplay::executeAction(unsigned int action, bool allowMoves) {
         case UI_ACTION_DEBUG_ENDSTOP:
             Printer::toggleEndStop();
             break;
+#if defined(CRASH_DETECT)            
+        case UI_ACTION_CRASH_ENABLE:
+            Printer::toggleCrash();
+        break;
+#endif
+#if defined(DRV_TMC2130)  
+        case UI_ACTION_STEALTHCHOP_ENABLE:
+            
+        if(Printer::stealthChopVal == 0)
+        {
+            Printer::stealthChopVal = 1;
+            Printer::tmc_driver_x->stealthChop(true);
+            Printer::tmc_driver_y->stealthChop(true);
+            Printer::tmc_driver_z->stealthChop(true);
+            Printer::tmc_driver_e0->stealthChop(true);
+            EEPROM::storeDataIntoEEPROM(false);
+        }
+        else if (Printer::stealthChopVal == 1)
+        {
+            Printer::stealthChopVal = 0;
+            Printer::tmc_driver_x->stealthChop(false);
+            Printer::tmc_driver_y->stealthChop(false);
+            Printer::tmc_driver_z->stealthChop(false);
+            Printer::tmc_driver_e0->stealthChop(false);
+            EEPROM::storeDataIntoEEPROM(false);
+        }
+    
+    
+        break;  
+#endif      
         case UI_ACTION_DEBUG_DRYRUN:
             Printer::toggleDryRun();
             if(Printer::debugDryrun()) { // simulate movements without printing

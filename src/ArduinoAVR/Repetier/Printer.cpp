@@ -92,10 +92,13 @@ uint8_t Printer::ac_lost_enable = HAL::eprGetByte(EPR_AC_LOST);
 volatile uint8_t executeTMCPeriodical = 0;
 uint32_t Printer::printingFilePosition = 0;
 int32_t Printer::stallGuardVal = HAL::eprGetInt32(EPR_STALLGUARD_VAL);
+int32_t Printer::stealthChopVal = HAL::eprGetInt32(EPR_STEALTHCHOP_VAL);
+
 #else
 uint8_t Printer::tmccrash_enable = 0;  
 uint8_t Printer::ac_lost_enable = 0;
 int32_t Printer::stallGuardVal = STALLGUARD_VAL;
+int32_t Printer::stealthChopVal = TMC2130_STEALTHCHOP;
 float Printer::zBedOffset = Z_PROBE_Z_OFFSET;
 float Printer::zProbeHeight  = Z_PROBE_HEIGHT;
 #endif
@@ -1156,20 +1159,25 @@ void Printer::setup() {
     #endif
 #endif
 #if defined(DRV_TMC2130)
+    #if EEPROM_MODE != 0
+    Printer::stallGuardVal = HAL::eprGetInt32(EPR_STALLGUARD_VAL);
+    #else
+    Printer::stallGuardVal = TMC2130_STALLGUARD_X;
+    #endif
     // TMC2130 motor drivers
 #if TMC2130_ON_X > 0
     Printer::tmc_driver_x = new TMC2130Stepper(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, TMC2130_X_CS_PIN);
-    configTMC2130(Printer::tmc_driver_x, TMC2130_STEALTHCHOP_X, TMC2130_STALLGUARD_X,
+    configTMC2130(Printer::tmc_driver_x, TMC2130_STEALTHCHOP_X, Printer::stallGuardVal,
     TMC2130_PWM_AMPL_X, TMC2130_PWM_GRAD_X, TMC2130_PWM_AUTOSCALE_X, TMC2130_PWM_FREQ_X);
 #endif
 #if TMC2130_ON_Y > 0
     Printer::tmc_driver_y = new TMC2130Stepper(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, TMC2130_Y_CS_PIN);
-    configTMC2130(Printer::tmc_driver_y, TMC2130_STEALTHCHOP_Y, TMC2130_STALLGUARD_Y,
+    configTMC2130(Printer::tmc_driver_y, TMC2130_STEALTHCHOP_Y, Printer::stallGuardVal,
     TMC2130_PWM_AMPL_Y, TMC2130_PWM_GRAD_Y, TMC2130_PWM_AUTOSCALE_Y, TMC2130_PWM_FREQ_Y);
 #endif
 #if TMC2130_ON_Z > 0
     Printer::tmc_driver_z = new TMC2130Stepper(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, TMC2130_Z_CS_PIN);
-    configTMC2130(Printer::tmc_driver_z, TMC2130_STEALTHCHOP_Z, TMC2130_STALLGUARD_Z,
+    configTMC2130(Printer::tmc_driver_z, TMC2130_STEALTHCHOP_Z, Printer::stallGuardVal,
     TMC2130_PWM_AMPL_Z, TMC2130_PWM_GRAD_Z, TMC2130_PWM_AUTOSCALE_Z, TMC2130_PWM_FREQ_Z);
 #endif
 #if TMC2130_ON_EXT0 > 0
@@ -2724,8 +2732,65 @@ void Printer::stopPrint() {
     }
 #endif
 
-
+void Printer::toggleStealth(){
+if (Printer::stealthChopVal == 1)
+            {
+                Printer::tmc_driver_x->stealthChop(false);
+                Printer::tmc_driver_y->stealthChop(false);
+                Printer::tmc_driver_z->stealthChop(false);
+                Printer::tmc_driver_e0->stealthChop(false);
+                Printer::stealthChopVal = 0;
+                EEPROM::storeDataIntoEEPROM(false);
+                
+            }
+            else if (Printer::stealthChopVal == 0)
+            {
+                Printer::tmc_driver_x->stealthChop(true);
+                Printer::tmc_driver_y->stealthChop(true);
+                Printer::tmc_driver_z->stealthChop(true);
+                Printer::tmc_driver_e0->stealthChop(true);
+                Printer::stealthChopVal = 1;
+                EEPROM::storeDataIntoEEPROM(false);
+                
+            }   
+       
+}
 #if defined(CRASH_DETECT)
+void Printer::toggleCrash()
+{
+    if (Printer::tmccrash_enable == 1)
+            {
+                Printer::tmcDisableCrashdetect();
+                EEPROM::storeDataIntoEEPROM(false);
+                
+            }
+            else if (Printer::tmccrash_enable == 0)
+            {
+                Printer::tmcEnableCrashdetect();
+                EEPROM::storeDataIntoEEPROM(false);
+                
+            }  
+             
+}
+void Printer::tmcEnableCrashdetect(){
+    Printer::tmcStartCrashSettings();
+    Com::printFLN(PSTR("tmc CRASH ENABLED"));
+    HAL::setTMCtimer();
+    HAL::eprSetByte(EPR_TMC_CRASH_ENABLE,1);
+    Printer::tmccrash_enable =1;
+
+}
+
+void Printer::tmcDisableCrashdetect(){
+    Printer::tmcFinishCrashSettings();
+    Com::printFLN(PSTR("tmc CRASH DISABLED"));
+    HAL::eprSetByte(EPR_TMC_CRASH_ENABLE,0);
+    Printer::tmccrash_enable =0;
+}
+
+
+
+
     void Printer::tmcPrepareCrashSettings(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min) {
         while(!tmc_driver->stst());                     // Wait for motor stand-still
         tmc_driver->stealth_max_speed(0);               // Upper speedlimit for stealthChop

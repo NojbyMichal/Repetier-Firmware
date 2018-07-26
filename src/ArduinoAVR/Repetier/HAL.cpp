@@ -816,7 +816,7 @@ ISR(TIMER4_COMPA_vect) {
 ISR(TIMER5_COMPA_vect) {
     //PJ1  D14
     if ((PORTJ & 2)==0) { // cause of pull up
-        Printer::AcLostDetected();
+       // Printer::AcLostDetected();
     }
 }
 

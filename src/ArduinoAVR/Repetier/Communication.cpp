@@ -411,8 +411,8 @@ FSTRINGVALUE(Com::tEPRDistanceRetractHeating, "distance to retract when heating 
 FSTRINGVALUE(Com::tEPRExtruderCoolerSpeed, "extruder cooler speed [0-255]")
 FSTRINGVALUE(Com::tEPRAdvanceK, "advance K [0=off]")
 FSTRINGVALUE(Com::tEPRAdvanceL, "advance L [0=off]")
-FSTRINGVALUE(Com::tEPRPreheatTemp, "Preheat temp. [°C]")
-FSTRINGVALUE(Com::tEPRPreheatBedTemp, "Bed Preheat temp. [°C]")
+FSTRINGVALUE(Com::tEPRPreheatTemp, "Preheat temp. [ï¿½C]")
+FSTRINGVALUE(Com::tEPRPreheatBedTemp, "Bed Preheat temp. [ï¿½C]")
 
 #endif
 #if SDSUPPORT
@@ -503,7 +503,15 @@ FSTRINGVALUE(Com::tServiceMenuItem5,UI_SERVICE_MENU_ITEM5)
 #ifdef EXTRUDER_JAM_CONTROL
 FSTRINGVALUE(Com::tEPREofControl, "Filament sensor control disabled:")
 #endif
+#if CRASH_DETECT
+FSTRINGVALUE(Com::tEPRTmcCrashEnable, "Crash detection:")
+FSTRINGVALUE(Com::tEPRTmcSGTVal, "TMC2130 Stallguard Threshold:")
+FSTRINGVALUE(Com::tEPRTmcStealthChopVal, "TMC2130 StealthChop:")
 
+#endif 
+#if AC_LOST_DETECT
+FSTRINGVALUE(Com::tEPRAC_LostEnable,"AC power loss detection:")
+#endif 
 
 
 

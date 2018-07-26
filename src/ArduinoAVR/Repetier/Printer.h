@@ -421,6 +421,7 @@ public:
     static float lastEposition;
     static uint32_t printingFilePosition;
     static int32_t stallGuardVal;
+    static int32_t stealthChopVal;
 #endif
 #if defined(DRV_TMC2130)
 #if TMC2130_ON_X
@@ -471,6 +472,7 @@ public:
     static INLINE uint8_t getDebugLevel() {
         return debugLevel;
     }
+
     static INLINE bool debugEcho() {
         return ((debugLevel & 1) != 0);
     }
@@ -1278,7 +1280,19 @@ public:
     static void configTMC2130(TMC2130Stepper* tmc_driver, bool tmc_stealthchop, int8_t tmc_sgt,
       uint8_t tmc_pwm_ampl, uint8_t tmc_pwm_grad, bool tmc_pwm_autoscale, uint8_t tmc_pwm_freq);
     static void tmcPrepareHoming(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min);
+    static void toggleStealth();
+     static INLINE bool getStealth() {
+        return ((bool)Printer::stealthChopVal);
+    }
     #if defined (CRASH_DETECT)
+    static void toggleCrash();
+    
+    static INLINE bool getCrash() {
+        return ((bool)Printer::tmccrash_enable);
+    }
+    static void tmcEnableCrashdetect();
+    static void tmcDisableCrashdetect();
+
         static void tmcPrepareCrashSettings(TMC2130Stepper* tmc_driver, uint32_t coolstep_sp_min);
         static void tmcDisableCrashSettings(TMC2130Stepper* tmc_driver);
         static void tmcStartCrashSettings();

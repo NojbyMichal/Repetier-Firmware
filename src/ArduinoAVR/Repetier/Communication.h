@@ -514,6 +514,18 @@ FSTRINGVAR(tServiceMenuItem5)
 #ifdef EXTRUDER_JAM_CONTROL
 FSTRINGVAR(tEPREofControl)
 #endif
+
+
+#if CRASH_DETECT
+FSTRINGVAR(tEPRTmcCrashEnable)
+FSTRINGVAR(tEPRTmcSGTVal)
+FSTRINGVAR(tEPRTmcStealthChopVal)
+#endif 
+
+#if AC_LOST_DETECT
+FSTRINGVAR(tEPRAC_LostEnable)
+#endif 
+
 static void cap(FSTRINGPARAM(text));
 static void config(FSTRINGPARAM(text));
 static void config(FSTRINGPARAM(text),int value);

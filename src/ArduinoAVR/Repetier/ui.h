@@ -211,6 +211,9 @@
 #define UI_ACTION_DEBUG_ERROR           1152
 #define UI_ACTION_DEBUG_DRYRUN          1153
 #define UI_ACTION_DEBUG_ENDSTOP         1154
+#define UI_ACTION_CRASH_ENABLE          1155
+#define UI_ACTION_STEALTHCHOP_ENABLE    1156
+
 
 #define UI_ACTION_SD_PRI_PAU_CONT       1200
 #define UI_ACTION_FAN_SUSPEND           1201
@@ -268,7 +271,7 @@
 #define UI_ACTION_SERVICE_MENU_ITEM4 1509
 #define UI_ACTION_SERVICE_MENU_ITEM5 1510
 #define UI_ACTION_STALLGUARD_CHANGE  1511
-
+#define UI_ACTION_STEALTHCHOP_CHANGE 1512
 // 1700-1956 language selectors
 
 #define UI_ACTION_LANGUAGE_EN           1700
@@ -695,6 +698,7 @@ class UIDisplay {
 #endif 
 #if defined(DRV_TMC2130)
 void menuAdjustStallGuardVal(const UIMenu *men,int32_t value);
+void menuAdjustStealthChopVal(const UIMenu *men,uint8_t value);
 #endif
     char cwd[SD_MAX_FOLDER_DEPTH * LONG_FILENAME_LENGTH + 2];
     uint8_t folderLevel;

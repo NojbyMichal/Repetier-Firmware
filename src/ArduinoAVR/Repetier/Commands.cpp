@@ -2777,18 +2777,10 @@ void Commands::processMCode(GCode *com) {
 
     if(com->hasS()) {
      if(com->S ==1){
-       Printer::tmcStartCrashSettings();
-       Com::printFLN(PSTR("tmc CRASH ENABLED"));
-       HAL::setTMCtimer();
-       HAL::eprSetByte(EPR_TMC_CRASH_ENABLE,1);
-        Printer::tmccrash_enable =1;
+        Printer::tmcEnableCrashdetect();
     }
     else if(com->S == 0){
-    
-        Printer::tmcFinishCrashSettings();
-        Com::printFLN(PSTR("tmc CRASH DISABLED"));
-        HAL::eprSetByte(EPR_TMC_CRASH_ENABLE,0);
-         Printer::tmccrash_enable =0;
+        Printer::tmcDisableCrashdetect();
     }
     }
     else

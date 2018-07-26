@@ -451,6 +451,8 @@ void EEPROM::storeDataIntoEEPROM(uint8_t corrupted)
 
 #if CRASH_DETECT
     HAL::eprSetByte(EPR_TMC_CRASH_ENABLE,Printer::tmccrash_enable);
+    HAL::eprSetInt32(EPR_STALLGUARD_VAL,Printer::stallGuardVal);
+    HAL::eprSetInt32(EPR_STEALTHCHOP_VAL,Printer::stealthChopVal);
 #endif 
 
 #if AC_LOST_DETECT
@@ -625,6 +627,8 @@ void EEPROM::readDataFromEEPROM(bool includeExtruder)
 #endif        
 #if CRASH_DETECT
          Printer::tmccrash_enable = HAL::eprGetByte(EPR_TMC_CRASH_ENABLE);
+         Printer::stallGuardVal = HAL::eprGetInt32(EPR_STALLGUARD_VAL);
+         Printer::stealthChopVal = HAL::eprGetInt32(EPR_STEALTHCHOP_VAL);
 #endif   
 #if EXTRUDER_JAM_CONTROL
 	Printer::setJamcontrolDisabled(HAL::eprGetByte(EPR_EOF_CONTROL));
@@ -1086,6 +1090,16 @@ writeFloat(EPR_X2AXIS_STEPS_PER_MM, Com::tEPRX2StepsPerMM, 4);
 #endif
 #if EXTRUDER_JAM_CONTROL
     writeByte(EPR_EOF_CONTROL,Com::tEPREofControl);
+#endif 
+#if CRASH_DETECT
+    writeByte(EPR_TMC_CRASH_ENABLE,Com::tEPRTmcCrashEnable);
+    writeInt(EPR_STALLGUARD_VAL,Com::tEPRTmcSGTVal);
+    writeInt(EPR_STEALTHCHOP_VAL,Com::tEPRTmcStealthChopVal);
+    
+#endif 
+
+#if AC_LOST_DETECT
+    writeByte(EPR_AC_LOST_ENABLE,Com::tEPRAC_LostEnable);
 #endif 
 
     }

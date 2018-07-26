@@ -693,7 +693,7 @@ Values must be in range 1..255
 #define UI_SERVICE_MENU_ITEM5_TEXT ""
 
 
-#define AC_LOST_DETECT 1 
+//#define AC_LOST_DETECT 1 
 
 #define CRASH_DETECT 1
 
@@ -707,11 +707,9 @@ Values must be in range 1..255
 #define UI_TEXT_WIZ_CRASH_11_TEXT "Crash Detected"
 #define UI_TEXT_WIZ_CRASH_12_TEXT "Recover print ?"
 
-#define UI_TEXT_WIZ_CRASH_13_TEXT "Stall guard set to"
 
 #define UI_TEXT_WIZ_CRASH_21_TEXT "Printer will home"
 #define UI_TEXT_WIZ_CRASH_22_TEXT "and reheat hotend"
-#define UI_TEXT_WIZ_CRASH_23_TEXT " %zg ."
 
 #define UI_TEXT_WIZ_CRASH_31_TEXT "Wait for temperature"
 #define UI_TEXT_WIZ_CRASH_32_TEXT "Purge fillament and"
@@ -719,17 +717,14 @@ Values must be in range 1..255
 
 #define UI_TEXT_WIZ_CRASH_41_TEXT "Press >> OK << to "
 #define UI_TEXT_WIZ_CRASH_42_TEXT "restart the print"
-#define UI_TEXT_WIZ_CRASH_43_TEXT ""
 
 
 #define UI_TEXT_WIZ_AC_LOST_11_TEXT "Power lost detected"
 #define UI_TEXT_WIZ_AC_LOST_12_TEXT "Recover print ?"
 
-#define UI_TEXT_WIZ_AC_LOST_13_TEXT ""
 
 #define UI_TEXT_WIZ_AC_LOST_21_TEXT "Printer will home"
 #define UI_TEXT_WIZ_AC_LOST_22_TEXT "and reheat hotend"
-#define UI_TEXT_WIZ_AC_LOST_23_TEXT ""
 
 #define UI_TEXT_WIZ_AC_LOST_31_TEXT "Wait for temperature"
 #define UI_TEXT_WIZ_AC_LOST_32_TEXT "Purge fillament and"
@@ -737,8 +732,16 @@ Values must be in range 1..255
 
 #define UI_TEXT_WIZ_AC_LOST_41_TEXT "Press >> OK << to "
 #define UI_TEXT_WIZ_AC_LOST_42_TEXT "restart the print"
-#define UI_TEXT_WIZ_AC_LOST_43_TEXT ""
 
+#define UI_TEXT_WIZ_CRASH_13_TEXT "Stallguard set to"
+#define UI_TEXT_WIZ_CRASH_23_TEXT " %zg ."
+#define UI_TEXT_WIZ_CRASH_43_TEXT "Stealthchop: %zc"
+
+#define UI_TEXT_WIZ_AC_LOST_13_TEXT "Stealthchop set %zc"
+
+#define UI_TEXT_WIZ_AC_LOST_23_TEXT "Crashdetect:%zr "
+
+#define UI_TEXT_WIZ_AC_LOST_43_TEXT "Stealthchop:%zs "
 
 
 #endif

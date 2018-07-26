@@ -147,7 +147,7 @@ have problems with other modules using the eeprom */
 #define EPR_LAST_EXTR_TEMP                    1084
 #define EPR_LAST_BED_TEMP                     1088
 
-#define EPR_STEALTHCHOP_VAL                   1092
+#define EPR_STEALTHCHOP_VAL                   1092  //plencani pameti - predelat na uint8
 #define EPR_STALLGUARD_VAL                    1096
 
 #define EPR_AC_LAST_X_POSITION                   1100 //int
@@ -313,6 +313,14 @@ static inline int32_t stallGuardThreshold() {
         return HAL::eprGetInt32(EPR_STALLGUARD_VAL);
 #else
         return STALLGUARD_VAL;
+#endif
+    }
+
+static inline int32_t StealthChopVal() { 
+#if EEPROM_MODE != 0
+        return HAL::eprGetInt32(EPR_STEALTHCHOP_VAL);
+#else
+        return TMC2130_STEALTHCHOP;
 #endif
     }
 
