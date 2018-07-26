@@ -707,11 +707,11 @@ Values must be in range 1..255
 #define UI_TEXT_WIZ_CRASH_11_TEXT "Crash Detected"
 #define UI_TEXT_WIZ_CRASH_12_TEXT "Recover print ?"
 
-#define UI_TEXT_WIZ_CRASH_13_TEXT ""
+#define UI_TEXT_WIZ_CRASH_13_TEXT "Stall guard set to"
 
 #define UI_TEXT_WIZ_CRASH_21_TEXT "Printer will home"
 #define UI_TEXT_WIZ_CRASH_22_TEXT "and reheat hotend"
-#define UI_TEXT_WIZ_CRASH_23_TEXT ""
+#define UI_TEXT_WIZ_CRASH_23_TEXT " %zg ."
 
 #define UI_TEXT_WIZ_CRASH_31_TEXT "Wait for temperature"
 #define UI_TEXT_WIZ_CRASH_32_TEXT "Purge fillament and"
