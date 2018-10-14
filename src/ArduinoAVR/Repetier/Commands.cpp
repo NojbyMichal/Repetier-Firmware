@@ -24,7 +24,7 @@ which based on Tonokip RepRap firmware rewrite based off of Hydra-mmm firmware.
 const int8_t sensitive_pins[] PROGMEM = SENSITIVE_PINS; // Sensitive pin list for M42
 int Commands::lowestRAMValue = MAX_RAM;
 int Commands::lowestRAMValueSend = MAX_RAM;
-
+extern unsigned int AC_lost_event;
 void Commands::commandLoop() {
     //while(true) {
 #ifdef DEBUG_PRINT
@@ -2738,23 +2738,39 @@ void Commands::processMCode(GCode *com) {
     }
     break;
 #endif
+
 #if defined (AC_LOST_DETECT)
+
     case 980:
 
     if(com->hasS()) {
-    //TMC_enable = (com->S);
-
+    
     if(com->S == 0){
        HAL::eprSetByte(EPR_AC_LOST,0); 
     }
     else if(com->S ==1)
     {
         HAL::eprSetByte(EPR_AC_LOST,1);
+
     }
     }
     Com::printFLN(PSTR("AC_LOST EPR FLAG is (1=on,0=off): "),HAL::eprGetByte(EPR_AC_LOST));
     break;
+    case 981:
 
+    if(com->hasS()) {
+    
+    if(com->S == 0){
+       AC_lost_event = 0; 
+    }
+    else if(com->S ==1)
+    {
+        AC_lost_event = 1;
+
+    }
+    }
+    //Com::printFLN(PSTR("AC_LOST event: "),AC_lost_event);
+    break;
 #endif    
 
 #if defined (CRASH_DETECT)
@@ -2839,10 +2855,12 @@ void Commands::processMCode(GCode *com) {
     
     if(com->S ==1){
         TIMSK5 |= (1 << OCIE5A);
+        Com::printFLN(PSTR("AC timer ENABLED"));
     }
     else if(com->S == 0){
     
         TIMSK5 &= !(1 << OCIE5A);
+        Com::printFLN(PSTR("AC timer DISABLED"));
     }
     }
     }

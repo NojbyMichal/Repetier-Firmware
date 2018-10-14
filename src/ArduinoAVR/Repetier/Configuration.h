@@ -693,7 +693,7 @@ Values must be in range 1..255
 #define UI_SERVICE_MENU_ITEM5_TEXT ""
 
 
-//#define AC_LOST_DETECT 1 
+#define AC_LOST_DETECT 1 
 
 #define CRASH_DETECT 1
 

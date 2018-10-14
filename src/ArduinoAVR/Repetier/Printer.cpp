@@ -386,6 +386,8 @@ bool Printer::updateDoorOpen() {
 #endif
 }
 
+
+
 void Printer::reportPrinterMode() {
     Printer::setMenuMode(MENU_MODE_CNC + MENU_MODE_LASER + MENU_MODE_FDM, false);
     switch(Printer::mode) {
@@ -1317,10 +1319,10 @@ void Printer::setup() {
     Com::printFLN(PSTR("AC LOST FEATURE DISABLED"));
  }
 
-    if(HAL::eprGetByte(EPR_AC_LOST)==1){
-        HAL::eprSetByte(EPR_AC_LOST,0);
+if(HAL::eprGetByte(EPR_AC_LOST)==1){
+    HAL::eprSetByte(EPR_AC_LOST,0);
     Printer::AcLostRecover();    
-    }
+}
     
 #endif
 
@@ -1342,6 +1344,7 @@ if(HAL::eprGetByte(EPR_TMC_CRASH_ENABLE))
 #ifdef STARTUP_GCODE
     GCode::executeFString(Com::tStartupGCode);
 #endif
+
 #if EEPROM_MODE != 0 && UI_DISPLAY_TYPE != NO_DISPLAY
     if(EEPROM::getStoredLanguage() == 254) {
         Com::printFLN(PSTR("Needs language selection"));
@@ -2826,6 +2829,8 @@ void Printer::tmcDisableCrashdetect(){
 #endif
 #if defined(AC_LOST_DETECT)
 void Printer::AcLostRecover(){
+uid.executeAction(UI_ACTION_WIZARD_AC_LOST_BEGIN, true);    
+/*
   if (printingFilePosition !=0)
     {
     Com::printFLN(PSTR("RECOVER BEGIN"));  
@@ -2875,12 +2880,12 @@ void Printer::AcLostRecover(){
 
     
      updateCurrentPosition(true);
-     /*
+     
      Printer::moveToReal(20, 20, 200,
                             IGNORE_COORDINATE,
                             Printer::maxFeedrate[Z_AXIS] / 3,false);
     
-*/
+
     
     sd.sdmode = 1;
 
@@ -2900,41 +2905,70 @@ void Printer::AcLostRecover(){
     {
     Com::printFLN(PSTR("AC RECOVER UNSUCCESSFUL"));    
     }
-    
+  */  
 }    
  void Printer::AcLostDetected(){
-   Com::printFLN(PSTR("ACLOST DETECTED  !!!"));
+    Com::printFLN(PSTR("ACLOST DETECTED  !!!"));
+    
 
     Extruder::setHeatedBedTemperature(0,false);
     Extruder::setTemperatureForExtruder(0,0,false,false);
 
-    printingFilePosition = sd.sdpos;
-     
-    lastXposition = Printer::currentPosition[X_AXIS];
+    Printer::CrashDetected();
+
+
+    Com::printFLN(PSTR("HERE IT IS ************")); 
+/*
+   
+        Com::printF(PSTR("PrintLine::linesWritePos:"),PrintLine::linesWritePos);
+    Com::printF(PSTR("PrintLine::linesCount:"), PrintLine::linesCount);
+    Com::printF(PSTR("PrintLine::linesPos:"),  PrintLine::linesPos);
+
+    
+     lastXposition = Printer::currentPosition[X_AXIS];
     lastYposition = Printer::currentPosition[Y_AXIS];
     lastZposition = Printer::currentPosition[Z_AXIS];
     lastEposition = Printer::currentPositionSteps[E_AXIS] * Printer::invAxisStepsPerMM[E_AXIS];
+   Com::printFLN(PSTR("DETECTED: AC X position: "), lastXposition);  
+   Com::printFLN(PSTR("DETECTED: AC Y position: "), lastYposition);  
+   Com::printFLN(PSTR("DETECTED: AC Z position: "), lastZposition);  
 
+    GCodeSource::removeSource(&sdSource);
+    Com::printFLN(PSTR("REMOVED SOURCE"));  
 
-
+   
     
+    Com::printF(PSTR(" pos:"), sd.sdpos);
+    Com::printFLN(PSTR(" of "), sd.filesize);
+
+    printingFilePosition = sd.sdpos;
+     
+    
+
+
+   
+
+
+ /*   
+  HAL::eprSetByte(EPR_AC_LOST,1);
+
     HAL::eprSetFloat(EPR_AC_LAST_X_POSITION,Printer::lastXposition);
     HAL::eprSetFloat(EPR_AC_LAST_Y_POSITION,Printer::lastYposition);
     HAL::eprSetFloat(EPR_AC_LAST_Z_POSITION,Printer::lastZposition);
     HAL::eprSetFloat(EPR_AC_LAST_E_POSITION,Printer::lastEposition);
     HAL::eprSetInt32(EPR_AC_LAST_FILE_POSITION,Printer::printingFilePosition);
-
+*/
+/*
     HAL::eprSetFloat(EPR_AC_LAST_EXTR_TEMP,Extruder::current->tempControl.currentTemperatureC);
     HAL::eprSetFloat(EPR_AC_LAST_BED_TEMP,Extruder::getHeatedBedTemperature());
     HAL::eprSetByte(EPR_AC_LAST_FAN_SPEED,Printer::fanSpeed);
-
+*/
 
 
     //EEPROM::storeDataIntoEEPROM(false);
 
-    GCodeSource::removeSource(&sdSource);
-    Com::printFLN(PSTR("REMOVED SOURCE"));  
-
+    /*
+  
     Printer::setMenuMode(MENU_MODE_SD_PRINTING,false);
     Printer::setMenuMode(MENU_MODE_PAUSED,false);
     Printer::setPrinting(0);
@@ -2952,31 +2986,21 @@ void Printer::AcLostRecover(){
                              IGNORE_COORDINATE,Printer::maxFeedrate[Z_AXIS] / 3);
     Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
                              IGNORE_COORDINATE,Printer::maxFeedrate[Z_AXIS] / 3);
-/*
 
-    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
-                             currentPosition[E_AXIS]-5,
-                            Printer::maxFeedrate[Z_AXIS] / 3);
-    Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, currentPosition[Z_AXIS] + 10,
-                            IGNORE_COORDINATE,
-                            Printer::maxFeedrate[Z_AXIS] / 3);
- */
-    //smazat bude ve wizardu
-    Extruder::setHeatedBedTemperature(0,false);
-    Extruder::setTemperatureForExtruder(0,0,false,false);
+    
     sd.sdmode = 0; 
+*/
  }   
 
 #endif
 
-#if defined (CRASH_DETECT)
 void Printer::TestCrashPins()
 {
     uint8_t crash = 0;
-    if (READ(CRASH_X_PIN))
+    if (READ(14))
     {
          crash = 1;
-      Com::printFLN(PSTR("X crash:"), (int16_t)READ(CRASH_X_PIN));  
+      Com::printFLN(PSTR("ACLOST:"), (int16_t)READ(14));  
     }
     if (READ(CRASH_Y_PIN))
     {
@@ -2995,7 +3019,23 @@ void Printer::TestCrashPins()
         crash = 0;
     }
 }
+ /// zkus udělat jako door AC senzor
+/*
+bool Printer::updateDoorOpen() {
+    bool isAC = isDoorOpen();
+    uint8_t ac = READ(DOOR_PIN) != DOOR_INVERTING;
+    if(!b && isOpen) {
+        UI_STATUS_F(Com::tSpace);
+    } else if(b && !isOpen) {
+         Com::printFLN(PSTR("AC LOST DET")); 
+        UI_STATUS_F(Com::tDoorOpen);
+    }
+    flag3 = (b ? flag3 | PRINTER_FLAG3_DOOR_OPEN : flag3 & ~PRINTER_FLAG3_DOOR_OPEN);
+    return b;
 
+}
+*/
+#if defined (CRASH_DETECT)
 //extern bool TMC_enable;
 
 void Printer::CrashDetected()

@@ -4,7 +4,7 @@
 
 unsigned int TMC_Crash_counterPeriodical = 0;
 unsigned int AC_lost_counterPeriodical = 0;
-
+unsigned int AC_lost_event = 1;
 #if ANALOG_INPUTS > 0
 uint8 osAnalogInputCounter[ANALOG_INPUTS];
 uint osAnalogInputBuildup[ANALOG_INPUTS];
@@ -815,8 +815,14 @@ ISR(TIMER4_COMPA_vect) {
 
 ISR(TIMER5_COMPA_vect) {
     //PJ1  D14
-    if ((PORTJ & 2)==0) { // cause of pull up
-       // Printer::AcLostDetected();
+
+    if (digitalRead(14)==0) { 
+        if(AC_lost_event==1)
+    {
+        AC_lost_event=0;
+        Printer::AcLostDetected();
+    }
+
     }
 }
 
@@ -1036,7 +1042,7 @@ ISR(PWM_TIMER_VECTOR) {
      if(AC_lost_counterPeriodical >= 4) //shoud run each 1ms
      {
         AC_lost_counterPeriodical=0;
-        Printer::ACtestLost();
+       //Printer::ACtestLost();
      }
 #endif
 //#if defined (CRASH_DETECT)
